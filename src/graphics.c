@@ -18,9 +18,10 @@ void draw_card(card_t *card)
 
 void draw_cards(ui_t *ui, game_state_t *game)
 {
+    int dumb = 0;
     for (int i = 0; i < game->nb_players; i++) // Pour chaque joueur
     {
-        for (int j = 0; j < game->??? ; j++)
+        for (int j = 0; j < dumb; j++)
         {
             //draw_card
         }
