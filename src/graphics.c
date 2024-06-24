@@ -20,13 +20,11 @@ void draw_background(ui_t *ui)
 void draw_players(ui_t *ui, game_t *game)
 {
     SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
-    for (int i = 0; i < 4; i++)
+    if (game->players[0] != NULL)
     {
-        if (game->players[i] != NULL)
-        {
-            // Affiche le joueur
-            SDL_Rect player_rect = {0, 0, 0, 0};
-        }
+        SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
+        SDL_Rect draw_player_rect = {ui->screen_w - 40, ui->screen_h - 80, 40, 80};
+        SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &draw_player_rect);
     }
 }
 
