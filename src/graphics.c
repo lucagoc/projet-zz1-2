@@ -69,6 +69,12 @@ void draw_buttons(ui_t *ui, game_t *game)
     return;
 }
 
+void draw_logo(ui_t *ui)
+{
+    SDL_Rect draw_logo_rect = {10, 10, 200, 200};
+    SDL_RenderCopy(ui->renderer, ui->interface_textures[0], NULL, &draw_logo_rect);
+}
+
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
 {
@@ -82,6 +88,7 @@ void draw(ui_t *ui, game_t *game)
         draw_players(ui, game);
         draw_cards(ui, game);
         draw_buttons(ui, game);
+        draw_logo(ui);
     }
 
     // Affichage

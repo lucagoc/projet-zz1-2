@@ -172,7 +172,7 @@ void load_textures(ui_t *ui)
     // ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
-    // ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
+    ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- TEXTE --------------------------------------------- */
     // ui->interface_textures[1] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
