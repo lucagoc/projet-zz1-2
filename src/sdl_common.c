@@ -3,7 +3,6 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <stdbool.h>
-#include <headers/sdl_common.h>
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -261,13 +260,13 @@ void refresh_input(ui_t *ui, int *input, game_t * game)
                 int y = ui->event.button.y;
 
                 if (stack_clicked(game, x, y)){
-                    game_play(game, 0);  //si on clicke sur la pile pour marquer
+                    *input = 0; //si on clique sur la pile pour marquer
 
                 } else {
                     
                     int player_chosen = player_clicked(game, x, y);
-                    if (player_chosen){ //si on clicke sur un joueur pour le voler
-                        game_play(game, player_chosen);
+                    if (player_chosen){ //si on clique sur un autre joueur pour le voler
+                        *input = player_chosen;
                     }
                 }
             }
@@ -282,4 +281,6 @@ void refresh_input(ui_t *ui, int *input, game_t * game)
             }
         }
     }
+
+    *input=-1;
 }
