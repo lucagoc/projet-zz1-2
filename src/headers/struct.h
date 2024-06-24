@@ -33,7 +33,7 @@ struct game
 };
 typedef struct game game_t;
 
-/********************Fonctions utiles pour la*************************/
+/********************Fonctions utiles pour la pile*************************/
 stack_t * stack_create();
 int stack_is_empty(stack_t *stack);
 stack_t * stack_push(stack_t *stack, int value);
@@ -41,6 +41,6 @@ int stack_top(stack_t *stack);
 stack_t * stack_pop(stack_t *stack);
 int stack_size(stack_t *stack);
 void stack_free(stack_t *stack);
-/********************Fonctions utiles pour la*************************/
+/********************Fonctions utiles pour la pile*************************/
 
 
