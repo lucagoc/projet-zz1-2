@@ -1,7 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "struct.h"
+#include "headers/gameplay.h"
+
 
 int is_card_in_tank(int player, game_t * game){
     //renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
