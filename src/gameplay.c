@@ -162,11 +162,8 @@ void distribute_card(game_t *game, int nb_player)
 {
     for (int i = 0; i < nb_player; i++)
     {
-        for (int j = 0; j < 6; j++)
-        {
             game->players[i]->tank[game->draw_pile->card.face] = 1; // on ajoute la carte au tank du joueur
             game->draw_pile = game->draw_pile->next; // on passe à l'élément suivant de la pile
-        }
     }
 }
 
