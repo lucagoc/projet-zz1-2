@@ -18,7 +18,7 @@ typedef struct player player_t;
 
 struct card
 {
-    int back[3]; // Dos de la carte
+    int back[2]; // Dos de la carte
     int face;    // Face de la carte
 };
 typedef struct card card_t;
