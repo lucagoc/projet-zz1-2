@@ -12,10 +12,10 @@ int is_card_in_tank(int player, game_t * game){
 
 int draw_card(game_t * game){
     //dépile la pile et renvoie la couleur de la première carte
-    if (game->pile != NULL){
-        int drawn_card_color = game->pile->value;
+    if (game->stack != NULL){
+        int drawn_card_color = game->stack->value;
 
-        game->pile->value=game->pile->next;
+        game->stack->value=game->stack->next;
 
         return drawn_card_color;
     } else {
@@ -61,7 +61,7 @@ void game_play(game_t * game, int input){
 
 
 
-        if (is_card_in_tank(game->active_player, drawn_card_color, game)){ //s'il tombe sur une bonne couleur qu'il a
+        if (is_card_in_tank(game->active_player, game)){ //s'il tombe sur une bonne couleur qu'il a
             
             score_card(game);
 
@@ -73,12 +73,12 @@ void game_play(game_t * game, int input){
 
     } else {    //le joueur actif choisit de voler
 
-        if (is_card_in_tank(input)){ //s'il tombe sur une bonne couleur qu'il a
+        if (is_card_in_tank(input, game)){ //s'il tombe sur une bonne couleur qu'il a
             
             steal_card(input, game);
 
         } else { //s'il tombe sur une couleur qu'il n'a pas
-            add_card_in_tank(input);
+            add_card_in_tank(input, game);
 
         }
     }
