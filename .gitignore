@@ -54,3 +54,4 @@ dkms.conf
 # Build
 build/
 build/bin/mantis
+.vscode/
