@@ -31,7 +31,8 @@ int stack_is_empty(stack_t *stack)
  * @brief Ajoute un élément à la pile
  * 
  * @param stack la pile
- * @param value la valeur à ajouter
+ * @param face la face de la carte
+ * @param back le dos de la carte
  * @return stack_t* 
  */
 stack_t * stack_push(stack_t *stack, int face, int back[2])

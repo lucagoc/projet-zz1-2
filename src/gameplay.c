@@ -74,6 +74,8 @@ void init_draw_card(game_t *game)
     int face_count[NUMBER_FACE] = {0};
     card_t card[number_of_cards];
 
+    // Créer les cartes en assurant qu'il y a 15 cartes de chaque couleur
+
     for (int i = 0; i < NUMBER_FACE; i++)
     {
         for (int j = 0; j < 15; j++)
@@ -83,6 +85,8 @@ void init_draw_card(game_t *game)
             total_card++;
         }
     }
+
+    // Compléter les cartes restantes aléatoirement (même si le calcul est bon, on ne sait jamais)
 
     while (total_card < number_of_cards)
     {
