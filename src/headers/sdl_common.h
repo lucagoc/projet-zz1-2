@@ -1,0 +1,1 @@
+#define SDL_COMMON_H
