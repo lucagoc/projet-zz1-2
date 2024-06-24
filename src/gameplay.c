@@ -129,7 +129,6 @@ int is_card_in_tank(int player, game_t *game)
 {
     // renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
     return game->players[player]->tank[game->drawn_card_color];
-    ;
 }
 
 // dépile la pile et renvoie la couleur de la première carte
