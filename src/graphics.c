@@ -22,9 +22,15 @@ void draw_players(ui_t *ui, game_t *game)
     SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
     if (game->players[0] != NULL)
     {
+        int size_x = 130;
+        int size_y = 80;
+
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
-        SDL_Rect draw_player_rect = {ui->screen_w - 40, ui->screen_h - 80, 40, 80};
-        SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &draw_player_rect);
+        SDL_Rect player_background = {ui->screen_w/2 - size_x/2, ui->screen_h - size_y, size_x, size_y};
+        SDL_RenderFillRect(ui->renderer, &player_background);
+
+        // SDL_Rect player_avatar_rect = {ui->screen_w - 40, ui->screen_h - 80, 40, 40};
+        // SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &player_avatar_rect); Pour l'affichage d'un éventuel avatar.
     }
 }
 
