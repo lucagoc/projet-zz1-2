@@ -170,17 +170,17 @@ void load_textures(SDL_Texture *textures[11], SDL_Texture *textures_pause[4], SD
  
 void init_sdl(ui_t *ui)
 {
-    /* Initialisation de la SDL 
+    //Initialisation de la SDL 
     ui->renderer = NULL;
     ui->window = NULL;
-    /* Initialisation SDL 
+    //Initialisation SDL 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    /* Création de la fenêtre et du renderer 
+    // Création de la fenêtre et du renderer 
     ui->window = SDL_CreateWindow("Mana (pre-alpha)",
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
@@ -195,7 +195,7 @@ void init_sdl(ui_t *ui)
     if (TTF_Init() < 0)
         end_sdl(0, "Couldn't initialize SDL TTF", ui->window, ui->renderer);
 
-    /* Loading de toutes les textures dans un tableau 
+    //Loading de toutes les textures dans un tableau 
     load_textures(ui->textures, ui->textures_pause, ui->renderer, ui->window);
 
     // Activer le mode de mélange pour la transparence
@@ -240,7 +240,7 @@ void get_input(ui_t *ui, input_t *input)
         selection = 2;
     }
 
-    /* Gestion des événements 
+    // Gestion des événements 
     while (SDL_PollEvent(&ui->event))
     {
         switch (ui->event.type)
