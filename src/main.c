@@ -7,33 +7,6 @@
 #include "headers/graphics.h"
 #include "headers/gameplay.h"
 
-/**
- * @brief Initialisation du jeu
- */
-game_t *create_game()
-{
-    game_t *game = malloc(sizeof(game_t));
-
-    // Initialisation des joueurs à 0
-    for (int i = 0; i < 4; i++)
-    {
-        player_t *newplayer = malloc(sizeof(player_t));
-        for (int j = 0; j < 6; j++)
-        {
-            newplayer->tank[j] = 0;
-        }
-        newplayer->score = 0;
-        newplayer->last_scored_card = -1;
-        game->players[i] = newplayer;
-    }
-
-    game->player_action = 1;          // Le joueur 1 commence
-    game->win = 0;                    // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
-
-    return game;
-}
-
 int game_loop(int input, game_t *game, ui_t *ui)
 {
     return 1;

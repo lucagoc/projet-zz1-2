@@ -10,7 +10,7 @@
 /**
  *@brief Initialisation du jeu
  */
-game_t *init_game()
+game_t *create_game()
 {
     game_t *game;
     game = malloc(sizeof(game_t));
