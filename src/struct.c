@@ -34,7 +34,7 @@ int stack_is_empty(stack_t *stack)
  * @param value la valeur à ajouter
  * @return stack_t* 
  */
-stack_t * stack_push(stack_t *stack, int value)
+stack_t * stack_push(stack_t *stack, int face, int back[2])
 {
     stack_t *new_stack = malloc(sizeof(stack_t));
     if (new_stack == NULL)
@@ -42,14 +42,18 @@ stack_t * stack_push(stack_t *stack, int value)
         fprintf(stderr, "Erreur d'allocation de mémoire\n");
         exit(EXIT_FAILURE);
     }
-    new_stack->value = value;
-    new_stack->next = stack;
+    new_stack->card.face = face;
+    for (int i = 0 ; i < 2 ; i++)
+    {
+        new_stack->card.back[i] = back[i];
+    }
+    new_stack->next= stack;
     return new_stack;
 }
 
 
 /**
- * @brief Retourne le sommet de la pile
+ * @brief Retourne la face du sommet de la pile
  * 
  * @param stack la pile
  * @return int 
@@ -62,7 +66,7 @@ int stack_top(stack_t *stack)
         fprintf(stderr, "Erreur: pile vide\n");
         exit(EXIT_FAILURE);
     }
-    return stack->value;
+    return stack->card.face;
 }
 
 

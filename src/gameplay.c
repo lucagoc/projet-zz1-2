@@ -121,7 +121,7 @@ void init_draw_card(game_t *game)
 
         // Ajout de la carte à la pile de pioche
 
-        game->draw_pile = stack_push(game->draw_pile, card[i].face);
+        game->draw_pile = stack_push(game->draw_pile, card[i].face, card[i].back);
     }
 }
 
@@ -136,7 +136,7 @@ int get_draw_card(game_t *game)
 {
     if (game->draw_pile != NULL)
     {
-        int drawn_card_color = game->draw_pile->value; // on récupère la couleur du haut de la pile
+        int drawn_card_color = game->draw_pile->card.face; // on récupère la couleur du haut de la pile
 
         game->draw_pile = game->draw_pile->next; // on passe à l'élément suivant de la pile
 
@@ -150,7 +150,6 @@ int get_draw_card(game_t *game)
 
 void score_card(game_t *game)
 {
-
     game->players[game->player_action]->score += game->players[game->player_action]->tank[game->drawn_card_color] + 1; // on ajoute les cartes au score du joueur
 
     game->players[game->player_action]->tank[game->drawn_card_color] = 0; // on enlève les cartes du tank
@@ -160,13 +159,11 @@ void score_card(game_t *game)
 
 void add_card_in_tank(int player, game_t *game)
 {
-
     game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
 }
 
 void steal_card(int input, game_t *game)
 {
-
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
 
     game->players[input]->tank[game->drawn_card_color] = 0; // on enlève les cartes au joueur volé
