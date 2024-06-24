@@ -3,14 +3,14 @@
 #include <time.h>
 #include <stdbool.h>
 
-#include "headers/gameplay.h"
+#include "headers/struct.h"
 
 #define NUMBER_FACE 7
 
 /**
  *@brief Initialisation du jeu
  */
-game_t * init_game()
+game_t *init_game()
 {
     game_t *game;
     game = malloc(sizeof(game_t));
@@ -158,7 +158,7 @@ int get_draw_card(game_t *game)
 
 /**
  * @brief Fonction distribuant les cartes à chaque joueur à partir de la pile de pioche
- * 
+ *
  * @param game le jeu
  */
 
@@ -166,14 +166,14 @@ void distribute_card(game_t *game, int nb_player)
 {
     for (int i = 0; i < nb_player; i++)
     {
-            game->players[i]->tank[game->draw_pile->card.face] = 1; // on ajoute la carte au tank du joueur
-            game->draw_pile = game->draw_pile->next; // on passe à l'élément suivant de la pile
+        game->players[i]->tank[game->draw_pile->card.face] = 1; // on ajoute la carte au tank du joueur
+        game->draw_pile = game->draw_pile->next;                // on passe à l'élément suivant de la pile
     }
 }
 
 /**
  * @brief Fonction du score
- * 
+ *
  * @param game le jeu
  */
 void score_card(game_t *game)
@@ -187,7 +187,7 @@ void score_card(game_t *game)
 
 /**
  * @brief Fonction d'ajout de carte dans le tank
- * 
+ *
  * @param player le joueur
  * @param game le jeu
  */
@@ -196,10 +196,9 @@ void add_card_in_tank(int player, game_t *game)
     game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
 }
 
-
 /**
  * @brief Fonction de vol de carte
- * 
+ *
  * @param input l'input du joueur
  * @param game le jeu
  */
@@ -212,7 +211,7 @@ void steal_card(int input, game_t *game)
 
 /**
  * @brief Fonction de jeu
- * 
+ *
  * @param game le jeu
  * @param input l'input du joueur
  */
@@ -252,8 +251,7 @@ void game_play(game_t *game, int input)
         }
     }
 
-    //passage au joueur suivant
+    // passage au joueur suivant
 
-    game->player_action=(game->player_action)%4 +1;
-
+    game->player_action = (game->player_action) % 4 + 1;
 }

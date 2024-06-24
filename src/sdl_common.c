@@ -1,9 +1,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-
 #include <stdbool.h>
+
 #include "headers/sdl_common.h"
+#include "headers/gameplay.h"
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
@@ -69,14 +70,14 @@ void unload_textures(ui_t *ui)
         SDL_DestroyTexture(ui->front_card_textures[i]);
     }
     SDL_DestroyTexture(ui->back_card_texture);
-    
-    /* --------------------------------------------- JOUEURS --------------------------------------------- 
+
+    /* --------------------------------------------- JOUEURS ---------------------------------------------
     for (int i = 0; i < 5; i++)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
     }*/
-    
-    /* --------------------------------------------- MENU  --------------------------------------------- 
+
+    /* --------------------------------------------- MENU  ---------------------------------------------
     for (int i = 0; i < 4; i++)
     {
         SDL_DestroyTexture(ui->interface_textures[i]);
@@ -146,7 +147,7 @@ SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color c
 void load_textures(ui_t *ui)
 {
     /* --------------------------------------------- CARTES --------------------------------------------- */
-    //ui->front_card_textures[0] = load_texture_from_image("assets/cards/front_0.png", ui->window, ui->renderer); // Texture de debug
+    // ui->front_card_textures[0] = load_texture_from_image("assets/cards/front_0.png", ui->window, ui->renderer); // Texture de debug
     ui->front_card_textures[1] = load_texture_from_image("assets/cards/front_1.png", ui->window, ui->renderer);
     ui->front_card_textures[2] = load_texture_from_image("assets/cards/front_2.png", ui->window, ui->renderer);
     ui->front_card_textures[3] = load_texture_from_image("assets/cards/front_3.png", ui->window, ui->renderer);
@@ -165,20 +166,20 @@ void load_textures(ui_t *ui)
     ui->back_flag_textures[6] = load_texture_from_image("assets/cards/back_flag_6.png", ui->window, ui->renderer);
     ui->back_flag_textures[7] = load_texture_from_image("assets/cards/back_flag_7.png", ui->window, ui->renderer);
 
-    /* --------------------------------------------- JOUEURS --------------------------------------------- */    
-    //ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
-    //ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
-    //ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
-    //ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
-    //ui->player_textures[4] = load_texture_from_image("assets/players/player_4.png", ui->window, ui->renderer);
+    /* --------------------------------------------- JOUEURS --------------------------------------------- */
+    // ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
+    // ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
+    // ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
+    // ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
+    // ui->player_textures[4] = load_texture_from_image("assets/players/player_4.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
-    //ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
+    // ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- TEXTE --------------------------------------------- */
-    //ui->interface_textures[1] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    //ui->interface_textures[2] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    //ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    // ui->interface_textures[1] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    // ui->interface_textures[2] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    // ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
     return;
 }
@@ -235,13 +236,13 @@ ui_t *create_ui()
     return ui;
 }
 
-//si les coordonnées cliquées correspondent à la pile
+// si les coordonnées cliquées correspondent à la pile
 bool stack_clicked(game_t *game, int x, int y)
 {
     return 0;
 }
 
-//si les coordonnées cliquées correspondent à un joueur (pour le voler)
+// si les coordonnées cliquées correspondent à un joueur (pour le voler)
 int player_clicked(game_t *game, int x, int y)
 {
     return 1;
@@ -253,15 +254,15 @@ void gameplay_call(game_t *game, int input)
     if (input == 0)
     { // choix de marquer
 
-        game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+        game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
     }
     else
-    {                           // choix de voler un joueur
-        game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+    {                           // Choix de voler un joueur
+        game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
     }
 }
 
-void free_ui(ui_t* ui)
+void free_ui(ui_t *ui)
 {
     unload_textures(ui);
     free(ui);
@@ -294,7 +295,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
 
                 if (stack_clicked(game, x, y))
                 {
-                    *input=0;
+                    *input = 0;
                     gameplay_call(game, *input);
                 }
                 else
@@ -303,7 +304,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                     int player_chosen = player_clicked(game, x, y);
                     if (player_chosen)
                     { // si on clique sur un autre joueur pour le voler
-                        *input=player_chosen;
+                        *input = player_chosen;
                         gameplay_call(game, *input);
                     }
                 }

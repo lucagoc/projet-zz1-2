@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "headers/player.h"
 #include "headers/struct.h"
-
+#include "headers/player.h"
 
 /**
-*@brief Initialisation d'un joueur
-*/
+ *@brief Initialisation d'un joueur
+ */
 player_t *create_player()
 {
     player_t *player = malloc(sizeof(player_t));

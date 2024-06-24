@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 #include "headers/struct.h"
 
 /*************************** Fonctions de la structure de données pile *****************************/
