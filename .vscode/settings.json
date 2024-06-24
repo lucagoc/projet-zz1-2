@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "stdio.h": "c",
-        "struct.h": "c"
+        "struct.h": "c",
+        "sdl_common.h": "c"
     }
 }

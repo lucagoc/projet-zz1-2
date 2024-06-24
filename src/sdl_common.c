@@ -225,13 +225,22 @@ ui_t* create_ui()
     return ui;
 }
 
+bool stack_clicked(game_t * game, int x, int y){
+    return 0;
+}
+
+int player_clicked(game, x, y){
+    return 1;
+}
+
+
 /*
  * @brief Fonction pour récupérer les événements
  *
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void get_input(ui_t *ui, int *input)
+void refresh_input(ui_t *ui, int *input, game_t * game)
 {
     (void) input;
     
@@ -244,8 +253,25 @@ void get_input(ui_t *ui, int *input)
             ui->program_on = SDL_FALSE;
             break;
 
-        case SDL_MOUSEBUTTONDOWN: // Clic souris
-            // Faire ici ce qu'il faut
+        case SDL_MOUSEBUTTONDOWN:
+
+            if (ui->event.button.button == SDL_BUTTON_LEFT){
+                
+                int x = ui->event.button.x;
+                int y = ui->event.button.y;
+
+                if (stack_clicked(game, x, y)){
+                    game_play(game, 0);  //si on clicke sur la pile pour marquer
+
+                } else {
+                    
+                    int player_chosen = player_clicked(game, x, y);
+                    if (player_chosen){ //si on clicke sur un joueur pour le voler
+                        game_play(game, player_chosen);
+                    }
+                }
+            }
+
             break;
         case SDL_KEYDOWN:
             switch (ui->event.key.keysym.sym)
