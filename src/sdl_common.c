@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include <headers/sdl_common.h>
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 
 /**
  * @file sdl_common.c
@@ -146,28 +146,38 @@ SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color c
 void load_textures(ui_t *ui)
 {
     /* --------------------------------------------- CARTES --------------------------------------------- */
-    ui->front_card_textures[0] = load_texture_from_image("assets/cards/front_0.png", ui->window, ui->renderer); // Texture de debug
+    //ui->front_card_textures[0] = load_texture_from_image("assets/cards/front_0.png", ui->window, ui->renderer); // Texture de debug
     ui->front_card_textures[1] = load_texture_from_image("assets/cards/front_1.png", ui->window, ui->renderer);
     ui->front_card_textures[2] = load_texture_from_image("assets/cards/front_2.png", ui->window, ui->renderer);
     ui->front_card_textures[3] = load_texture_from_image("assets/cards/front_3.png", ui->window, ui->renderer);
     ui->front_card_textures[4] = load_texture_from_image("assets/cards/front_4.png", ui->window, ui->renderer);
     ui->front_card_textures[5] = load_texture_from_image("assets/cards/front_5.png", ui->window, ui->renderer);
     ui->front_card_textures[6] = load_texture_from_image("assets/cards/front_6.png", ui->window, ui->renderer);
+    ui->front_card_textures[7] = load_texture_from_image("assets/cards/front_7.png", ui->window, ui->renderer);
+
     ui->back_card_texture = load_texture_from_image("assets/cards/back.png", ui->window, ui->renderer);
 
+    ui->back_flag_textures[1] = load_texture_from_image("assets/cards/back_flag_1.png", ui->window, ui->renderer);
+    ui->back_flag_textures[2] = load_texture_from_image("assets/cards/back_flag_2.png", ui->window, ui->renderer);
+    ui->back_flag_textures[3] = load_texture_from_image("assets/cards/back_flag_3.png", ui->window, ui->renderer);
+    ui->back_flag_textures[4] = load_texture_from_image("assets/cards/back_flag_4.png", ui->window, ui->renderer);
+    ui->back_flag_textures[5] = load_texture_from_image("assets/cards/back_flag_5.png", ui->window, ui->renderer);
+    ui->back_flag_textures[6] = load_texture_from_image("assets/cards/back_flag_6.png", ui->window, ui->renderer);
+    ui->back_flag_textures[7] = load_texture_from_image("assets/cards/back_flag_7.png", ui->window, ui->renderer);
+
     /* --------------------------------------------- JOUEURS --------------------------------------------- */    
-    ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
-    ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
-    ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
-    ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
-    ui->player_textures[4] = load_texture_from_image("assets/players/player_4.png", ui->window, ui->renderer);
+    //ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
+    //ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
+    //ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
+    //ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
+    //ui->player_textures[4] = load_texture_from_image("assets/players/player_4.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
-    ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
+    //ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- TEXTE --------------------------------------------- */
-    //ui->interface_textures[2] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    //ui->interface_textures[1] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    //ui->interface_textures[1] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    //ui->interface_textures[2] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
     //ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
     return;
@@ -225,13 +235,19 @@ ui_t* create_ui()
     return ui;
 }
 
+void free_ui(ui_t* ui)
+{
+    unload_textures(ui);
+    free(ui);
+}
+
 /*
  * @brief Fonction pour récupérer les événements
  *
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void get_input(ui_t *ui, int *input)
+void refresh_input(ui_t *ui, int *input)
 {
     (void) input;
     
@@ -251,7 +267,7 @@ void get_input(ui_t *ui, int *input)
             switch (ui->event.key.keysym.sym)
             {
             case SDLK_ESCAPE:
-                ui->in_pause = !ui->in_pause;
+                ui->program_on = false;
                 break;
             }
         }
