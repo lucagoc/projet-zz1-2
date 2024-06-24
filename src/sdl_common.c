@@ -64,23 +64,23 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
 void unload_textures(ui_t *ui)
 {
     /* --------------------------------------------- CARTES --------------------------------------------- */
-    for (int i = 0; i < 7; i++)
+    for (int i = 1; i < 8; i++)
     {
         SDL_DestroyTexture(ui->front_card_textures[i]);
     }
     SDL_DestroyTexture(ui->back_card_texture);
     
-    /* --------------------------------------------- JOUEURS --------------------------------------------- */
+    /* --------------------------------------------- JOUEURS --------------------------------------------- 
     for (int i = 0; i < 5; i++)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
-    }
+    }*/
     
-    /* --------------------------------------------- MENU  --------------------------------------------- */
+    /* --------------------------------------------- MENU  --------------------------------------------- 
     for (int i = 0; i < 4; i++)
     {
         SDL_DestroyTexture(ui->interface_textures[i]);
-    }
+    }*/
 }
 
 /**

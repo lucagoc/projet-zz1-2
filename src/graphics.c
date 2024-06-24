@@ -68,12 +68,6 @@ void draw_cards(ui_t *ui, game_t *game)
     draw_draw_cards(ui, game, ui->screen_w/2-(CARD_WIDTH/4), ui->screen_h/2-(CARD_HEIGHT/4));
 }
 
-// Affiche la pile de carte du jeu.
-void draw_stack(ui_t *ui, game_t *game)
-{
-    return;
-}
-
 void draw_buttons(ui_t *ui, game_t *game)
 {
     return;
