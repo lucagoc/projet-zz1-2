@@ -27,10 +27,10 @@ typedef struct player player_t;
 struct game
 {
     player_t *players[4]; // tableau des joueurs
-    int player_action;    // Joueur actif
-    int win;              // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
     stack_t *draw_pile;   // Pile de pioche
     int drawn_card_color;
+    int player_action;    // Joueur actif
+    int win;              // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
 };
 typedef struct game game_t;
 

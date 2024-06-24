@@ -26,17 +26,12 @@ game_t *init_game()
         newplayer->score = 0;
         newplayer->last_scored_card = -1;
         game->players[i] = newplayer;
-        game->players[i] = newplayer;
     }
-    // Le joueur 1 commence
-    game->player_action = 1;
-    game->player_action = 1;
-    // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game->win = 0;
-    game->win = 0;
-    // Initialisation de la pile de pioche avec une pile vide
-    game->draw_pile = stack_create();
-    game->draw_pile = stack_create();
+
+    game->drawn_card_color = -1;      // Initialisation de la couleur de la carte tirée à -1
+    game->player_action = 1;          // Le joueur 1 commence
+    game->win = 0;                    // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
 
     return game;
 }
@@ -136,6 +131,10 @@ void init_draw_card(game_t *game)
 // Renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
 int is_card_in_tank(int player, game_t *game)
 {
+    if(game->drawn_card_color > 7 || game->drawn_card_color < 0){
+        fprintf(stderr, "[ERROR] is_card_in_tank : no card drawn\n");
+        return 0;
+    }
     return game->players[player]->tank[game->drawn_card_color];
 }
 
@@ -234,6 +233,7 @@ void game_play(game_t *game, int input)
 
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
+
             steal_card(input, game);
         }
         else

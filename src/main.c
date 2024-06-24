@@ -26,12 +26,10 @@ game_t *create_game()
         newplayer->last_scored_card = -1;
         game->players[i] = newplayer;
     }
-    // Le joueur 1 commence
-    game->player_action = 1;
-    // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game->win = 0;
-    // Initialisation de la pile de pioche avec une pile vide
-    game->draw_pile = stack_create();
+
+    game->player_action = 1;          // Le joueur 1 commence
+    game->win = 0;                    // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
 
     return game;
 }
