@@ -19,20 +19,19 @@ game_t init_game()
     // Initialisation des joueurs à 0
     for (int i = 0; i < 4; i++)
     {
-        player_t * newplayer= malloc(sizeof(player_t));
+        player_t *newplayer = malloc(sizeof(player_t));
         for (int j = 0; j < 6; j++)
         {
-            newplayer->tank[j]=0;
-
+            newplayer->tank[j] = 0;
         }
-        newplayer->score=0;
-        newplayer->last_scored_card=-1;
+        newplayer->score = 0;
+        newplayer->last_scored_card = -1;
         game.players[i] = newplayer;
     }
     // Le joueur 1 commence
     game.player_action = 1;
     // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game.win=0;
+    game.win = 0;
     // Initialisation de la pile de pioche avec une pile vide
     game.draw_pile = stack_create();
 
@@ -98,13 +97,13 @@ void init_draw_card(game_t *game)
 int is_card_in_tank(int player, game_t *game)
 {
     // renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
-    return game->players[player]->tank[game->drawn_card_color];;
+    return game->players[player]->tank[game->drawn_card_color];
+    ;
 }
 
-int draw_card(game_t *game)
+// dépile la pile et renvoie la couleur de la première carte
+int get_draw_card(game_t *game)
 {
-    // dépile la pile et renvoie la couleur de la première carte
-
     if (game->draw_pile != NULL)
     {
         int drawn_card_color = game->draw_pile->value; // on récupère la couleur du haut de la pile
@@ -119,7 +118,7 @@ int draw_card(game_t *game)
     }
 }
 
-void score_card(game_t * game)
+void score_card(game_t *game)
 {
 
     game->players[game->player_action]->score += game->players[game->player_action]->tank[game->drawn_card_color] + 1; // on ajoute les cartes au score du joueur
@@ -148,7 +147,7 @@ void game_play(game_t *game, int input)
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
 
-    game->drawn_card_color = draw_card(game); // on dépile et on affiche
+    game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
     if (input)
     { // le joueur actif choisit de marquer
@@ -178,4 +177,3 @@ void game_play(game_t *game, int input)
         }
     }
 }
-
