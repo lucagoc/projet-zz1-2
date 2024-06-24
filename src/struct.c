@@ -108,9 +108,13 @@ int stack_size(stack_t *stack)
  */
 void stack_free(stack_t *stack)
 {
-    while (!stack_is_empty(stack))
+    stack_t *current = stack;
+    stack_t *next;
+    while (current != NULL)
     {
-        stack = stack_pop(stack);
+        next = current->next;
+        free(current);
+        current = next;
     }
 }
 

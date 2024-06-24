@@ -18,7 +18,7 @@ typedef struct stack stack_t;
 
 struct player
 {
-    int tank[6];          // Carte tank de joueur
+    int tank[7];          // Carte tank de joueur
     int score;            // Score du joueur
     int last_scored_card; // Valeur de la dernière carte jouée
 };
@@ -26,7 +26,7 @@ typedef struct player player_t;
 
 struct game
 {
-    player_t *players[4]; // tableau des joueurs
+    player_t *players[4]; // Tableau des joueurs, numéroté de 0 à 3
     stack_t *draw_pile;   // Pile de pioche
     int drawn_card_color;
     int player_action;    // Joueur actif
@@ -37,7 +37,7 @@ typedef struct game game_t;
 /******************** Fonctions utiles pour la pile *************************/
 stack_t *stack_create();
 bool stack_is_empty(stack_t *stack);
-stack_t *stack_push(stack_t *stack, int face, int back[2]);
+stack_t *stack_push(stack_t *stack, int face, int back[3]);
 int stack_top(stack_t *stack);
 stack_t *stack_pop(stack_t *stack);
 int stack_size(stack_t *stack);

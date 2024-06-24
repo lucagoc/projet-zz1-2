@@ -19,7 +19,7 @@ game_t *create_game()
     for (int i = 0; i < 4; i++)
     {
         player_t *newplayer = malloc(sizeof(player_t));
-        for (int j = 0; j < 6; j++)
+        for (int j = 0; j < 7; j++)
         {
             newplayer->tank[j] = 0;
         }
@@ -34,6 +34,22 @@ game_t *create_game()
     game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
 
     return game;
+}
+
+/**
+ *@brief Libération de la mémoire du jeu
+ */
+void free_game(game_t *game)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if(game->players[i] != NULL)    // Nombre de joueur variable
+        {
+            free(game->players[i]);
+        }
+    }
+    stack_free(game->draw_pile);
+    free(game);
 }
 
 /**

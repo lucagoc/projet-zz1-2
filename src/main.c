@@ -28,8 +28,7 @@ int main(int argc, char const *argv[])
         draw(ui, game);
     }
 
-    // free_input(input);
-    // free_game_state(game);
+    free_game(game);
     free_ui(ui);
 
     return 0;
