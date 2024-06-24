@@ -237,10 +237,10 @@ int player_clicked(game_t *game, int x, int y)
     return 1;
 }
 
-void gameplay_call(game_t *game, int *input)
+void gameplay_call(game_t *game, int input)
 {
 
-    if (*input == 0)
+    if (input == 0)
     { // choix de marquer
 
         game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
@@ -259,8 +259,6 @@ void gameplay_call(game_t *game, int *input)
  */
 void refresh_input(ui_t *ui, int *input, game_t *game)
 {
-    (void)input;
-
     /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
     {
@@ -280,7 +278,8 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
 
                 if (stack_clicked(game, x, y))
                 {
-                    gameplay_call(game, 0);
+                    *input=0;
+                    gameplay_call(game, *input);
                 }
                 else
                 {
@@ -288,7 +287,8 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                     int player_chosen = player_clicked(game, x, y);
                     if (player_chosen)
                     { // si on clique sur un autre joueur pour le voler
-                        gameplay_call(game, player_chosen);
+                        *input=player_chosen;
+                        gameplay_call(game, *input);
                     }
                 }
             }

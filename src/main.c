@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
         refresh_input(ui, input);
         draw(ui, game);
         SDL_RenderPresent(ui->renderer);
-        SDL_Delay(15); // ~ 60 FPS
+        SDL_Delay(15); // ~  60 FPS
     }
 
     //free_input(input);

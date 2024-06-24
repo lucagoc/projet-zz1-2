@@ -1,7 +1,7 @@
 #define SDL_COMMON_H
 #include <SDL2/SDL.h>
 #include <stdbool.h>
-#include "headers/struct.h"
+#include "headers/gameplay.h"
 
 struct ui_s
 {
