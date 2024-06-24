@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -7,14 +6,14 @@
 #include "headers/struct.h"
 
 #define NUMBER_FACE 7
-#define NUMBER_BACK 3
 
 /**
  *@brief Initialisation du jeu
  */
-game_t init_game()
+game_t *init_game()
 {
-    game_t game;
+    game_t *game;
+    game = malloc(sizeof(game_t));
 
     // Initialisation des joueurs à 0
     for (int i = 0; i < 4; i++)
@@ -26,14 +25,14 @@ game_t init_game()
         }
         newplayer->score = 0;
         newplayer->last_scored_card = -1;
-        game.players[i] = newplayer;
+        game->players[i] = newplayer;
     }
     // Le joueur 1 commence
-    game.player_action = 1;
+    game->player_action = 1;
     // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game.win = 0;
+    game->win = 0;
     // Initialisation de la pile de pioche avec une pile vide
-    game.draw_pile = stack_create();
+    game->draw_pile = stack_create();
 
     return game;
 }
@@ -70,27 +69,59 @@ void init_draw_card(game_t *game)
 
     srand(time(NULL));
 
-    int number_of_cards = 70;
+    int number_of_cards = 105;
+    int total_card = 0;
+    int face_count[NUMBER_FACE] = {0};
+    card_t card[number_of_cards];
 
-    // Initialisation des couleurs de face
-    for (int i = 0; i < number_of_cards; i++)
+    for (int i = 0; i < NUMBER_FACE; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            card[total_card].face = i;
+            face_count[i]++;
+            total_card++;
+        }
+    }
+
+    while (total_card < number_of_cards)
     {
         int face = rand() % NUMBER_FACE;
-        int back[2];
+        card[total_card].face = face;
+        face_count[face]++;
+        total_card++;
+    }
 
-        // Initialisation des couleurs de dos
+    // Mélangez les cartes pour les répartir aléatoirement
+
+    for (int i = 0; i < NUMBER_FACE; i++)
+    {
+        int j = rand() % number_of_cards;
+
+        card_t temp = card[i];
+        card[i] = card[j];
+        card[j] = temp;
+    }
+    // Initialisation des couleurs du dos de la carte
+
+    for (int i = 0; i < NUMBER_FACE; i++)
+    {
+        int face = card[i].face;
+        int back[2];
         for (int j = 0; j < 2; j++)
         {
             do
             {
-                back[j] = rand() % NUMBER_BACK;
+                back[j] = rand() % NUMBER_FACE;
+
             } while (back[j] == face && j == 1 && back[0] == face);
         }
 
-        card_t card;
-        init_card(&card, face, back);
+        init_card(&card[i], face, back);
 
-        game->draw_pile = stack_push(game->draw_pile, card.face);
+        // Ajout de la carte à la pile de pioche
+
+        game->draw_pile = stack_push(game->draw_pile, card[i].face);
     }
 }
 
