@@ -176,4 +176,9 @@ void game_play(game_t *game, int input)
             add_card_in_tank(input, game);
         }
     }
+
+    //passage au joueur suivant
+
+    game->player_action=(game->player_action)%4 +1;
+
 }

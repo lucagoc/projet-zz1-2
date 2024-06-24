@@ -225,11 +225,13 @@ ui_t *create_ui()
     return ui;
 }
 
+//si les coordonnées cliquées correspondent à la pile
 bool stack_clicked(game_t *game, int x, int y)
 {
     return 0;
 }
 
+//si les coordonnées cliquées correspondent à un joueur (pour le voler)
 int player_clicked(game_t *game, int x, int y)
 {
     return 1;
