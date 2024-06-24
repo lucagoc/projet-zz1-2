@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 
 #include "headers/sdl_common.h"
+#include "headers/animation.h"
 
 #define FLAG_WIDTH 434
 #define FLAG_HEIGHT 396
@@ -120,7 +121,10 @@ void draw(ui_t *ui, game_t *game)
         draw_logo(ui);
     }
 
+    draw_confetti(ui);
+
     // Affichage
     SDL_RenderPresent(ui->renderer);
     SDL_Delay(15); // ~ 60 FPS
+    ui->tick = SDL_GetTicks();
 }

@@ -232,6 +232,8 @@ ui_t *create_ui()
     ui->in_pause = false;
     ui->program_on = true;
 
+    ui->tick = 0;
+
     return ui;
 }
 

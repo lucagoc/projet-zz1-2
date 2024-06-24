@@ -11,13 +11,15 @@ struct ui_s
     int screen_h;
     SDL_Event event;
 
+    /* Textures */
     SDL_Texture *front_card_textures[8]; // front_card_textures[0] inutilisé
     SDL_Texture *back_flag_textures[8];  // back_flag_textures[0] inutilisé
     SDL_Texture *back_card_texture;
     SDL_Texture *player_textures[5]; // player_textures[0] inutilisé
     SDL_Texture *interface_textures[4];
-
     SDL_Texture *button_textures[8];
+
+    unsigned long long tick;
 
     bool in_pause;
     bool program_on;
