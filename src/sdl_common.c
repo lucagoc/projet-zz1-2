@@ -233,6 +233,18 @@ int player_clicked(game_t * game, int x, int y){
     return 1;
 }
 
+int gameplay_call(game_t * game, int * input){
+        
+        if (*input==0) { //choix de marquer
+
+            game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+            
+        } else { //choix de voler un joueur
+            game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+
+        }
+}
+
 
 /*
  * @brief Fonction pour récupérer les événements
@@ -261,13 +273,12 @@ void refresh_input(ui_t *ui, int *input, game_t * game)
                 int y = ui->event.button.y;
 
                 if (stack_clicked(game, x, y)){
-                    *input = 0; //si on clique sur la pile pour marquer
-
+                    gameplay_call(game, 0);
                 } else {
                     
                     int player_chosen = player_clicked(game, x, y);
                     if (player_chosen){ //si on clique sur un autre joueur pour le voler
-                        *input = player_chosen;
+                        gameplay_call(game, player_chosen);
                     }
                 }
             }
