@@ -148,6 +148,12 @@ int get_draw_card(game_t *game)
     }
 }
 
+
+/**
+ * @brief Fonction du score
+ * 
+ * @param game le jeu
+ */
 void score_card(game_t *game)
 {
     game->players[game->player_action]->score += game->players[game->player_action]->tank[game->drawn_card_color] + 1; // on ajoute les cartes au score du joueur
@@ -157,17 +163,38 @@ void score_card(game_t *game)
     game->players[game->player_action]->last_scored_card = game->drawn_card_color; // on affiche la carte en haut de la pile de score
 }
 
+/**
+ * @brief Fonction d'ajout de carte dans le tank
+ * 
+ * @param player le joueur
+ * @param game le jeu
+ */
 void add_card_in_tank(int player, game_t *game)
 {
     game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
 }
 
+
+/**
+ * @brief Fonction de vol de carte
+ * 
+ * @param input l'input du joueur
+ * @param game le jeu
+ */
 void steal_card(int input, game_t *game)
 {
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
 
     game->players[input]->tank[game->drawn_card_color] = 0; // on enlève les cartes au joueur volé
 }
+
+
+/**
+ * @brief Fonction de jeu
+ * 
+ * @param game le jeu
+ * @param input l'input du joueur
+ */
 
 void game_play(game_t *game, int input)
 {
