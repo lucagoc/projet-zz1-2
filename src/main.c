@@ -1,8 +1,7 @@
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#include "headers/struct.h"
 #include "headers/sdl_common.h"
 #include "headers/graphics.h"
 #include "headers/gameplay.h"
@@ -45,7 +44,7 @@ int main(int argc, char const *argv[])
 {
     (void)argc;
     (void)argv;
-
+    int * input=-1;
     ui_t *ui = create_ui();
     game_t *game = create_game();
     int input = 0;

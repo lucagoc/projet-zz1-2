@@ -3,14 +3,14 @@
 #include <time.h>
 #include <stdbool.h>
 
-#include "headers/struct.h"
+#include "headers/gameplay.h"
 
 #define NUMBER_FACE 7
 
 /**
  *@brief Initialisation du jeu
  */
-game_t *init_game()
+game_t * init_game()
 {
     game_t *game;
     game = malloc(sizeof(game_t));
@@ -26,12 +26,16 @@ game_t *init_game()
         newplayer->score = 0;
         newplayer->last_scored_card = -1;
         game->players[i] = newplayer;
+        game->players[i] = newplayer;
     }
     // Le joueur 1 commence
     game->player_action = 1;
+    game->player_action = 1;
     // Initialisation du statut de victoire à 0 (personne n'a gagné)
     game->win = 0;
+    game->win = 0;
     // Initialisation de la pile de pioche avec une pile vide
+    game->draw_pile = stack_create();
     game->draw_pile = stack_create();
 
     return game;
@@ -247,4 +251,9 @@ void game_play(game_t *game, int input)
             add_card_in_tank(input, game);
         }
     }
+
+    //passage au joueur suivant
+
+    game->player_action=(game->player_action)%4 +1;
+
 }

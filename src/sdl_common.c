@@ -3,7 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <stdbool.h>
-#include <headers/sdl_common.h>
+#include "headers/sdl_common.h"
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
@@ -222,9 +222,9 @@ void init_sdl(ui_t *ui)
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
-ui_t* create_ui()
+ui_t *create_ui()
 {
-    ui_t* ui = malloc(sizeof(ui_t));
+    ui_t *ui = malloc(sizeof(ui_t));
     ui->screen_w = SCREEN_WIDTH;
     ui->screen_h = SCREEN_HEIGHT;
 
@@ -233,6 +233,32 @@ ui_t* create_ui()
     ui->program_on = true;
 
     return ui;
+}
+
+//si les coordonnées cliquées correspondent à la pile
+bool stack_clicked(game_t *game, int x, int y)
+{
+    return 0;
+}
+
+//si les coordonnées cliquées correspondent à un joueur (pour le voler)
+int player_clicked(game_t *game, int x, int y)
+{
+    return 1;
+}
+
+void gameplay_call(game_t *game, int input)
+{
+
+    if (input == 0)
+    { // choix de marquer
+
+        game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+    }
+    else
+    {                           // choix de voler un joueur
+        game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+    }
 }
 
 void free_ui(ui_t* ui)
@@ -247,10 +273,8 @@ void free_ui(ui_t* ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input)
+void refresh_input(ui_t *ui, int *input, game_t *game)
 {
-    (void) input;
-    
     /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
     {
@@ -260,8 +284,31 @@ void refresh_input(ui_t *ui, int *input)
             ui->program_on = SDL_FALSE;
             break;
 
-        case SDL_MOUSEBUTTONDOWN: // Clic souris
-            // Faire ici ce qu'il faut
+        case SDL_MOUSEBUTTONDOWN:
+
+            if (ui->event.button.button == SDL_BUTTON_LEFT)
+            {
+
+                int x = ui->event.button.x;
+                int y = ui->event.button.y;
+
+                if (stack_clicked(game, x, y))
+                {
+                    *input=0;
+                    gameplay_call(game, *input);
+                }
+                else
+                {
+
+                    int player_chosen = player_clicked(game, x, y);
+                    if (player_chosen)
+                    { // si on clique sur un autre joueur pour le voler
+                        *input=player_chosen;
+                        gameplay_call(game, *input);
+                    }
+                }
+            }
+
             break;
         case SDL_KEYDOWN:
             switch (ui->event.key.keysym.sym)
@@ -272,4 +319,6 @@ void refresh_input(ui_t *ui, int *input)
             }
         }
     }
+
+    *input = -1;
 }

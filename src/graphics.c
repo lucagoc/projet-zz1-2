@@ -2,8 +2,6 @@
 #include <SDL2/SDL.h>
 
 #include "headers/sdl_common.h"
-#include "headers/gameplay.h"
-#include "headers/struct.h"
 
 #define FLAG_WIDTH 434
 #define FLAG_HEIGHT 396
