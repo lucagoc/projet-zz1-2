@@ -9,7 +9,7 @@
  * 
  * @return stack_t* 
  */
-stack_t * stackCreate() 
+stack_t * stack_create() 
 {
 	return NULL;
 }

@@ -1,6 +1,5 @@
 #define STRUCT_H
 
-
 // Structure de pile
 struct stack
 {
@@ -8,6 +7,7 @@ struct stack
     struct stack *next;
 };
 typedef stack stack_t;
+
 struct player
 {
     int tank[4];          // Carte tank de joueur
@@ -32,5 +32,14 @@ struct game
 };
 typedef game game_t;
 
+/********************Fonctions utiles pour la*************************/
+stack_t * stack_create();
+int stack_is_empty(stack_t *stack);
+stack_t * stack_push(stack_t *stack, int value);
+int stack_top(stack_t *stack);
+stack_t * stack_pop(stack_t *stack);
+int stack_size(stack_t *stack);
+void stack_free(stack_t *stack);
+/********************Fonctions utiles pour la*************************/
 
 
