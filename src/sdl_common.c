@@ -3,6 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <stdbool.h>
+#include "headers/sdl_common.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -228,7 +229,7 @@ bool stack_clicked(game_t * game, int x, int y){
     return 0;
 }
 
-int player_clicked(game, x, y){
+int player_clicked(game_t * game, int x, int y){
     return 1;
 }
 

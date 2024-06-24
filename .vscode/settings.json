@@ -5,6 +5,9 @@
         "sdl_common.h": "c",
         "sdl.h": "c",
         "sdl_ttf.h": "c",
-        "gameplay.h": "c"
+        "gameplay.h": "c",
+        "stdbool.h": "c",
+        "stdlib.h": "c",
+        "sdl_image.h": "c"
     }
 }

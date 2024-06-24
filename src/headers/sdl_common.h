@@ -1,7 +1,7 @@
 #define SDL_COMMON_H
 #include <SDL2/SDL.h>
-#include <headers/struct.h>
-#include <headers/gameplay.h>
+#include <stdbool.h>
+#include "headers/struct.h"
 
 struct ui_s
 {
@@ -22,4 +22,3 @@ typedef struct ui_s ui_t;
 
 ui_t *create_ui();
 
-void game_play(game_t *game, int input);

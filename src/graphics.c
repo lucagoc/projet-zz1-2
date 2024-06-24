@@ -2,8 +2,6 @@
 #include <SDL2/SDL.h>
 
 #include "headers/sdl_common.h"
-#include "headers/gameplay.h"
-#include "headers/struct.h"
 
 // Affiche les joueurs. Affiches les joueurs sur chaque côté de l'écran, la pile étant au centre.
 void draw_players(ui_t *ui, game_t *game)
