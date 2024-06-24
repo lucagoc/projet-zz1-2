@@ -17,6 +17,30 @@ void draw_background(ui_t *ui)
     SDL_RenderClear(ui->renderer);
 }
 
+void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
+{
+    int descale = 7;
+    int card_width = CARD_WIDTH / descale;
+    int card_height = CARD_HEIGHT / descale;
+
+    /* DEBUG
+    for (int i = 0; i < 7; i++)
+    {
+        player->tank[i] = 1;
+    }*/
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (player->tank[i] > 0)
+        {
+            int card_x = x + i * card_width + i * 10;
+            int card_y = y;
+            SDL_Rect draw_card_rect = {card_x, card_y, card_width, card_height};
+            SDL_RenderCopy(ui->renderer, ui->front_card_textures[i], NULL, &draw_card_rect);
+        }
+    }
+}
+
 // Affiche les joueurs. Affiches les joueurs sur chaque côté de l'écran, la pile étant au centre.
 void draw_players(ui_t *ui, game_t *game)
 {
@@ -24,12 +48,14 @@ void draw_players(ui_t *ui, game_t *game)
 
     int size_length = ui->screen_w / 2 - 90;
     int size_height = 200;
+    int padding = 25;
 
     if (game->players[0] != NULL)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
         SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
+        draw_player_tank(ui, game->players[0], padding, ui->screen_h - size_height + padding);
 
         // SDL_Rect player_avatar_rect = {ui->screen_w - 40, ui->screen_h - 80, 40, 40};
         // SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &player_avatar_rect); Pour l'affichage d'un éventuel avatar.
@@ -40,6 +66,7 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
+        draw_player_tank(ui, game->players[1], ui->screen_w - size_length + padding, padding);
     }
 
     if (game->players[2] != NULL)
@@ -47,6 +74,7 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 255);
         SDL_Rect player_background = {0, 0, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
+        draw_player_tank(ui, game->players[2], padding, padding);
     }
 
     if (game->players[3] != NULL)
@@ -54,6 +82,7 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_SetRenderDrawColor(ui->renderer, 255, 255, 0, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
+        draw_player_tank(ui, game->players[3], ui->screen_w - size_length + padding, ui->screen_h - size_height + padding);
     }
 }
 
