@@ -34,43 +34,48 @@ void draw_players(ui_t *ui, game_t *game)
         // SDL_Rect player_avatar_rect = {ui->screen_w - 40, ui->screen_h - 80, 40, 40};
         // SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &player_avatar_rect); Pour l'affichage d'un éventuel avatar.
     }
-    
-    if(game->players[1] != NULL)
+
+    if (game->players[1] != NULL)
     {
         SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
     }
 
-    if(game->players[2] != NULL)
+    if (game->players[2] != NULL)
     {
         SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 255);
         SDL_Rect player_background = {0, 0, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
     }
 
-    if(game->players[3] != NULL)
+    if (game->players[3] != NULL)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 255, 0, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
     }
-    
-}
-
-// Affiche UNE carte.
-void draw_card(card_t *card)
-{
-    return;
 }
 
 // Affiche la pioche
-void draw_draw_cards(ui_t *ui, game_t *game, int x, int y)
+void draw_draw_card(ui_t *ui, game_t *game)
 {
+    int x = 0;
+    int y = 0;
+
+    if (ui->follow_mouse)
+    {
+        x = ui->mouse_pos.x - CARD_WIDTH / 6;
+        y = ui->mouse_pos.y - CARD_HEIGHT / 6;
+    }
+    else
+    {
+        x = ui->screen_w / 2 - CARD_WIDTH / 6;
+        y = ui->screen_h / 2 - CARD_HEIGHT / 6;
+    }
     int oui_debug = 1;
     for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
     {
-
         SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
         SDL_RenderCopy(ui->renderer, ui->back_flag_textures[oui_debug], NULL, &draw_indicator_rect);
         oui_debug += 1;
@@ -78,20 +83,12 @@ void draw_draw_cards(ui_t *ui, game_t *game, int x, int y)
 
     // Affiche la carte
     SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
-    SDL_RenderCopy(ui->renderer, ui->back_card_texture, NULL, &draw_pile_rect);
-}
+    SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
 
-void draw_cards(ui_t *ui, game_t *game)
-{
-    int dumb = 0;
-    for (int i = 0; i < dumb; i++) // Pour chaque joueur
+    if (ui->follow_mouse)
     {
-        for (int j = 0; j < dumb; j++)
-        {
-            // draw_card
-        }
+        draw_particles(ui, ui->mouse_pos.x, ui->mouse_pos.y);
     }
-    draw_draw_cards(ui, game, ui->screen_w / 2 - (CARD_WIDTH / 6), ui->screen_h / 2 - (CARD_HEIGHT / 6));
 }
 
 void draw_buttons(ui_t *ui, game_t *game)
@@ -101,7 +98,7 @@ void draw_buttons(ui_t *ui, game_t *game)
 
 void draw_logo(ui_t *ui)
 {
-    SDL_Rect draw_logo_rect = {10, ui->screen_h/2-100, 200, 200};
+    SDL_Rect draw_logo_rect = {10, ui->screen_h / 2 - 100, 200, 200};
     SDL_RenderCopy(ui->renderer, ui->interface_textures[0], NULL, &draw_logo_rect);
 }
 
@@ -116,12 +113,15 @@ void draw(ui_t *ui, game_t *game)
     {
         draw_background(ui);
         draw_players(ui, game);
-        draw_cards(ui, game);
+        draw_draw_card(ui, game);
         draw_buttons(ui, game);
         draw_logo(ui);
     }
 
-    draw_confetti(ui);
+    if (game->win != 0)
+    {
+        draw_confetti(ui);
+    }
 
     // Affichage
     SDL_RenderPresent(ui->renderer);

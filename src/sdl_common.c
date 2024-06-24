@@ -9,6 +9,9 @@
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 
+#define CARD_WIDTH 601
+#define CARD_HEIGHT 844
+
 /**
  * @file sdl_common.c
  * @brief Fonctions communes à l'initialisation de la SDL
@@ -69,7 +72,8 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->front_card_textures[i]);
     }
-    SDL_DestroyTexture(ui->back_card_texture);
+    SDL_DestroyTexture(ui->back_card_texture[0]);
+    SDL_DestroyTexture(ui->back_card_texture[1]);
 
     /* --------------------------------------------- JOUEURS ---------------------------------------------
     for (int i = 0; i < 5; i++)
@@ -155,7 +159,8 @@ void load_textures(ui_t *ui)
     ui->front_card_textures[5] = load_texture_from_image("assets/cards/front_5.png", ui->window, ui->renderer);
     ui->front_card_textures[6] = load_texture_from_image("assets/cards/front_6.png", ui->window, ui->renderer);
 
-    ui->back_card_texture = load_texture_from_image("assets/cards/back.png", ui->window, ui->renderer);
+    ui->back_card_texture[0] = load_texture_from_image("assets/cards/back.png", ui->window, ui->renderer);
+    ui->back_card_texture[1] = load_texture_from_image("assets/cards/back_blank.png", ui->window, ui->renderer);
 
     ui->back_flag_textures[0] = load_texture_from_image("assets/cards/back_flag_0.png", ui->window, ui->renderer);
     ui->back_flag_textures[1] = load_texture_from_image("assets/cards/back_flag_1.png", ui->window, ui->renderer);
@@ -173,7 +178,7 @@ void load_textures(ui_t *ui)
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);
-    //ui->interface_textures[1] = load_texture_from_image("assets/ui/score.png", ui->window, ui->renderer);
+    // ui->interface_textures[1] = load_texture_from_image("assets/ui/score.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- TEXTE --------------------------------------------- */
     // ui->interface_textures[1] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
@@ -233,14 +238,17 @@ ui_t *create_ui()
     ui->program_on = true;
 
     ui->tick = 0;
+    ui->animate[0] = false;
+    ui->animate[1] = false;
+    ui->follow_mouse = false;
 
     return ui;
 }
 
 // si les coordonnées cliquées correspondent à la pile
-bool stack_clicked(game_t *game, int x, int y)
+bool stack_clicked(ui_t *ui, int x, int y)
 {
-    return 0;
+    return x > ui->screen_w / 2 - CARD_WIDTH / 6 && x < ui->screen_w / 2 + CARD_WIDTH / 6 && y > ui->screen_h / 2 - CARD_HEIGHT / 6 && y < ui->screen_h / 2 + CARD_HEIGHT / 6;
 }
 
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
@@ -253,8 +261,7 @@ void gameplay_call(game_t *game, int input)
 {
 
     if (input == 0)
-    { // choix de marquer
-
+    {                           // choix de marquer
         game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
     }
     else
@@ -277,6 +284,11 @@ void free_ui(ui_t *ui)
  */
 void refresh_input(ui_t *ui, int *input, game_t *game)
 {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    ui->mouse_pos.x = x;
+    ui->mouse_pos.y = y;
+
     /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
     {
@@ -294,14 +306,14 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                 int x = ui->event.button.x;
                 int y = ui->event.button.y;
 
-                if (stack_clicked(game, x, y))
+                if (stack_clicked(ui, x, y))
                 {
+                    ui->follow_mouse = true;
                     *input = 0;
                     gameplay_call(game, *input);
                 }
                 else
                 {
-
                     int player_chosen = player_clicked(game, x, y);
                     if (player_chosen)
                     { // si on clique sur un autre joueur pour le voler
@@ -319,6 +331,10 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                 ui->program_on = false;
                 break;
             }
+            break;
+        
+        default:
+            break;
         }
     }
 
