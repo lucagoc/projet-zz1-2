@@ -52,7 +52,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[0] != NULL)
     {
-        SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
         draw_player_tank(ui, game->players[0], padding, ui->screen_h - size_height + padding);
@@ -63,7 +63,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[1] != NULL)
     {
-        SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
         draw_player_tank(ui, game->players[1], ui->screen_w - size_length + padding, padding);
@@ -71,7 +71,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[2] != NULL)
     {
-        SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {0, 0, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
         draw_player_tank(ui, game->players[2], padding, padding);
@@ -79,7 +79,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[3] != NULL)
     {
-        SDL_SetRenderDrawColor(ui->renderer, 255, 255, 0, 255);
+        SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderFillRect(ui->renderer, &player_background);
         draw_player_tank(ui, game->players[3], ui->screen_w - size_length + padding, ui->screen_h - size_height + padding);
