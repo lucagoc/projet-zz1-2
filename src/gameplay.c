@@ -1,0 +1,85 @@
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "struct.h"
+
+int is_card_in_tank(int player, game_t * game){
+    //renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
+
+    return game->player[game->active_player]->tank[game->drawn_card_color];
+
+}
+
+int draw_card(game_t * game){
+    //dépile la pile et renvoie la couleur de la première carte
+    if (game->pile != NULL){
+        int drawn_card_color = game->pile->value;
+
+        game->pile->value=game->pile->next;
+
+        return drawn_card_color;
+    } else {
+        return NULL;
+    }
+    
+}
+
+void score_card(game_t * game){
+
+    game->player[game->active_player]->score += game->player[game->active_player]->tank[game->drawn_card_color] + 1;
+    
+    game->player[game->active_player]->tank[game->drawn_card_color] = 0;
+
+    game->player[game->active_player]->last_scored_card= game->drawn_card_color;
+
+}
+
+void add_card_in_tank(int player, game_t * game){
+
+    game->player[player]->tank[game->drawed_card_color] = 1;
+
+
+}
+
+void steal_card(int input, game_t * game){
+
+    game->player[game->active_player]->tank[game->drawn_card_color] += game->player[input]->tank[game->drawn_card_color] +1;
+
+    game->player[input]->tank[game->drawn_card_color]=0;
+
+}
+
+
+
+void game_play(game_t * game, int input){ 
+
+    //input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
+    
+    game->drawn_card_color = draw_card(game->draw_pile); //on dépile et on affiche 
+
+    if (input){ //le joueur actif choisit de marquer
+
+
+
+        if (is_card_in_tank(game->active_player, drawn_card_color, game)){ //s'il tombe sur une bonne couleur qu'il a
+            
+            score_card(game);
+
+        } else { //s'il tombe sur une couleur qu'il n'a pas
+
+            add_card_in_tank(game->active_player,game);
+
+        }
+
+    } else {    //le joueur actif choisit de voler
+
+        if (is_card_in_tank(input)){ //s'il tombe sur une bonne couleur qu'il a
+            
+            steal_card(input, game);
+
+        } else { //s'il tombe sur une couleur qu'il n'a pas
+            add_card_in_tank(input);
+
+        }
+    }
+}
