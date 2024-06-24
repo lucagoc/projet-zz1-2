@@ -16,7 +16,10 @@ int main(int argc, char const *argv[])
     while (ui->program_on)
     {
         //refresh_input(ui, input);
+        //game_loop(input, game); (Attention pour les animations à ne rien faire si aucune input)
         //draw(ui, game)
+        //SDL_RenderPresent(ui->renderer);
+        //SDL_Delay(15); // ~ 60 FPS
     }
 
     //free_input(input);
