@@ -3,7 +3,10 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <stdbool.h>
+#include <headers/sdl_common.h>
 
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 /**
  * @file sdl_common.c
@@ -21,6 +24,7 @@
  * @param window Fenêtre à fermer
  * @param renderer Renderer à fermer
  */
+
 void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *renderer)
 {
     char msg_formated[255];
@@ -36,12 +40,12 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     }
 
     if (renderer != NULL)
-    {                                  // Destruction si nécessaire du renderer
-        SDL_DestroyRenderer(renderer); // Attention : on suppose que les NULL sont maintenus !!
+    {
+        SDL_DestroyRenderer(renderer);
     }
     if (window != NULL)
-    {                              // Destruction si nécessaire de la fenêtre
-        SDL_DestroyWindow(window); // Attention : on suppose que les NULL sont maintenus !!
+    {
+        SDL_DestroyWindow(window);
     }
     TTF_Quit();
     SDL_Quit();
@@ -56,26 +60,28 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
  * @brief Décharge toutes les textures du jeu
  *
  * @param textures Tableau de textures
- 
+ */
 void unload_textures(ui_t *ui)
 {
-    SDL_DestroyTexture(ui->textures[1]);
-    SDL_DestroyTexture(ui->textures[2]);
-    SDL_DestroyTexture(ui->textures[3]);
-    SDL_DestroyTexture(ui->textures[4]);
-    SDL_DestroyTexture(ui->textures[5]);
-    SDL_DestroyTexture(ui->textures[6]);
-    SDL_DestroyTexture(ui->textures[7]);
-    SDL_DestroyTexture(ui->textures[8]);
-    SDL_DestroyTexture(ui->textures[9]);
-    SDL_DestroyTexture(ui->textures[10]);
-
-    SDL_DestroyTexture(ui->textures_pause[0]);
-    SDL_DestroyTexture(ui->textures_pause[1]);
-    SDL_DestroyTexture(ui->textures_pause[2]);
-    SDL_DestroyTexture(ui->textures_pause[3]);
+    /* --------------------------------------------- CARTES --------------------------------------------- */
+    for (int i = 0; i < 7; i++)
+    {
+        SDL_DestroyTexture(ui->front_card_textures[i]);
+    }
+    SDL_DestroyTexture(ui->back_card_texture);
+    
+    /* --------------------------------------------- JOUEURS --------------------------------------------- */
+    for (int i = 0; i < 5; i++)
+    {
+        SDL_DestroyTexture(ui->player_textures[i]);
+    }
+    
+    /* --------------------------------------------- MENU  --------------------------------------------- */
+    for (int i = 0; i < 4; i++)
+    {
+        SDL_DestroyTexture(ui->interface_textures[i]);
+    }
 }
-*/
 
 /**
  * @brief Charge une texture à partir d'une image
@@ -137,28 +143,32 @@ SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color c
  * @param renderer Renderer SDL
  * @param window Fenêtre SDL
  */
-void load_textures(SDL_Texture *textures[11], SDL_Texture *textures_pause[4], SDL_Renderer *renderer, SDL_Window *window)
+void load_textures(ui_t *ui)
 {
-    /* Assets d'images */
-    // textures[0] = load_texture_from_image("assets/board/board.png", window, renderer);
-    textures[1] = load_texture_from_image("assets/pieces/rhonin_black.png", window, renderer);
-    textures[2] = load_texture_from_image("assets/pieces/rhonin_white.png", window, renderer);
-    textures[3] = load_texture_from_image("assets/pieces/daimio_black.png", window, renderer);
-    textures[4] = load_texture_from_image("assets/pieces/daimio_white.png", window, renderer);
-    textures[5] = load_texture_from_image("assets/board/case1.png", window, renderer);
-    textures[6] = load_texture_from_image("assets/board/case2.png", window, renderer);
-    textures[7] = load_texture_from_image("assets/board/case3.png", window, renderer);
-    textures[9] = load_texture_from_image("assets/pieces/bird.png", window, renderer);
+    /* --------------------------------------------- CARTES --------------------------------------------- */
+    ui->front_card_textures[0] = load_texture_from_image("assets/cards/front_0.png", ui->window, ui->renderer); // Texture de debug
+    ui->front_card_textures[1] = load_texture_from_image("assets/cards/front_1.png", ui->window, ui->renderer);
+    ui->front_card_textures[2] = load_texture_from_image("assets/cards/front_2.png", ui->window, ui->renderer);
+    ui->front_card_textures[3] = load_texture_from_image("assets/cards/front_3.png", ui->window, ui->renderer);
+    ui->front_card_textures[4] = load_texture_from_image("assets/cards/front_4.png", ui->window, ui->renderer);
+    ui->front_card_textures[5] = load_texture_from_image("assets/cards/front_5.png", ui->window, ui->renderer);
+    ui->front_card_textures[6] = load_texture_from_image("assets/cards/front_6.png", ui->window, ui->renderer);
+    ui->back_card_texture = load_texture_from_image("assets/cards/back.png", ui->window, ui->renderer);
 
-    /* Assets de texte */
-    textures[8] = render_text("Mana", "assets/otf/metal_lord.otf", (SDL_Color){255, 255, 255, 255}, 48, renderer);
-    textures[10] = render_text("L 'ordinateur pense...", "assets/otf/metal_lord.otf", (SDL_Color){255, 255, 255, 255}, 48, renderer);
+    /* --------------------------------------------- JOUEURS --------------------------------------------- */    
+    ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
+    ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
+    ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
+    ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
+    ui->player_textures[4] = load_texture_from_image("assets/players/player_4.png", ui->window, ui->renderer);
 
-    /* --------------------------------------------- MENU PAUSE --------------------------------------------- */
-    textures_pause[0] = load_texture_from_image("assets/image_menu/menu_pause.png", window, renderer);
-    textures_pause[1] = render_text("Continue", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, renderer);
-    textures_pause[2] = render_text("Quit", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, renderer);
-    textures_pause[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, renderer);
+    /* --------------------------------------------- MENU  --------------------------------------------- */
+    ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
+
+    /* --------------------------------------------- TEXTE --------------------------------------------- */
+    //ui->interface_textures[2] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    //ui->interface_textures[1] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    //ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
     return;
 }
@@ -167,21 +177,21 @@ void load_textures(SDL_Texture *textures[11], SDL_Texture *textures_pause[4], SD
  * @brief Initialisation de la SDL
  *
  * @param ui Structure de l'interface utilisateur
- 
+ */
 void init_sdl(ui_t *ui)
 {
-    //Initialisation de la SDL 
     ui->renderer = NULL;
     ui->window = NULL;
-    //Initialisation SDL 
+
+    /* Initialisation SDL */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    // Création de la fenêtre et du renderer 
-    ui->window = SDL_CreateWindow("Mana (pre-alpha)",
+    /* Création de la fenêtre et du renderer */
+    ui->window = SDL_CreateWindow("Mantis (pre-alpha)",
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
                                   ui->screen_w,
@@ -195,52 +205,37 @@ void init_sdl(ui_t *ui)
     if (TTF_Init() < 0)
         end_sdl(0, "Couldn't initialize SDL TTF", ui->window, ui->renderer);
 
-    //Loading de toutes les textures dans un tableau 
-    load_textures(ui->textures, ui->textures_pause, ui->renderer, ui->window);
+    /* Loading de toutes les textures dans un tableau */
+    load_textures(ui);
 
     // Activer le mode de mélange pour la transparence
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
-*/
 
-/**
- * @brief Initialisation de l'interface utilisateur
- *
- * @param ui Structure de l'interface utilisateur
- 
-void init_ui(ui_t *ui)
+ui_t* create_ui()
 {
+    ui_t* ui = malloc(sizeof(ui_t));
     ui->screen_w = SCREEN_WIDTH;
     ui->screen_h = SCREEN_HEIGHT;
-    ui->board_size = BOARD_SIZE;
-    ui->selected_case = malloc(sizeof(pos_t));
-    if (ui->selected_case == NULL)
-    {
-        fprintf(stderr, "Erreur d'allocation de mémoire\n");
-        exit(EXIT_FAILURE);
-    }
 
     init_sdl(ui);
     ui->in_pause = false;
     ui->program_on = true;
+
+    return ui;
 }
-*/
 
 /*
  * @brief Fonction pour récupérer les événements
  *
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
- 
-void get_input(ui_t *ui, input_t *input)
+ */
+void get_input(ui_t *ui, int *input)
 {
-    int selection = 1;
-    if (input->selected_case_1->x != -1 && input->selected_case_1->y != -1)
-    {
-        selection = 2;
-    }
-
-    // Gestion des événements 
+    (void) input;
+    
+    /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
     {
         switch (ui->event.type)
@@ -250,7 +245,7 @@ void get_input(ui_t *ui, input_t *input)
             break;
 
         case SDL_MOUSEBUTTONDOWN: // Clic souris
-            ///////
+            // Faire ici ce qu'il faut
             break;
         case SDL_KEYDOWN:
             switch (ui->event.key.keysym.sym)
@@ -261,4 +256,4 @@ void get_input(ui_t *ui, input_t *input)
             }
         }
     }
-}*/
+}

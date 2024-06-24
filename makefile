@@ -9,7 +9,7 @@ SRCS := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Nom de l'exécutable
-EXEC := $(BIN_DIR)/mana
+EXEC := $(BIN_DIR)/mantis
 
 # Compilateur et options de compilation
 CC := gcc
