@@ -133,21 +133,19 @@ void init_draw_card(game_t *game)
     }
 }
 
+// Renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
 int is_card_in_tank(int player, game_t *game)
 {
-    // renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
     return game->players[player]->tank[game->drawn_card_color];
 }
 
-// dépile la pile et renvoie la couleur de la première carte
+// Dépile la pile et renvoie la couleur de la première carte
 int get_draw_card(game_t *game)
 {
     if (game->draw_pile != NULL)
     {
         int drawn_card_color = game->draw_pile->card.face; // on récupère la couleur du haut de la pile
-
-        game->draw_pile = game->draw_pile->next; // on passe à l'élément suivant de la pile
-
+        game->draw_pile = game->draw_pile->next;           // on passe à l'élément suivant de la pile
         return drawn_card_color;
     }
     else
@@ -179,10 +177,8 @@ void distribute_card(game_t *game, int nb_player)
 void score_card(game_t *game)
 {
     game->players[game->player_action]->score += game->players[game->player_action]->tank[game->drawn_card_color] + 1; // on ajoute les cartes au score du joueur
-
-    game->players[game->player_action]->tank[game->drawn_card_color] = 0; // on enlève les cartes du tank
-
-    game->players[game->player_action]->last_scored_card = game->drawn_card_color; // on affiche la carte en haut de la pile de score
+    game->players[game->player_action]->tank[game->drawn_card_color] = 0;                                              // on enlève les cartes du tank
+    game->players[game->player_action]->last_scored_card = game->drawn_card_color;                                     // on affiche la carte en haut de la pile de score
 }
 
 /**
@@ -205,8 +201,7 @@ void add_card_in_tank(int player, game_t *game)
 void steal_card(int input, game_t *game)
 {
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
-
-    game->players[input]->tank[game->drawn_card_color] = 0; // on enlève les cartes au joueur volé
+    game->players[input]->tank[game->drawn_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
 }
 
 /**
@@ -223,35 +218,30 @@ void game_play(game_t *game, int input)
 
     game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
-    if (input)
-    { // le joueur actif choisit de marquer
-
-        if (is_card_in_tank(game->player_action, game))
-        { // s'il tombe sur une bonne couleur qu'il a
-
+    if (!input) // le joueur actif choisit de marquer
+    {
+        if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
+        {
             score_card(game);
         }
         else
-        { // s'il tombe sur une couleur qu'il n'a pas
-
-            add_card_in_tank(game->player_action, game);
+        {
+            add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
         }
     }
-    else
-    { // le joueur actif choisit de voler
+    else // le joueur actif choisit de voler
+    {
 
-        if (is_card_in_tank(input, game))
-        { // s'il tombe sur une bonne couleur qu'il a
-
+        if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
+        {
             steal_card(input, game);
         }
         else
-        { // s'il tombe sur une couleur qu'il n'a pas
-            add_card_in_tank(input, game);
+        {
+            add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
         }
     }
 
     // passage au joueur suivant
-
     game->player_action = (game->player_action) % 4 + 1;
 }
