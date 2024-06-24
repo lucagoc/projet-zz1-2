@@ -69,13 +69,13 @@ void unload_textures(ui_t *ui)
         SDL_DestroyTexture(ui->front_card_textures[i]);
     }
     SDL_DestroyTexture(ui->back_card_texture);
-    
+
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 5; i++)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
     }
-    
+
     /* --------------------------------------------- MENU  --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
@@ -155,7 +155,7 @@ void load_textures(ui_t *ui)
     ui->front_card_textures[6] = load_texture_from_image("assets/cards/front_6.png", ui->window, ui->renderer);
     ui->back_card_texture = load_texture_from_image("assets/cards/back.png", ui->window, ui->renderer);
 
-    /* --------------------------------------------- JOUEURS --------------------------------------------- */    
+    /* --------------------------------------------- JOUEURS --------------------------------------------- */
     ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
     ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
     ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
@@ -166,9 +166,9 @@ void load_textures(ui_t *ui)
     ui->interface_textures[0] = load_texture_from_image("assets/ui/menu_pause.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- TEXTE --------------------------------------------- */
-    //ui->interface_textures[2] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    //ui->interface_textures[1] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    //ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    // ui->interface_textures[2] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    // ui->interface_textures[1] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    // ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
     return;
 }
@@ -212,9 +212,9 @@ void init_sdl(ui_t *ui)
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
-ui_t* create_ui()
+ui_t *create_ui()
 {
-    ui_t* ui = malloc(sizeof(ui_t));
+    ui_t *ui = malloc(sizeof(ui_t));
     ui->screen_w = SCREEN_WIDTH;
     ui->screen_h = SCREEN_HEIGHT;
 
@@ -225,26 +225,29 @@ ui_t* create_ui()
     return ui;
 }
 
-bool stack_clicked(game_t * game, int x, int y){
+bool stack_clicked(game_t *game, int x, int y)
+{
     return 0;
 }
 
-int player_clicked(game_t * game, int x, int y){
+int player_clicked(game_t *game, int x, int y)
+{
     return 1;
 }
 
-int gameplay_call(game_t * game, int * input){
-        
-        if (*input==0) { //choix de marquer
+void gameplay_call(game_t *game, int *input)
+{
 
-            game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
-            
-        } else { //choix de voler un joueur
-            game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+    if (*input == 0)
+    { // choix de marquer
 
-        }
+        game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+    }
+    else
+    {                           // choix de voler un joueur
+        game_play(game, input); //(Attention pour les animations à ne rien faire si aucune input)
+    }
 }
-
 
 /*
  * @brief Fonction pour récupérer les événements
@@ -252,10 +255,10 @@ int gameplay_call(game_t * game, int * input){
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input, game_t * game)
+void refresh_input(ui_t *ui, int *input, game_t *game)
 {
-    (void) input;
-    
+    (void)input;
+
     /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
     {
@@ -267,17 +270,22 @@ void refresh_input(ui_t *ui, int *input, game_t * game)
 
         case SDL_MOUSEBUTTONDOWN:
 
-            if (ui->event.button.button == SDL_BUTTON_LEFT){
-                
+            if (ui->event.button.button == SDL_BUTTON_LEFT)
+            {
+
                 int x = ui->event.button.x;
                 int y = ui->event.button.y;
 
-                if (stack_clicked(game, x, y)){
+                if (stack_clicked(game, x, y))
+                {
                     gameplay_call(game, 0);
-                } else {
-                    
+                }
+                else
+                {
+
                     int player_chosen = player_clicked(game, x, y);
-                    if (player_chosen){ //si on clique sur un autre joueur pour le voler
+                    if (player_chosen)
+                    { // si on clique sur un autre joueur pour le voler
                         gameplay_call(game, player_chosen);
                     }
                 }
@@ -294,5 +302,5 @@ void refresh_input(ui_t *ui, int *input, game_t * game)
         }
     }
 
-    *input=-1;
+    *input = -1;
 }
