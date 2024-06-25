@@ -102,9 +102,10 @@ void draw_draw_card(ui_t *ui, game_t *game)
         x = ui->screen_w / 2 - CARD_WIDTH / 6;
         y = ui->screen_h / 2 - CARD_HEIGHT / 6;
     }
+
     if (ui->animate[0]) // flip_the_card
     {
-        flip_the_card(ui, game, x, y);
+        flip_the_card(ui, game, ui->click_x, ui->click_y);
     }
     else
     {
@@ -168,4 +169,5 @@ void draw(ui_t *ui, game_t *game)
     SDL_RenderPresent(ui->renderer);
     SDL_Delay(15); // ~ 60 FPS
     ui->tick = SDL_GetTicks();
+    ui->delta_t = ui->tick - ui->last_tick;
 }

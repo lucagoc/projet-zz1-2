@@ -30,8 +30,8 @@ void draw_confetti(ui_t *ui)
         else
             SDL_SetRenderDrawColor(ui->renderer, 255, 255, 0, 255);
 
-        int x = fmod((ui->tick * 10 * i * speed), ui->screen_w);
-        int y = fmod((ui->tick * 10 * i * speed), ui->screen_h);
+        int x = fmod((ui->delta_t * 10 * i * speed), ui->screen_w);
+        int y = fmod((ui->delta_t * 10 * i * speed), ui->screen_h);
         SDL_Rect confetti = {x, y, 10, 10};
         SDL_RenderFillRect(ui->renderer, &confetti);
     }
@@ -40,40 +40,40 @@ void draw_confetti(ui_t *ui)
 // Donne un effet de flip à une carte.
 void flip_the_card(ui_t *ui, game_t *game, int x, int y)
 {
-    int descale = 4;
+    int descale = 6;
     int card_width = CARD_WIDTH / descale;
     int card_height = CARD_HEIGHT / descale;
 
-    float speed = 0.1;
-    float anime_tick = (ui->tick * speed);
+    float speed = 0.2;
+    float anime_tick = (ui->delta_t * speed);
 
     if (anime_tick < 200)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, anime_tick * 255 / 200);
-        SDL_Rect background = {x - card_width / 2, y + 20, card_width, card_height - 40};
+        SDL_Rect background = {x - card_width / 2, y - card_height/2 + 20, card_width, card_height - 40};
         SDL_RenderFillRect(ui->renderer, &background);
-        SDL_Rect card = {x - card_width / 2, y, card_width, card_height};
+        SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &card);
     }
     else if (anime_tick < 300)
     {
         card_width = (CARD_WIDTH * (300 - anime_tick) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
-        SDL_Rect card = {x - card_width / 2, y, card_width, card_height};
+        SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->back_card_texture[1], NULL, &card);
     }
     else if (anime_tick < 400)
     {
         card_width = (CARD_WIDTH * (anime_tick - 300) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
-        SDL_Rect card = {x - card_width / 2, y, card_width, card_height};
+        SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->drawn_card_color], NULL, &card);
     }
     else
     {
         ui->animate[0] = false;
         ui->animate[1] = false;
-        ui->tick = 0;
+        ui->last_tick = SDL_GetTicks();
     }
 }
 
@@ -125,8 +125,8 @@ void draw_particles(ui_t *ui, game_t *game, int x, int y)
         else
             SDL_SetRenderDrawColor(ui->renderer, colors[c].r, colors[c].g, colors[c].b, colors[c].a);
 
-        int x_particle = x + 100 * cos(ui->tick * speed * i);
-        int y_particle = y + 100 * sin(ui->tick * speed * i);
+        int x_particle = x + 100 * cos(ui->delta_t * speed * i);
+        int y_particle = y + 100 * sin(ui->delta_t * speed * i);
         SDL_Rect particle = {x_particle, y_particle, 10, 10};
         SDL_RenderFillRect(ui->renderer, &particle);
     }

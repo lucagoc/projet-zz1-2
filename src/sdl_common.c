@@ -241,6 +241,7 @@ ui_t *create_ui()
     ui->program_on = true;
 
     ui->tick = 0;
+    ui->last_tick = 0;
     ui->animate[0] = false;
     ui->animate[1] = false;
     ui->follow_mouse = false;
@@ -290,6 +291,11 @@ void free_ui(ui_t *ui)
     free(ui);
 }
 
+bool is_animating(ui_t *ui)
+{
+    return ui->animate[0];
+}
+
 /*
  * @brief Fonction pour récupérer les événements
  *
@@ -313,32 +319,34 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-
-                int x = ui->event.button.x;
-                int y = ui->event.button.y;
-
-                if (stack_clicked(ui, x, y))
+                if (*input == -1 && !is_animating(ui)) // Traiter seulement si non déjà traité
                 {
-                    ui->follow_mouse = !ui->follow_mouse;
-                }
-                else
-                {
-                    if (ui->animate[0] == false)
+                    int x = ui->event.button.x;
+                    int y = ui->event.button.y;
+
+                    if (stack_clicked(ui, x, y))
                     {
-                        int input = player_clicked(game, x, y);
-                        if (input != -1) // input valide
+                        ui->follow_mouse = !ui->follow_mouse;
+                    }
+                    else
+                    {
+                        *input = player_clicked(game, x, y);
+                        if (*input != -1) // input valide
                         {
-                            game_play(game, input);
+                            ui->animate[0] = true; // flip_the_card
+                            ui->last_tick = ui->tick;
+                            ui->click_x = x;
+                            ui->click_y = y;
+                            game->drawn_card_color = game->draw_pile->card->face;
                         }
                         ui->follow_mouse = false;
                     }
                 }
             }
-
             break;
+
         case SDL_KEYDOWN:
             switch (ui->event.key.keysym.sym)
             {
@@ -352,6 +360,14 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
             break;
         }
     }
+}
 
-    *input = -1;
+void game_interact(int *input, game_t *game, ui_t *ui)
+{
+    if (!is_animating(ui) && *input != -1)
+    {
+        fprintf(stderr, "test %d\n", *input);
+        game_play(game, *input);
+        *input = -1;
+    }
 }
