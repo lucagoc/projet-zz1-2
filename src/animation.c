@@ -152,7 +152,7 @@ void draw_steal(ui_t *ui, game_t *game)
         ui->ticks_stealing_init=SDL_GetTicks();
         ui->animate[0]=1;
     } else if (SDL_GetTicks() - ui->ticks_stealing_init <1000){
-        //on joue l'animation
+        //on joue l'animation pendant 1000 ticks
 
         int size_length = ui->screen_w / 2 - 90;
         int size_height = 200;
@@ -222,6 +222,7 @@ void draw_steal(ui_t *ui, game_t *game)
         game->players[game->player_action]->tank[game->drawn_card_color] += game->players[game->stealing]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
         game->players[game->stealing]->tank[game->drawn_card_color] = 0;
         game->stealing=0;
+        ui->ticks_stealing_init=0; //on remet à 0 pour la prochaine animation
     }
 
 }
