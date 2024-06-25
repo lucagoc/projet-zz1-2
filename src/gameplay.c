@@ -378,10 +378,14 @@ void game_play(game_t *game, int input)
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
         {
             score_card(game);
+            game->player_action = (game->player_action + 1) % 4;
+
         }
         else
         {
             add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
+            game->player_action = (game->player_action + 1) % 4;
+
         }
     }
     else // le joueur actif choisit de voler
@@ -395,12 +399,11 @@ void game_play(game_t *game, int input)
         else
         {
             add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
+            game->player_action = (game->player_action + 1) % 4;
+
         }
     }
     
     // passage au joueur suivant
-    if (game->stealing==0){
-        game->player_action = (game->player_action + 1) % 4;
-    }
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 }

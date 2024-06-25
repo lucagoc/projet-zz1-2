@@ -277,6 +277,8 @@ ui_t *create_ui()
     ui->animate[1] = false;
     ui->follow_mouse = false;
     ui->ticks_stealing_init=0;
+    ui->animate[2]=0;
+
     return ui;
 }
 
@@ -347,7 +349,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                if (*input == -1 && !ui->animate[0]) // Traiter seulement si non déjà traité
+                if (*input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
                 {
                     int x = ui->event.button.x;
                     int y = ui->event.button.y;

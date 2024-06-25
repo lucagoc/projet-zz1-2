@@ -207,10 +207,7 @@ void draw_logo(ui_t *ui)
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
 {    
-    if (game->stealing>0){ //si on est dans une animation de vol
-        draw_steal(ui, game);
-    }
-    
+
     game->win=is_victory(game);
 
     if (ui->in_pause)
@@ -231,6 +228,10 @@ void draw(ui_t *ui, game_t *game)
     {
         draw_victory(ui, game);
         draw_confetti(ui);
+    }
+
+    if (game->stealing>0){ //si on est dans une animation de vol
+        draw_steal(ui, game);
     }
 
     // Affichage

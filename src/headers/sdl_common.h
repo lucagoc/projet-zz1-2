@@ -31,7 +31,7 @@ struct ui_s
     SDL_Texture *score_textures[10];
 
     /* Animation */
-    bool animate[2]; // 0: flip_the_card, 1: draw_particles
+    bool animate[3]; // 0: flip_the_card, 1: draw_particles, 3:vol de cartes
     int click_x;
     int click_y;
     unsigned long long last_tick;
