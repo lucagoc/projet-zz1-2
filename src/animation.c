@@ -93,7 +93,7 @@ void draw_particles(ui_t *ui, int x, int y)
     y -= 1;
 
     int particle_number = 100;
-    float speed = 0.00005;
+    float speed = 0.00004;
     for (int i = 0; i < particle_number; i++)
     {
         // Couleur aléatoire mais toujours la même pour un i donné.

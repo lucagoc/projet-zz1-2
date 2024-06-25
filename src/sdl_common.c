@@ -75,17 +75,17 @@ void unload_textures(ui_t *ui)
     SDL_DestroyTexture(ui->back_card_texture[0]);
     SDL_DestroyTexture(ui->back_card_texture[1]);
 
-    /* --------------------------------------------- JOUEURS ---------------------------------------------
-    for (int i = 0; i < 5; i++)
-    {
-        SDL_DestroyTexture(ui->player_textures[i]);
-    }*/
-
-    /* --------------------------------------------- MENU  ---------------------------------------------
+    /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
+        SDL_DestroyTexture(ui->player_textures[i]);
+    }
+
+    /* --------------------------------------------- MENU  --------------------------------------------- */
+    for (int i = 0; i < 7; i++)
+    {
         SDL_DestroyTexture(ui->interface_textures[i]);
-    }*/
+    }
 }
 
 /**
@@ -178,12 +178,15 @@ void load_textures(ui_t *ui)
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);
-    // ui->interface_textures[1] = load_texture_from_image("assets/ui/score.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- TEXTE --------------------------------------------- */
-    // ui->interface_textures[1] = render_text("SCORE", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    // ui->interface_textures[2] = render_text("STEAL", "assets/otf/metal_lord.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
-    // ui->interface_textures[3] = render_text("Good game !", "assets/otf/metal_lord.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[1] = render_text("SCORE", "assets/fonts/Vividly-Regular.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    ui->interface_textures[2] = render_text("STEAL", "assets/fonts/Vividly-Regular.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
+    ui->interface_textures[3] = render_text("Good game !", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[4] = render_text("Joueur 1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[5] = render_text("Joueur 2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
     return;
 }

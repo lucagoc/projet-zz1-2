@@ -78,6 +78,7 @@ void init_draw_card(game_t *game)
 {
     if (game == NULL)
     {
+        fprintf(stderr, "[ERROR] init_draw_card : game is NULL\n"); 
         return;
     }
     game->draw_pile = stack_create();
@@ -86,23 +87,27 @@ void init_draw_card(game_t *game)
 
     int number_of_cards = 105;
     int total_card = 0;
-    int face_count[NUMBER_FACE] = {0};
+    int face_count[NUMBER_FACE];
+
+    for (int i = 0; i < NUMBER_FACE; i++)
+    {
+        face_count[i] = 0;
+    }
+    
     card_t card[number_of_cards];
 
     // Créer les cartes en assurant qu'il y a 15 cartes de chaque couleur
-
     for (int i = 0; i < NUMBER_FACE; i++)
     {
         for (int j = 0; j < 15; j++)
         {
-            card[total_card].face = i;
-            face_count[i]++;
+            card[i].face = i;
+            face_count[i] = face_count[i] + 1;
             total_card++;
         }
     }
 
     // Compléter les cartes restantes aléatoirement (même si le calcul est bon, on ne sait jamais)
-
     while (total_card < number_of_cards)
     {
         int face = rand() % NUMBER_FACE;
@@ -112,7 +117,6 @@ void init_draw_card(game_t *game)
     }
 
     // Mélangez les cartes pour les répartir aléatoirement
-
     for (int i = 0; i < NUMBER_FACE; i++)
     {
         int j = rand() % number_of_cards;
@@ -121,8 +125,8 @@ void init_draw_card(game_t *game)
         card[i] = card[j];
         card[j] = temp;
     }
-    // Initialisation des couleurs du dos de la carte
 
+    // Initialisation des couleurs du dos de la carte
     for (int i = 0; i < NUMBER_FACE; i++)
     {
         int face = card[i].face;
@@ -139,7 +143,6 @@ void init_draw_card(game_t *game)
         init_card(&card[i], face, back);
 
         // Ajout de la carte à la pile de pioche
-
         game->draw_pile = stack_push(game->draw_pile, card[i].face, card[i].back);
     }
 }
@@ -259,5 +262,5 @@ void game_play(game_t *game, int input)
     }
 
     // passage au joueur suivant
-    game->player_action = (game->player_action) % 4 + 1;
+    game->player_action = (game->player_action + 1) % 4;
 }

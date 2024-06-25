@@ -125,6 +125,12 @@ void draw_buttons(ui_t *ui, game_t *game)
     return;
 }
 
+void draw_active_player(ui_t *ui, game_t *game)
+{
+    SDL_Rect draw_active_player_rect = {10, ui->screen_h / 2 + 100, 230, 70};
+    SDL_RenderCopy(ui->renderer, ui->interface_textures[game->player_action + 4], NULL, &draw_active_player_rect);
+}
+
 void draw_logo(ui_t *ui)
 {
     SDL_Rect draw_logo_rect = {10, ui->screen_h / 2 - 100, 200, 200};
@@ -142,9 +148,10 @@ void draw(ui_t *ui, game_t *game)
     {
         draw_background(ui);
         draw_players(ui, game);
-        draw_draw_card(ui, game);
+        draw_active_player(ui, game);
         draw_buttons(ui, game);
         draw_logo(ui);
+        draw_draw_card(ui, game);
     }
 
     if (game->win != 0)
