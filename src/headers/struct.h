@@ -42,7 +42,7 @@ struct mcts
     struct mcts **possible_move;        // Les noueds enfants (mouvements possibles à partir de cet état)
     int num_children;                   // Le nombre d'enfants
     int visits;                         // Le nombre de fois que ce noeud a été visité
-    double accumuled_value;             // La valeur accumulée des simulations
+    double accumulated_value;           // La valeur accumulée des simulations
 };
 typedef struct mcts mcts_t;
 

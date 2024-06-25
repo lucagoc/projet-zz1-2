@@ -306,8 +306,6 @@ int *get_possible_moves(game_t *game, int player , int *num_moves)
     return possible_moves;
 }
 
-
-
 /**
  * @brief Fonction de jeu
  *
