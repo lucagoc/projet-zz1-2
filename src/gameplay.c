@@ -331,7 +331,7 @@ game_t *copy_game(game_t *game)
  * @param game l'état du jeu
  * @param player le joueur actif
  */
-int *get_possible_moves(game_t *game, int player)
+int *get_possible_moves(int player)
 {
     int *possible_moves = malloc(4*sizeof(int));
     

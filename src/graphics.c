@@ -54,7 +54,7 @@ int is_victory(game_t * game){
 }
 
 //teste la victoire
-int draw_victory(ui_t * ui, game_t * game){
+void draw_victory(ui_t * ui, game_t * game){
 
     int player_win = game->win ;
     SDL_Rect drawvic = {650, 200, 300, 100};
