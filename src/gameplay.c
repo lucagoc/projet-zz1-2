@@ -46,7 +46,7 @@ card_t *init_card(int face_color)
     {
         a = rand() % NUMBER_FACE;
     }
-    while (b == -1 || b == face_color)
+    while (b == -1 || b == face_color || b == a)
     {
         b = rand() % NUMBER_FACE;
     }
