@@ -50,7 +50,7 @@ void draw_players(ui_t *ui, game_t *game)
     int size_height = 200;
     int padding = 25;
 
-    if (game->players[0] != NULL)
+    if (game->players[0] != NULL) // En bas à gauche
     {
         SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};
@@ -61,7 +61,7 @@ void draw_players(ui_t *ui, game_t *game)
         // SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &player_avatar_rect); Pour l'affichage d'un éventuel avatar.
     }
 
-    if (game->players[1] != NULL)
+    if (game->players[1] != NULL) // En haut à droite
     {
         SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
@@ -69,7 +69,7 @@ void draw_players(ui_t *ui, game_t *game)
         draw_player_tank(ui, game->players[1], ui->screen_w - size_length + padding, padding);
     }
 
-    if (game->players[2] != NULL)
+    if (game->players[2] != NULL) // En haut à gauche
     {
         SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {0, 0, size_length, size_height};
@@ -77,7 +77,7 @@ void draw_players(ui_t *ui, game_t *game)
         draw_player_tank(ui, game->players[2], padding, padding);
     }
 
-    if (game->players[3] != NULL)
+    if (game->players[3] != NULL) // En bas à droite
     {
         SDL_SetRenderDrawColor(ui->renderer, 128, 128, 128, 255);
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};

@@ -257,7 +257,27 @@ bool stack_clicked(ui_t *ui, int x, int y)
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
 int player_clicked(game_t *game, int x, int y)
 {
-    return 1;
+    // OUI c'est des magic numbers, mais c'est pour le prototype
+    if(x < 800 && y < 100)
+    {
+        fprintf(stderr, "Clique sur joueur 3\n");
+        return 2;
+    }
+    else if(x > 1000 && y < 100)
+    {
+        fprintf(stderr, "Clique sur joueur 4\n");
+        return 3;
+    }
+    else if(x < 800 && y > 800)
+    {
+        fprintf(stderr, "Clique sur joueur 1\n");
+        return 0;
+    }
+    else if(x > 1000 && y > 800)
+    {
+        fprintf(stderr, "Clique sur joueur 2\n");
+        return 1;
+    }
 }
 
 void gameplay_call(game_t *game, int input)

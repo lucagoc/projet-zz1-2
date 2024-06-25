@@ -207,6 +207,7 @@ void score_card(game_t *game)
  */
 void add_card_in_tank(int player, game_t *game)
 {
+    fprintf(stderr, "[DEBUG] add_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
     game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
 }
 
