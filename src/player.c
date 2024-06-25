@@ -6,20 +6,6 @@
 #include "headers/player.h"
 #include "headers/gameplay.h"
 
-/**
- *@brief Initialisation d'un joueur
- */
-player_t *create_player()
-{
-    player_t *player = malloc(sizeof(player_t));
-    player->score = 0;
-    player->last_scored_card = 0;
-    for (int i = 0; i < 5; i++)
-    {
-        player->tank[i] = 0;
-    }
-    return player;
-}
 
 /*----------------------------------------------------------------------Implémentation des 4 phases de MCTS-----------------------------------------------------------*/
 
@@ -61,32 +47,33 @@ mcts_t *select_node(mcts_t *root)
  */
 void expand_node(mcts_t *node)
 {
-    int num_moves;
-    int *legal_moves = get_possible_moves(node->state, node->player, &num_moves);
-    node->possible_move = malloc(num_moves * sizeof(mcts_t *));
-    for (int i = 0; i < num_moves; i++)
+    int *legal_moves = get_possible_moves(node->state, node->player); // Récupérer les mouvements possibles
+    node->possible_move = malloc(4 * sizeof(mcts_t *));
+    for (int i = 0; i < 4; i++)                                       // Pour chaque mouvement possible
     {
         game_t *new_state = copy_game(node->state);
+
         // Appliquer le mouvement pour obtenir le nouvel état
+
         if (legal_moves[i] == 0)
         { 
             score_card(new_state);
         }
-        else if (legal_moves[i] == 1)
+        else
         { 
             steal_card(new_state->player_action, new_state);
         }
         //Créer un nouveau noeud pour le nouvel état
-        node->possible_move[i] = malloc(sizeof(mcts_t));
-        node->possible_move[i]->state = new_state;
-        node->possible_move[i]->parent = node;
+        node->possible_move[i] = malloc(sizeof(mcts_t));         
+        node->possible_move[i]->state = new_state;              
+        node->possible_move[i]->parent = node;                  
         node->possible_move[i]->player = (node->player + 1) % 4; // Prochain joueur
-        node->possible_move[i]->num_children = 0;
+        node->possible_move[i]->num_children = 0;                
         node->possible_move[i]->possible_move = NULL;
         node->possible_move[i]->visits = 0;
         node->possible_move[i]->accumulated_value = 0;
     }
-    node->num_children = num_moves;
+    node->num_children = 4;
     free(legal_moves);
 }
 
@@ -98,6 +85,7 @@ void expand_node(mcts_t *node)
  */
 void backpropagate(mcts_t *node, double value)
 {
+    // Mettre à jour les visites et la valeur accumulée de tous les noeuds parents
     while (node != NULL)
     {
         node->visits++;
@@ -136,3 +124,18 @@ double simulate_game(game_t *game)
 }
 
 /*----------------------------------------------------------------------Implémentation des 4 phases de MCTS-----------------------------------------------------------*/
+
+/**
+ *@brief Initialisation d'un joueur
+ */
+player_t *create_player()
+{
+    player_t *player = malloc(sizeof(player_t));
+    player->score = 0;
+    player->last_scored_card = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        player->tank[i] = 0;
+    }
+    return player;
+}

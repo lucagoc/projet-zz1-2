@@ -292,21 +292,19 @@ game_t *copy_game(game_t *game)
  * 
  * @param game l'état du jeu
  * @param player le joueur actif
- * @param num_moves le nombre de mouvements possibles
  */
-int *get_possible_moves(game_t *game, int player , int *num_moves)
+int *get_possible_moves(game_t *game, int player)
 {
-    (void)game;
-    (void)player;
-
-    *num_moves = 5;
-
-    int *possible_moves = malloc(5*sizeof(int));
-    possible_moves[0] = 0;          // marquer
-    possible_moves[1] = 1;          // voler le joueur 1
-    possible_moves[2] = 2;          // voler le joueur 2
-    possible_moves[3] = 3;          // voler le joueur 3
-    possible_moves[4] = 4;          // voler le joueur 4
+    int *possible_moves = malloc(4*sizeof(int));
+    
+    possible_moves[0] = 0; // Marquer
+    for (int i =1 ; i < 4 ; i++)
+    {
+        if (i != player)
+        {
+            possible_moves[i] = i; // Voler à joueur i != player
+        }
+    }
 
     return possible_moves;
 }
