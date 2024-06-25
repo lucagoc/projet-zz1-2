@@ -98,6 +98,18 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->interface_textures[i]);
     }
+
+    /* --------------------------------------------- TEXTE --------------------------------------------- */
+    /*for (int i = 1; i < 8; i++)
+    {
+        SDL_DestroyTexture(ui->interface_textures[i]);
+    }*/
+
+    /* --------------------------------------------- SCORE --------------------------------------------- */
+    for (int i = 0; i < 10; i++)
+    {
+        SDL_DestroyTexture(ui->score_textures[i]);
+    }
 }
 
 /**
@@ -315,11 +327,6 @@ void free_ui(ui_t *ui)
     free(ui);
 }
 
-bool is_animating(ui_t *ui)
-{
-    return ui->animate[0];
-}
-
 /*
  * @brief Fonction pour récupérer les événements
  *
@@ -345,7 +352,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                if (*input == -1 && !is_animating(ui)) // Traiter seulement si non déjà traité
+                if (*input == -1 && !ui->animate[0]) // Traiter seulement si non déjà traité
                 {
                     int x = ui->event.button.x;
                     int y = ui->event.button.y;
@@ -388,7 +395,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (!is_animating(ui) && *input != -1)
+    if (!(ui->animate[0]) && *input != -1)
     {
         fprintf(stderr, "test %d\n", *input);
         game_play(game, *input);

@@ -106,7 +106,7 @@ double simulate_game(game_t *game)
         while (game->players[i]->score >=10 )                                       
         {
             int num_moves;
-            int *legal_moves = get_possible_moves(game, game->player_action, &num_moves);
+            int *legal_moves = get_possible_moves(game, game->player_action);
             int move = legal_moves[rand() % num_moves];                             // Choisir un mouvement aléatoire
             if (move == 0)
             {
