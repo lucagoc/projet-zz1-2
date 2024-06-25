@@ -41,6 +41,27 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
     }
 }
 
+//teste la victoire
+int is_victory(game_t * game){
+
+    for(int i=0; i<4; i++){
+        if (game->players[i]->score>=10){
+            return i;
+        }
+    }
+
+    return 0;
+}
+
+//teste la victoire
+int draw_victory(ui_t * ui, game_t * game){
+
+    int player_win = 1; // game->win ;
+    
+    
+
+}
+
 // Affiche les joueurs. Affiches les joueurs sur chaque côté de l'écran, la pile étant au centre.
 void draw_players(ui_t *ui, game_t *game)
 {
@@ -154,9 +175,12 @@ void draw(ui_t *ui, game_t *game)
         draw_draw_card(ui, game);
     }
 
-    if (game->win != 0)
+    game->win=is_victory(game);
+
+    if (game->win != 0 || true)
     {
         draw_confetti(ui);
+        draw_victory(ui, game);
     }
 
     // Affichage

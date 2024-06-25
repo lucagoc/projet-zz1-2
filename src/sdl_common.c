@@ -60,17 +60,6 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     }
 }
 
-int is_victory(game_t * game){
-
-    for(int i=0; i<4; i++){
-        if (game->players[i]->score>=10){
-            return i;
-        }
-    }
-
-    return 0;
-    
-}
 
 /**
  * @brief Décharge toutes les textures du jeu
