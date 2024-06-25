@@ -324,29 +324,6 @@ game_t *copy_game(game_t *game)
 }
 
 
-
-/**
- * @brief Liste des mouvements possibles
- * 
- * @param game l'état du jeu
- * @param player le joueur actif
- */
-int *get_possible_moves(int player)
-{
-    int *possible_moves = malloc(4*sizeof(int));
-    
-    possible_moves[0] = 0; // Marquer
-    for (int i =1 ; i < 4 ; i++)
-    {
-        if (i != player)
-        {
-            possible_moves[i] = i; // Voler à joueur i != player
-        }
-    }
-
-    return possible_moves;
-}
-
 /**
  * @brief Obtenir le score du joueur 
  * 
