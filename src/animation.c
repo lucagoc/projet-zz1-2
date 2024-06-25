@@ -149,7 +149,7 @@ void draw_steal(ui_t *ui, game_t *game)
     if (ui->ticks_stealing_init==0){
 
         //on démarre l'animation
-        ui->ticks_stealing_init=SDL_GetTicks();
+        ui->last_tick=SDL_GetTicks();
         ui->animate[0]=1;
     } else if (SDL_GetTicks() - ui->ticks_stealing_init <1000){
         //on joue l'animation pendant 1000 ticks
@@ -212,7 +212,7 @@ void draw_steal(ui_t *ui, game_t *game)
         {
             param = (SDL_GetTicks() - ui->ticks_stealing_init) * 10 * speed;
 
-            draw_face(ui, game->drawn_card_color, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby);
+            draw_face(ui, game->drawn_card_color, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby +i*20);
         }
 
     } else {
@@ -223,6 +223,9 @@ void draw_steal(ui_t *ui, game_t *game)
         game->players[game->stealing]->tank[game->drawn_card_color] = 0;
         game->stealing=0;
         ui->ticks_stealing_init=0; //on remet à 0 pour la prochaine animation
+        game->player_action = (game->player_action + 1) % 4; //on passe au joueur suivant
+        ui->last_tick = SDL_GetTicks();
+
     }
 
 }

@@ -399,6 +399,8 @@ void game_play(game_t *game, int input)
     }
     
     // passage au joueur suivant
-    game->player_action = (game->player_action + 1) % 4;
+    if (game->stealing==0){
+        game->player_action = (game->player_action + 1) % 4;
+    }
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 }
