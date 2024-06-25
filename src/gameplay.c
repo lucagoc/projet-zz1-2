@@ -304,7 +304,18 @@ game_t *copy_game(game_t *game)
     stack_t *current = game->draw_pile;
     while (current != NULL)
     {
-        copy_draw_pile = stack_push(copy_draw_pile, current->card.face, current->card.back);
+        card_t *copy_card = malloc(sizeof(card_t));
+        if (copy_card == NULL)
+        {
+            fprintf(stderr, "Erreur d'alloction de mémoire\n");
+            return NULL;
+        }
+        copy_card->face = current->card->face;
+        for (int i = 0 ; i < 3 ; i++)
+        {
+            copy_card->back[i] = current->card->back[i];
+        }
+        copy_draw_pile = stack_push(copy_draw_pile, copy_card);
         current = current->next;
     }
     copy_game_state->draw_pile = copy_draw_pile;
