@@ -150,10 +150,9 @@ void draw_steal(ui_t *ui, game_t *game)
 
         //on démarre l'animation
         ui->ticks_stealing_init=SDL_GetTicks();
+        ui->animate[0]=1;
     } else if (SDL_GetTicks() - ui->ticks_stealing_init <1000){
         //on joue l'animation
-        player_t *stealer = game->player_action; //joueur voleur
-        player_t *stolen= game->players[game->stealing];
 
         int size_length = ui->screen_w / 2 - 90;
         int size_height = 200;
@@ -165,45 +164,45 @@ void draw_steal(ui_t *ui, game_t *game)
 
         float speed = 0.001;
         int param;
-        int number_cards_stolen = stolen->tank[game->drawn_card_color]; //nombre de cartes volées
+        int number_cards_stolen = game->players[game->stealing]->tank[game->drawn_card_color]; //nombre de cartes volées
 
-        if (stolen == 0)  //selon la position du volé on définit d'où partent les cartes
+        if (game->stealing == 0)  //selon la position du volé on définit d'où partent les cartes
         {
             debx = 0;
             deby = ui->screen_h - size_height;
         }
-        else if (stolen == 1)
+        else if (game->stealing == 1)
         {
             debx = ui->screen_w - size_length;
             deby = 0;
         }
-        else if (stolen == 2)
+        else if (game->stealing == 2)
         {
             debx = 0;
             deby = 0;
         }
-        else if (stolen == 3)
+        else if (game->stealing == 3)
         {
             debx = ui->screen_w - size_length;
             deby = ui->screen_h - size_height;
         }
 
-        if (stealer == 0) //selon la position du voleur on définit où arrivent les cartes
+        if (game->player_action == 0) //selon la position du voleur on définit où arrivent les cartes
         {
             finx = 0;
             finy = ui->screen_h - size_height;
         }
-        else if (stealer == 1)
+        else if (game->player_action == 1)
         {
             finx = ui->screen_w - size_length;
             finy = 0;
         }
-        else if (stealer == 2)
+        else if (game->player_action == 2)
         {
             finx = 0;
             finy = 0;
         }
-        else if (stealer == 3)
+        else if (game->player_action == 3)
         {
             finx = ui->screen_w - size_length;
             finy = ui->screen_h - size_height;
@@ -218,7 +217,10 @@ void draw_steal(ui_t *ui, game_t *game)
 
     } else {
         //l'animation termine
-        ui->ticks_stealing_init=0;
+        ui->animate[0]=0;
+        fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->drawn_card_color);
+        game->players[game->player_action]->tank[game->drawn_card_color] += game->players[game->stealing]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
+        game->players[game->stealing]->tank[game->drawn_card_color] = 0;
         game->stealing=0;
     }
 
