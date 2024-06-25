@@ -11,7 +11,7 @@ typedef struct card card_t;
 // Structure de pile
 struct stack
 {
-    card_t card;
+    card_t *card;
     struct stack *next;
 };
 typedef struct stack stack_t;
@@ -37,7 +37,7 @@ typedef struct game game_t;
 /******************** Fonctions utiles pour la pile *************************/
 stack_t *stack_create();
 bool stack_is_empty(stack_t *stack);
-stack_t *stack_push(stack_t *stack, int face, int back[3]);
+stack_t *stack_push(stack_t *stack, card_t *card);
 int stack_top(stack_t *stack);
 stack_t *stack_pop(stack_t *stack);
 int stack_size(stack_t *stack);
