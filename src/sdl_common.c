@@ -80,6 +80,8 @@ void unload_textures(ui_t *ui)
     for (int i = 0; i < 4; i++)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
+        SDL_DestroyTexture(ui->victory[i]);
+
     }
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
@@ -87,6 +89,7 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->interface_textures[i]);
     }
+    
 }
 
 /**
@@ -176,6 +179,10 @@ void load_textures(ui_t *ui)
     // ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
     // ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
     // ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
+    ui->victory[0] = load_texture_from_image("assets/ui/pl1.png", ui->window, ui->renderer);
+    ui->victory[1] = load_texture_from_image("assets/ui/pl2.png", ui->window, ui->renderer);
+    ui->victory[2] = load_texture_from_image("assets/ui/pl3.png", ui->window, ui->renderer);
+    ui->victory[3] = load_texture_from_image("assets/ui/pl4.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);

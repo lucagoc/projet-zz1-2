@@ -56,9 +56,17 @@ int is_victory(game_t * game){
 //teste la victoire
 int draw_victory(ui_t * ui, game_t * game){
 
-    int player_win = 1; // game->win ;
+    int player_win = game->win ;
     
-    
+    if (player_win==1){
+        
+    } else if (player_win==2){
+
+    } else if (player_win==3){
+
+    } else if (player_win==4){
+
+    }
 
 }
 
@@ -177,7 +185,7 @@ void draw(ui_t *ui, game_t *game)
 
     game->win=is_victory(game);
 
-    if (game->win != 0 || true)
+    if (game->win != 0)
     {
         draw_confetti(ui);
         draw_victory(ui, game);
