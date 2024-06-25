@@ -322,14 +322,17 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
 
                 if (stack_clicked(ui, x, y))
                 {
-                    ui->follow_mouse = true;
+                    ui->follow_mouse = !ui->follow_mouse;
                 }
                 else
                 {
-                    int input = player_clicked(game, x, y);
-                    if (input != -1)
+                    if (ui->animate[0] == false)
                     {
-                        game_play(game, input);
+                        int input = player_clicked(game, x, y);
+                        if (input != -1) // input valide
+                        {
+                            game_play(game, input);
+                        }
                         ui->follow_mouse = false;
                     }
                 }

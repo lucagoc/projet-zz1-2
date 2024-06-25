@@ -30,10 +30,8 @@ void draw_confetti(ui_t *ui)
 }
 
 // Donne un effet de flip à une carte.
-void flip_the_card(ui_t *ui, game_t *game)
+void flip_the_card(ui_t *ui, game_t *game, int x, int y)
 {
-    int x = ui->screen_w / 2 - CARD_WIDTH / 2;
-    int y = ui->screen_h / 2 - CARD_HEIGHT / 2;
     int descale = 4;
     int card_width = CARD_WIDTH / descale;
     int card_height = CARD_HEIGHT / descale;
@@ -61,7 +59,7 @@ void flip_the_card(ui_t *ui, game_t *game)
         card_width = (CARD_WIDTH * (anime_tick - 300) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
         SDL_Rect card = {x - card_width / 2, y, card_width, card_height};
-        SDL_RenderCopy(ui->renderer, ui->front_card_textures[1], NULL, &card);
+        SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->drawn_card_color], NULL, &card);
     }
     else
     {

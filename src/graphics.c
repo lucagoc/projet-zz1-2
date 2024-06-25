@@ -31,10 +31,10 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
 
     for (int i = 0; i < 7; i++)
     {
-        if (player->tank[i] > 0)
+        for(int j = 0; j < player->tank[i]; j++)
         {
             int card_x = x + i * card_width + i * 10;
-            int card_y = y;
+            int card_y = y + j * 10;
             SDL_Rect draw_card_rect = {card_x, card_y, card_width, card_height};
             SDL_RenderCopy(ui->renderer, ui->front_card_textures[i], NULL, &draw_card_rect);
         }
@@ -102,19 +102,26 @@ void draw_draw_card(ui_t *ui, game_t *game)
         x = ui->screen_w / 2 - CARD_WIDTH / 6;
         y = ui->screen_h / 2 - CARD_HEIGHT / 6;
     }
-    for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
+    if (ui->animate[0]) // flip_the_card
     {
-        SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
-        SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->draw_pile->card->back[i]], NULL, &draw_indicator_rect);
+        flip_the_card(ui, game, x, y);
     }
-
-    // Affiche la carte
-    SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
-    SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
-
-    if (ui->follow_mouse)
+    else
     {
-        draw_particles(ui, ui->mouse_pos.x, ui->mouse_pos.y);
+        for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
+        {
+            SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
+            SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->draw_pile->card->back[i]], NULL, &draw_indicator_rect);
+        }
+
+        // Affiche la carte
+        SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
+        SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
+
+        if (ui->follow_mouse)
+        {
+            draw_particles(ui, ui->mouse_pos.x, ui->mouse_pos.y);
+        }
     }
 }
 
