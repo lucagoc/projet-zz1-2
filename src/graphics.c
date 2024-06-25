@@ -41,6 +41,40 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
     }
 }
 
+//teste la victoire
+int is_victory(game_t * game){
+
+    for(int i=0; i<4; i++){
+        if (game->players[i]->score>=10){
+            return i;
+        }
+    }
+
+    return 0;
+}
+
+//teste la victoire
+int draw_victory(ui_t * ui, game_t * game){
+
+    int player_win = game->win ;
+    SDL_Rect drawvic = {650, 200, 300, 100};
+
+    if (player_win==1){
+        SDL_RenderCopy(ui->renderer, ui->victory[0], NULL, &drawvic);
+
+    } else if (player_win==2){
+        SDL_RenderCopy(ui->renderer, ui->victory[1], NULL, &drawvic);
+
+    } else if (player_win==3){
+        SDL_RenderCopy(ui->renderer, ui->victory[2], NULL, &drawvic);
+
+    } else if (player_win==4){
+        SDL_RenderCopy(ui->renderer, ui->victory[3], NULL, &drawvic);
+
+    }
+
+}
+
 void draw_score(ui_t *ui, game_t *game, int player, int x, int y)
 {
     SDL_Rect units = {x, y, 30, 50};
@@ -172,7 +206,13 @@ void draw_logo(ui_t *ui)
 
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
-{
+{    
+    if (game->stealing>0){ //si on est dans une animation de vol
+        draw_steal(ui, game);
+    }
+    
+    game->win=is_victory(game);
+
     if (ui->in_pause)
     {
         // Affiche le menu pause
@@ -189,6 +229,7 @@ void draw(ui_t *ui, game_t *game)
 
     if (game->win != 0)
     {
+        draw_victory(ui, game);
         draw_confetti(ui);
     }
 

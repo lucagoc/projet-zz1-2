@@ -27,6 +27,7 @@ struct ui_s
     SDL_Texture *player_textures[4];
     SDL_Texture *interface_textures[4];
     SDL_Texture *button_textures[8];
+    SDL_Texture *victory[4];
     SDL_Texture *score_textures[10];
 
     /* Animation */
@@ -40,6 +41,8 @@ struct ui_s
 
     bool in_pause;
     bool program_on;
+
+    int ticks_stealing_init;
 };
 typedef struct ui_s ui_t;
 

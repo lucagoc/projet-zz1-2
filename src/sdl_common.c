@@ -60,17 +60,6 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     }
 }
 
-int is_victory(game_t * game){
-
-    for(int i=0; i<4; i++){
-        if (game->players[i]->score>=10){
-            return i;
-        }
-    }
-
-    return 0;
-    
-}
 
 /**
  * @brief Décharge toutes les textures du jeu
@@ -91,6 +80,8 @@ void unload_textures(ui_t *ui)
     for (int i = 0; i < 4; i++)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
+        SDL_DestroyTexture(ui->victory[i]);
+
     }
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
@@ -199,6 +190,10 @@ void load_textures(ui_t *ui)
     // ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
     // ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
     // ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
+    ui->victory[0] = load_texture_from_image("assets/ui/pl1.png", ui->window, ui->renderer);
+    ui->victory[1] = load_texture_from_image("assets/ui/pl2.png", ui->window, ui->renderer);
+    ui->victory[2] = load_texture_from_image("assets/ui/pl3.png", ui->window, ui->renderer);
+    ui->victory[3] = load_texture_from_image("assets/ui/pl4.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);
@@ -281,7 +276,7 @@ ui_t *create_ui()
     ui->animate[0] = false;
     ui->animate[1] = false;
     ui->follow_mouse = false;
-
+    ui->ticks_stealing_init=0;
     return ui;
 }
 

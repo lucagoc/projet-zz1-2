@@ -180,6 +180,7 @@ game_t *create_game()
 
     game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
     print_all_cards(game->draw_pile);
+    game->stealing=0;
 
     return game;
 }
@@ -261,7 +262,104 @@ void steal_card(int input, game_t *game)
 {
     fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", input, game->drawn_card_color);
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
-    game->players[input]->tank[game->drawn_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
+    game->players[input]->tank[game->drawn_card_color] = 0;
+    game->stealing=input;                                                                  // on enlève les cartes au joueur volé
+
+}
+
+/**
+ * @brief Fonction copie l'état du jeu
+ * 
+ * @param game l'état du jeu
+ * @return copy_game_state la copie de l'état du jeu
+ */
+game_t *copy_game(game_t *game)
+{
+    game_t *copy_game_state = malloc(sizeof(game_t));
+    if (copy_game_state == NULL)
+    {
+        fprintf(stderr, "Erreur d'alloction de mémoire\n");
+        return NULL;
+    }
+    //Copie des joueurs
+    for (int i = 0 ; i < 4 ; i++)
+    {
+        player_t * copy_player = malloc(sizeof(player_t));
+        if (copy_player == NULL)
+        {
+            fprintf(stderr, "Erreur d'alloction de mémoire\n");
+            return NULL;
+        }
+        for (int j = 0 ; j < 7 ; j++)
+        {
+            copy_player->tank[j] = game->players[i]->tank[j];
+        }
+        copy_player->score = game->players[i]->score;
+        copy_player->last_scored_card = game->players[i]->last_scored_card;
+        copy_game_state->players[i] = copy_player;
+    }
+    copy_game_state->drawn_card_color = game->drawn_card_color;
+    copy_game_state->player_action = game->player_action;
+    copy_game_state->win = game->win;
+
+    // Copie de la pile de pioche
+    stack_t *copy_draw_pile = stack_create();
+    stack_t *current = game->draw_pile;
+    while (current != NULL)
+    {
+        card_t *copy_card = malloc(sizeof(card_t));
+        if (copy_card == NULL)
+        {
+            fprintf(stderr, "Erreur d'alloction de mémoire\n");
+            return NULL;
+        }
+        copy_card->face = current->card->face;
+        for (int i = 0 ; i < 3 ; i++)
+        {
+            copy_card->back[i] = current->card->back[i];
+        }
+        copy_draw_pile = stack_push(copy_draw_pile, copy_card);
+        current = current->next;
+    }
+    copy_game_state->draw_pile = copy_draw_pile;
+
+    return copy_game_state;
+}
+
+
+
+/**
+ * @brief Liste des mouvements possibles
+ * 
+ * @param game l'état du jeu
+ * @param player le joueur actif
+ */
+int *get_possible_moves(game_t *game, int player)
+{
+    int *possible_moves = malloc(4*sizeof(int));
+    
+    possible_moves[0] = 0; // Marquer
+    for (int i =1 ; i < 4 ; i++)
+    {
+        if (i != player)
+        {
+            possible_moves[i] = i; // Voler à joueur i != player
+        }
+    }
+
+    return possible_moves;
+}
+
+/**
+ * @brief Obtenir le score du joueur 
+ * 
+ * @param game état du jeu
+ * @param player joueur actif
+ * @return score le score du joueur
+ */
+int get_score(game_t *game, int player)
+{
+    return game->players[player]->score;
 }
 
 /**
@@ -370,8 +468,8 @@ void game_play(game_t *game, int input)
 {
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
-
-    game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
+    if (game->stealing==0){
+        game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
     if (input == game->player_action) // le joueur actif choisit de marquer
     {
@@ -390,13 +488,13 @@ void game_play(game_t *game, int input)
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
 
-            steal_card(input, game);
-        }
-        else
-        {
-            add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
-        }
-    }
+                    steal_card(input, game);
+                }
+                else
+                {
+                    add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
+                }
+            }
 
     // passage au joueur suivant
     game->player_action = (game->player_action + 1) % 4;

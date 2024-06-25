@@ -29,8 +29,9 @@ struct game
     player_t *players[4];           // Tableau des joueurs, numéroté de 0 à 3
     stack_t *draw_pile;             // Pile de pioche
     int drawn_card_color;
-    int player_action;              // Joueur actif
-    int win;                        // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné etc.
+    int player_action; // Joueur actif
+    int win;           // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
+    int stealing;
 };
 typedef struct game game_t;
 
