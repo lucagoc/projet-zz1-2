@@ -174,7 +174,7 @@ void draw_logo(ui_t *ui)
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
 {    
-    if (game->stealing>0){
+    if (game->stealing>0){ //si on est dans une animation de vol
         draw_steal(ui, game);
     }
     
