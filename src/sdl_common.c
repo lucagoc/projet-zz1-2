@@ -188,6 +188,18 @@ void load_textures(ui_t *ui)
     ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
     ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
+    /* --------------------------------------------- SCORE ------------------------------------------------*/
+    ui->score_textures[0] = render_text("0", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[1] = render_text("1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[2] = render_text("2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[3] = render_text("3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[4] = render_text("4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[5] = render_text("5", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[6] = render_text("6", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[7] = render_text("7", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+
     return;
 }
 

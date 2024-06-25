@@ -27,6 +27,7 @@ struct ui_s
     SDL_Texture *player_textures[4];
     SDL_Texture *interface_textures[4];
     SDL_Texture *button_textures[8];
+    SDL_Texture *score_textures[10];
 
     /* Animation */
     bool animate[2]; // 0: flip_the_card, 1: draw_particles
