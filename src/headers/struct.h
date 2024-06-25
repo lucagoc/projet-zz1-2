@@ -30,7 +30,7 @@ struct game
     stack_t *draw_pile;   // Pile de pioche
     int drawn_card_color;
     int player_action;    // Joueur actif
-    int win;              // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
+    int win;              // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné etc.
 };
 typedef struct game game_t;
 
