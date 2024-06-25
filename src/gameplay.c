@@ -5,7 +5,134 @@
 
 #include "headers/struct.h"
 
-#define NUMBER_FACE 7
+#define NUMBER_FACE 7       // Nombre de couleurs
+#define NUMBER_BACK 3       // Nombre d'indicateur au dos de la carte
+#define NUMBER_CARD 105     // Nombre de cartes
+#define NUMBER_MIX_STACK 20 // Nombre de mélange de cartes
+
+/**
+ *@brief Libération de la mémoire du jeu
+ */
+void free_game(game_t *game)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (game->players[i] != NULL) // Nombre de joueur variable
+        {
+            free(game->players[i]);
+        }
+    }
+    stack_free(game->draw_pile);
+    free(game);
+}
+
+/**
+ *@brief Initialisation des cartes
+ *
+ *@param card La carte qu'on veut initialiser
+ *@param face_color La couleur de face
+ *@param back_color La couleur de dos
+ */
+
+card_t *init_card(int face_color)
+{
+    card_t *card = malloc(sizeof(card_t));
+    card->face = face_color; // Définition de la face avant
+
+    /* Couleur d'indicateur */
+    int a = -1;
+    int b = -1;
+    while (a == -1 || a == face_color)
+    {
+        a = rand() % NUMBER_FACE;
+    }
+    while (b == -1 || b == face_color || b == a)
+    {
+        b = rand() % NUMBER_FACE;
+    }
+
+    // Mettre les 3 couleurs en positions aléatoires
+    int r = rand() % 3;
+    card->back[r] = face_color;
+    card->back[(r + 1) % 3] = a;
+    card->back[(r + 2) % 3] = b;
+
+    return card;
+}
+
+stack_t *mix_cards(stack_t *origin)
+{
+    // On crée 7 pile
+    stack_t *stacks[NUMBER_MIX_STACK];
+    for (int i = 0; i < NUMBER_MIX_STACK; i++)
+    {
+        stacks[i] = stack_create();
+    }
+
+    // On distribue les cartes aléatoirement dans les piles
+    stack_t *current = origin;
+    while (current != NULL)
+    {
+        int r = rand() % NUMBER_MIX_STACK;
+        fprintf(stderr, "[DEBUG] mix_cards : %d\n", r);
+        stacks[r] = stack_push(stacks[r], current->card);
+        current = current->next;
+    }
+
+    // On remet les cartes dans la pile originale
+    stack_t *res = NULL;
+    for (int i = 0; i < NUMBER_MIX_STACK; i++)
+    {
+        while (!stack_is_empty(stacks[i]))
+        {
+            res = stack_push(res, stacks[i]->card);
+            stacks[i] = stack_pop(stacks[i]);
+        }
+    }
+
+    return res;
+}
+
+/**
+ * @brief Initialisation de la pile de pioche de manière aléatoire
+ *
+ * @param game Le jeu
+ */
+stack_t *init_draw_card()
+{
+    stack_t *res = stack_create();
+    srand(time(NULL));
+
+    // Créer les cartes en assurant qu'il y a 15 cartes de chaque couleur
+    for (int i = 0; i < NUMBER_FACE; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            card_t *new = init_card(i);
+            res = stack_push(res, new);
+        }
+    }
+
+    // Mélanger les cartes
+    for (int i = 0; i < 1000; i++) // Mélanger 100 fois
+    {
+        res = mix_cards(res);
+    }
+
+    return res;
+}
+
+// Affiche toutes les cartes d'une stack (debug)
+void print_all_cards(stack_t *stack)
+{
+    stack_t *current = stack;
+    while (current != NULL)
+    {
+        printf("Face : %d\n", current->card->face);
+        printf("Back : %d %d %d\n", current->card->back[0], current->card->back[1], current->card->back[2]);
+        current = current->next;
+    }
+}
 
 /**
  *@brief Initialisation du jeu
@@ -28,132 +155,26 @@ game_t *create_game()
         game->players[i] = newplayer;
     }
 
-    game->drawn_card_color = -1;      // Initialisation de la couleur de la carte tirée à -1
-    game->player_action = 1;          // Le joueur 1 commence
-    game->win = 0;                    // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
+    game->drawn_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
+    game->player_action = 0;     // Le joueur 1 commence
+    game->win = 0;               // Initialisation du statut de victoire à 0 (personne n'a gagné)
+
+    game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
+    print_all_cards(game->draw_pile);
 
     return game;
-}
-
-/**
- *@brief Libération de la mémoire du jeu
- */
-void free_game(game_t *game)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        if(game->players[i] != NULL)    // Nombre de joueur variable
-        {
-            free(game->players[i]);
-        }
-    }
-    stack_free(game->draw_pile);
-    free(game);
-}
-
-/**
- *@brief Initialisation des cartes
- *
- *@param card La carte qu'on veut initialiser
- *@param face_color La couleur de face
- *@param back_color La couleur de dos
- */
-
-void init_card(card_t *card, int face_color, int back_color[2])
-{
-    card->face = face_color;
-    for (int i = 0; i < 2; i++)
-    {
-        card->back[i] = back_color[i];
-    }
-}
-
-/**
- * @brief Initialisation de la pile de pioche de manière aléatoire
- *
- * @param game Le jeu
- */
-void init_draw_card(game_t *game)
-{
-    if (game == NULL)
-    {
-        fprintf(stderr, "[ERROR] init_draw_card : game is NULL\n"); 
-        return;
-    }
-    game->draw_pile = stack_create();
-
-    srand(time(NULL));
-
-    int number_of_cards = 105;
-    int total_card = 0;
-    int face_count[NUMBER_FACE];
-
-    for (int i = 0; i < NUMBER_FACE; i++)
-    {
-        face_count[i] = 0;
-    }
-    
-    card_t card[number_of_cards];
-
-    // Créer les cartes en assurant qu'il y a 15 cartes de chaque couleur
-    for (int i = 0; i < NUMBER_FACE; i++)
-    {
-        for (int j = 0; j < 15; j++)
-        {
-            card[i].face = i;
-            face_count[i] = face_count[i] + 1;
-            total_card++;
-        }
-    }
-
-    // Compléter les cartes restantes aléatoirement (même si le calcul est bon, on ne sait jamais)
-    while (total_card < number_of_cards)
-    {
-        int face = rand() % NUMBER_FACE;
-        card[total_card].face = face;
-        face_count[face]++;
-        total_card++;
-    }
-
-    // Mélangez les cartes pour les répartir aléatoirement
-    for (int i = 0; i < NUMBER_FACE; i++)
-    {
-        int j = rand() % number_of_cards;
-
-        card_t temp = card[i];
-        card[i] = card[j];
-        card[j] = temp;
-    }
-
-    // Initialisation des couleurs du dos de la carte
-    for (int i = 0; i < NUMBER_FACE; i++)
-    {
-        int face = card[i].face;
-        int back[2];
-        for (int j = 0; j < 2; j++)
-        {
-            do
-            {
-                back[j] = rand() % NUMBER_FACE;
-
-            } while (back[j] == face && j == 1 && back[0] == face);
-        }
-
-        init_card(&card[i], face, back);
-
-        // Ajout de la carte à la pile de pioche
-        game->draw_pile = stack_push(game->draw_pile, card[i].face, card[i].back);
-    }
 }
 
 // Renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
 int is_card_in_tank(int player, game_t *game)
 {
-    if(game->drawn_card_color > 7 || game->drawn_card_color < 0){
+    if (game->drawn_card_color > 7 || game->drawn_card_color < 0)
+    {
         fprintf(stderr, "[ERROR] is_card_in_tank : no card drawn\n");
         return 0;
     }
+    fprintf(stderr, "[DEBUG] is_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
+
     return game->players[player]->tank[game->drawn_card_color];
 }
 
@@ -162,8 +183,8 @@ int get_draw_card(game_t *game)
 {
     if (game->draw_pile != NULL)
     {
-        int drawn_card_color = game->draw_pile->card.face; // on récupère la couleur du haut de la pile
-        game->draw_pile = game->draw_pile->next;           // on passe à l'élément suivant de la pile
+        int drawn_card_color = game->draw_pile->card->face; // on récupère la couleur du haut de la pile
+        game->draw_pile = game->draw_pile->next;            // on passe à l'élément suivant de la pile
         return drawn_card_color;
     }
     else
@@ -182,8 +203,8 @@ void distribute_card(game_t *game, int nb_player)
 {
     for (int i = 0; i < nb_player; i++)
     {
-        game->players[i]->tank[game->draw_pile->card.face] = 1; // on ajoute la carte au tank du joueur
-        game->draw_pile = game->draw_pile->next;                // on passe à l'élément suivant de la pile
+        game->players[i]->tank[game->draw_pile->card->face] = 1; // on ajoute la carte au tank du joueur
+        game->draw_pile = game->draw_pile->next;                 // on passe à l'élément suivant de la pile
     }
 }
 
@@ -207,6 +228,7 @@ void score_card(game_t *game)
  */
 void add_card_in_tank(int player, game_t *game)
 {
+    fprintf(stderr, "[DEBUG] add_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
     game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
 }
 
@@ -218,6 +240,7 @@ void add_card_in_tank(int player, game_t *game)
  */
 void steal_card(int input, game_t *game)
 {
+    fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", input, game->drawn_card_color);
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
     game->players[input]->tank[game->drawn_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
 }
@@ -236,7 +259,7 @@ void game_play(game_t *game, int input)
 
     game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
-    if (!input) // le joueur actif choisit de marquer
+    if (input == game->player_action) // le joueur actif choisit de marquer
     {
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
         {
@@ -249,7 +272,7 @@ void game_play(game_t *game, int input)
     }
     else // le joueur actif choisit de voler
     {
-
+        fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
 
@@ -263,4 +286,5 @@ void game_play(game_t *game, int input)
 
     // passage au joueur suivant
     game->player_action = (game->player_action + 1) % 4;
+    fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 }

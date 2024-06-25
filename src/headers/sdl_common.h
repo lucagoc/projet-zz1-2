@@ -27,10 +27,15 @@ struct ui_s
     SDL_Texture *player_textures[4];
     SDL_Texture *interface_textures[4];
     SDL_Texture *button_textures[8];
+    SDL_Texture *score_textures[10];
 
     /* Animation */
     bool animate[2]; // 0: flip_the_card, 1: draw_particles
+    int click_x;
+    int click_y;
+    unsigned long long last_tick;
     unsigned long long tick;
+    unsigned long long delta_t;
     bool follow_mouse;
 
     bool in_pause;
@@ -41,3 +46,4 @@ typedef struct ui_s ui_t;
 ui_t *create_ui();
 void refresh_input(ui_t *ui, int *input, game_t *game);
 void free_ui(ui_t *ui);
+void game_interact(int *input, game_t *game, ui_t *ui);

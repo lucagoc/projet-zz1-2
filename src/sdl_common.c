@@ -200,6 +200,18 @@ void load_textures(ui_t *ui)
     ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
     ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
 
+    /* --------------------------------------------- SCORE ------------------------------------------------*/
+    ui->score_textures[0] = render_text("0", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[1] = render_text("1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[2] = render_text("2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[3] = render_text("3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[4] = render_text("4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[5] = render_text("5", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[6] = render_text("6", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[7] = render_text("7", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+
     return;
 }
 
@@ -253,6 +265,7 @@ ui_t *create_ui()
     ui->program_on = true;
 
     ui->tick = 0;
+    ui->last_tick = 0;
     ui->animate[0] = false;
     ui->animate[1] = false;
     ui->follow_mouse = false;
@@ -269,19 +282,30 @@ bool stack_clicked(ui_t *ui, int x, int y)
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
 int player_clicked(game_t *game, int x, int y)
 {
-    return 1;
-}
-
-void gameplay_call(game_t *game, int input)
-{
-
-    if (input == 0)
-    {                           // choix de marquer
-        game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
+    // OUI c'est des magic numbers, mais c'est pour le prototype
+    if (x < 800 && y < 100)
+    {
+        fprintf(stderr, "Clique sur joueur 3\n"); // En haut à gauche
+        return 2;
+    }
+    else if (x > 1000 && y < 100) // En haut à droite
+    {
+        fprintf(stderr, "Clique sur joueur 2\n");
+        return 1;
+    }
+    else if (x < 800 && y > 800) // En bas à gauche
+    {
+        fprintf(stderr, "Clique sur joueur 1\n");
+        return 0;
+    }
+    else if (x > 1000 && y > 800) // En bas à droite
+    {
+        fprintf(stderr, "Clique sur joueur 4\n");
+        return 3;
     }
     else
-    {                           // Choix de voler un joueur
-        game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
+    {
+        return -1;
     }
 }
 
@@ -289,6 +313,11 @@ void free_ui(ui_t *ui)
 {
     unload_textures(ui);
     free(ui);
+}
+
+bool is_animating(ui_t *ui)
+{
+    return ui->animate[0];
 }
 
 /*
@@ -314,31 +343,34 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-
-                int x = ui->event.button.x;
-                int y = ui->event.button.y;
-
-                if (stack_clicked(ui, x, y))
+                if (*input == -1 && !is_animating(ui)) // Traiter seulement si non déjà traité
                 {
-                    ui->follow_mouse = true;
-                    *input = 0;
-                    gameplay_call(game, *input);
-                }
-                else
-                {
-                    int player_chosen = player_clicked(game, x, y);
-                    if (player_chosen)
-                    { // si on clique sur un autre joueur pour le voler
-                        *input = player_chosen;
-                        gameplay_call(game, *input);
+                    int x = ui->event.button.x;
+                    int y = ui->event.button.y;
+
+                    if (stack_clicked(ui, x, y))
+                    {
+                        ui->follow_mouse = !ui->follow_mouse;
+                    }
+                    else
+                    {
+                        *input = player_clicked(game, x, y);
+                        if (*input != -1) // input valide
+                        {
+                            ui->animate[0] = true; // flip_the_card
+                            ui->last_tick = ui->tick;
+                            ui->click_x = x;
+                            ui->click_y = y;
+                            game->drawn_card_color = game->draw_pile->card->face;
+                        }
+                        ui->follow_mouse = false;
                     }
                 }
             }
-
             break;
+
         case SDL_KEYDOWN:
             switch (ui->event.key.keysym.sym)
             {
@@ -347,11 +379,19 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                 break;
             }
             break;
-        
+
         default:
             break;
         }
     }
+}
 
-    *input = -1;
+void game_interact(int *input, game_t *game, ui_t *ui)
+{
+    if (!is_animating(ui) && *input != -1)
+    {
+        fprintf(stderr, "test %d\n", *input);
+        game_play(game, *input);
+        *input = -1;
+    }
 }
