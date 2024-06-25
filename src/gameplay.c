@@ -31,7 +31,6 @@ game_t *create_game()
     game->drawn_card_color = -1;      // Initialisation de la couleur de la carte tirée à -1
     game->player_action = 1;          // Le joueur 1 commence
     game->win = 0;                    // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
 
     return game;
 }
@@ -50,6 +49,23 @@ void free_game(game_t *game)
     }
     stack_free(game->draw_pile);
     free(game);
+}
+
+/**
+ * @brief Fonction de vérification de la victoire
+ * 
+ * @param game le jeu
+ * @param nb_player le nombre de joueur
+ */
+void check_win(game_t * game , int nb_player)
+{
+    for (int i = 0; i < nb_player; i++)
+    {
+        if (game->players[i]->score >= 10)
+        {
+            game->win = i + 1;
+        }
+    }
 }
 
 /**
