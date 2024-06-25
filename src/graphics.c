@@ -56,7 +56,7 @@ int is_victory(game_t * game){
 //teste la victoire
 int draw_victory(ui_t * ui, game_t * game){
 
-    int player_win = 1; //game->win ;
+    int player_win = game->win ;
     SDL_Rect drawvic = {650, 200, 300, 100};
 
     if (player_win==1){
@@ -194,7 +194,7 @@ void draw(ui_t *ui, game_t *game)
         draw_draw_card(ui, game);
     }
 
-    if (game->win != 0 ||true)
+    if (game->win != 0)
     {
         draw_victory(ui, game);
         draw_confetti(ui);

@@ -236,35 +236,37 @@ void game_play(game_t *game, int input)
 {
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
+    if (game->stealing==0){
+        game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
-    game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
+            if (!input) // le joueur actif choisit de marquer
+            {
+                if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
+                {
+                    score_card(game);
+                }
+                else
+                {
+                    add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
+                }
+            }
+            else // le joueur actif choisit de voler
+            {
 
-    if (!input) // le joueur actif choisit de marquer
-    {
-        if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
-        {
-            score_card(game);
-        }
-        else
-        {
-            add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
-        }
+                if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
+                {
+
+                    steal_card(input, game);
+                }
+                else
+                {
+                    add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
+                }
+            }
+
+            // passage au joueur suivant
+            game->player_action = (game->player_action + 1) % 4;
     }
-    else // le joueur actif choisit de voler
-    {
-
-        if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
-        {
-
-            steal_card(input, game);
-        }
-        else
-        {
-            add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
-        }
-    }
-
-    // passage au joueur suivant
-    game->player_action = (game->player_action + 1) % 4;
+   
     
 }
