@@ -285,6 +285,8 @@ game_t *copy_game(game_t *game)
     return copy_game_state;
 }
 
+
+
 /**
  * @brief Liste des mouvements possibles
  * 
@@ -297,9 +299,9 @@ int *get_possible_moves(game_t *game, int player , int *num_moves)
     (void)game;
     (void)player;
 
-    *num_moves = 2;
+    *num_moves = 5;
 
-    int *possible_moves = malloc(2*sizeof(int));
+    int *possible_moves = malloc(5*sizeof(int));
     possible_moves[0] = 1 ; //Scoring
     possible_moves[1] = 0 ; //Stealing
 

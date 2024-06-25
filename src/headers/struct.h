@@ -36,7 +36,7 @@ typedef struct game game_t;
 
 struct mcts
 {
-    game_t *state;                      // L'état du jeu correspondant à ce nœud
+    game_t *state;                      // L'état du jeu correspondant à ce noeud
     int player;                         // Le joueur actif dans cet état du jeu
     struct mcts *parent;                // Le noued parent dans l'arbre MCTS
     struct mcts **possible_move;        // Les noueds enfants (mouvements possibles à partir de cet état)
