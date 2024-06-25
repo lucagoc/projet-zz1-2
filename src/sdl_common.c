@@ -258,38 +258,29 @@ bool stack_clicked(ui_t *ui, int x, int y)
 int player_clicked(game_t *game, int x, int y)
 {
     // OUI c'est des magic numbers, mais c'est pour le prototype
-    if(x < 800 && y < 100)
+    if (x < 800 && y < 100)
     {
-        fprintf(stderr, "Clique sur joueur 3\n");
+        fprintf(stderr, "Clique sur joueur 3\n"); // En haut à gauche
         return 2;
     }
-    else if(x > 1000 && y < 100)
-    {
-        fprintf(stderr, "Clique sur joueur 4\n");
-        return 3;
-    }
-    else if(x < 800 && y > 800)
-    {
-        fprintf(stderr, "Clique sur joueur 1\n");
-        return 0;
-    }
-    else if(x > 1000 && y > 800)
+    else if (x > 1000 && y < 100) // En haut à droite
     {
         fprintf(stderr, "Clique sur joueur 2\n");
         return 1;
     }
-}
-
-void gameplay_call(game_t *game, int input)
-{
-
-    if (input == 0)
-    {                           // choix de marquer
-        game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
+    else if (x < 800 && y > 800) // En bas à gauche
+    {
+        fprintf(stderr, "Clique sur joueur 1\n");
+        return 0;
+    }
+    else if (x > 1000 && y > 800) // En bas à droite
+    {
+        fprintf(stderr, "Clique sur joueur 4\n");
+        return 3;
     }
     else
-    {                           // Choix de voler un joueur
-        game_play(game, input); // Attention pour les animations à ne rien faire si aucune input
+    {
+        return -1;
     }
 }
 
@@ -332,16 +323,14 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                 if (stack_clicked(ui, x, y))
                 {
                     ui->follow_mouse = true;
-                    *input = 0;
-                    gameplay_call(game, *input);
                 }
                 else
                 {
-                    int player_chosen = player_clicked(game, x, y);
-                    if (player_chosen)
-                    { // si on clique sur un autre joueur pour le voler
-                        *input = player_chosen;
-                        gameplay_call(game, *input);
+                    int input = player_clicked(game, x, y);
+                    if (input != -1)
+                    {
+                        game_play(game, input);
+                        ui->follow_mouse = false;
                     }
                 }
             }
@@ -355,7 +344,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                 break;
             }
             break;
-        
+
         default:
             break;
         }

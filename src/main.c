@@ -17,14 +17,15 @@ int main(int argc, char const *argv[])
     (void)argc;
     (void)argv;
 
-    int input = -1;
+    int* input = malloc(sizeof(int));
+    *input = 0;
     ui_t *ui = create_ui();
     game_t *game = create_game();
 
     while (ui->program_on)
     {
-        refresh_input(ui, &input, game);
-        game_loop(input, game, ui); // (Attention pour les animations à ne rien faire si aucune input)
+        refresh_input(ui, input, game);
+        game_loop(*input, game, ui); // (Attention pour les animations à ne rien faire si aucune input)
         draw(ui, game);
     }
 

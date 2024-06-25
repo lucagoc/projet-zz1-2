@@ -156,7 +156,7 @@ game_t *create_game()
     }
 
     game->drawn_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
-    game->player_action = 1;     // Le joueur 1 commence
+    game->player_action = 0;     // Le joueur 1 commence
     game->win = 0;               // Initialisation du statut de victoire à 0 (personne n'a gagné)
 
     game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
@@ -174,6 +174,7 @@ int is_card_in_tank(int player, game_t *game)
         return 0;
     }
     fprintf(stderr, "[DEBUG] is_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
+
     return game->players[player]->tank[game->drawn_card_color];
 }
 
@@ -239,6 +240,7 @@ void add_card_in_tank(int player, game_t *game)
  */
 void steal_card(int input, game_t *game)
 {
+    fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", input, game->drawn_card_color);
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
     game->players[input]->tank[game->drawn_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
 }
@@ -257,7 +259,7 @@ void game_play(game_t *game, int input)
 
     game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
-    if (!input) // le joueur actif choisit de marquer
+    if (input == game->player_action) // le joueur actif choisit de marquer
     {
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
         {
@@ -270,7 +272,7 @@ void game_play(game_t *game, int input)
     }
     else // le joueur actif choisit de voler
     {
-
+        fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
 
