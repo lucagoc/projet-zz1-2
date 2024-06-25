@@ -113,21 +113,36 @@ void draw_particles(ui_t *ui, int x, int y)
     }
 }
 
-void draw_face(ui_t *ui, card_t *carte, int x, int y)
+void draw_face(ui_t *ui, int color, int x, int y)
 {
     int descale = 7;
     int card_width = CARD_WIDTH / descale;
     int card_height = CARD_HEIGHT / descale;
 
     SDL_Rect draw_card_rect = {x, y, card_width, card_height};
-    SDL_RenderCopy(ui->renderer, ui->front_card_textures[carte->face], NULL, &draw_card_rect);
+    SDL_RenderCopy(ui->renderer, ui->front_card_textures[color], NULL, &draw_card_rect);
 }
 
 // animation de vol de carte
-void draw_steal(ui_t *ui, card_t *carte, game_t *game, player_t *stolen)
+void draw_steal(ui_t *ui, game_t *game)
 {
 
+    if (ui->ticks_stealing_init==0){
+
+        //on démarre l'animation
+        ui->ticks_stealing_init=SDL_GetTicks();
+    } else if (SDL_GetTicks() - ui->ticks_stealing_init <100){
+        //on joue l'animation
+
+
+    } else {
+        //l'animation termine
+        ui->ticks_stealing_init=0;
+        game->stealing=0;
+    }
+
     player_t *stealer = game->player_action; //joueur voleur
+    player_t *stolen= game->players[game->stealing];
 
     int size_length = ui->screen_w / 2 - 90;
     int size_height = 200;
@@ -139,7 +154,7 @@ void draw_steal(ui_t *ui, card_t *carte, game_t *game, player_t *stolen)
 
     float speed = 0.001;
     int param;
-    int number_cards_stolen = stolen->tank[carte->face]; //nombre de cartes volées
+    int number_cards_stolen = stolen->tank[game->drawn_card_color]; //nombre de cartes volées
 
     if (stolen == 0)  //selon la position du volé on définit d'où partent les cartes
     {
@@ -187,6 +202,6 @@ void draw_steal(ui_t *ui, card_t *carte, game_t *game, player_t *stolen)
     {
         param = ui->delta_t * 10 * speed;
 
-        draw_face(ui, carte, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby);
+        draw_face(ui, game->drawn_card_color, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby);
     }
 }

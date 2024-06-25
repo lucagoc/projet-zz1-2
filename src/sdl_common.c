@@ -252,7 +252,7 @@ ui_t *create_ui()
     ui->animate[0] = false;
     ui->animate[1] = false;
     ui->follow_mouse = false;
-
+    ui->ticks_stealing_init=0;
     return ui;
 }
 

@@ -32,6 +32,7 @@ game_t *create_game()
     game->player_action = 1;          // Le joueur 1 commence
     game->win = 0;                    // Initialisation du statut de victoire à 0 (personne n'a gagné)
     game->draw_pile = stack_create(); // Initialisation de la pile de pioche avec une pile vide
+    game->stealing=0;
 
     return game;
 }
@@ -219,7 +220,9 @@ void add_card_in_tank(int player, game_t *game)
 void steal_card(int input, game_t *game)
 {
     game->players[game->player_action]->tank[game->drawn_card_color] += game->players[input]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
-    game->players[input]->tank[game->drawn_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
+    game->players[input]->tank[game->drawn_card_color] = 0;
+    game->stealing=input;                                                                  // on enlève les cartes au joueur volé
+
 }
 
 /**
@@ -263,4 +266,5 @@ void game_play(game_t *game, int input)
 
     // passage au joueur suivant
     game->player_action = (game->player_action + 1) % 4;
+    
 }

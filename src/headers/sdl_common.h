@@ -36,6 +36,8 @@ struct ui_s
 
     bool in_pause;
     bool program_on;
+
+    int ticks_stealing_init;
 };
 typedef struct ui_s ui_t;
 
