@@ -302,10 +302,25 @@ int *get_possible_moves(game_t *game, int player , int *num_moves)
     *num_moves = 5;
 
     int *possible_moves = malloc(5*sizeof(int));
-    possible_moves[0] = 1 ; //Scoring
-    possible_moves[1] = 0 ; //Stealing
+    possible_moves[0] = 0;          // marquer
+    possible_moves[1] = 1;          // voler le joueur 1
+    possible_moves[2] = 2;          // voler le joueur 2
+    possible_moves[3] = 3;          // voler le joueur 3
+    possible_moves[4] = 4;          // voler le joueur 4
 
     return possible_moves;
+}
+
+/**
+ * @brief Obtenir le score du joueur 
+ * 
+ * @param game état du jeu
+ * @param player joueur actif
+ * @return score le score du joueur
+ */
+int get_score(game_t *game, int player)
+{
+    return game->players[player]->score;
 }
 
 /**

@@ -4,6 +4,7 @@
 
 #include "headers/struct.h"
 #include "headers/player.h"
+#include "headers/gameplay.h"
 
 /**
  *@brief Initialisation d'un joueur
@@ -52,6 +53,12 @@ mcts_t *select_node(mcts_t *root)
     return node;
 }
 
+
+/**
+ * @brief MCTS expansion
+ * 
+ * @param node le noeud à étendre
+ */
 void expand_node(mcts_t *node)
 {
     int num_moves;
@@ -62,13 +69,14 @@ void expand_node(mcts_t *node)
         game_t *new_state = copy_game(node->state);
         // Appliquer le mouvement pour obtenir le nouvel état
         if (legal_moves[i] == 0)
-        { // Exemple : marquer
+        { 
             score_card(new_state);
         }
         else if (legal_moves[i] == 1)
-        { // Exemple : voler
+        { 
             steal_card(new_state->player_action, new_state);
         }
+        //Créer un nouveau noeud pour le nouvel état
         node->possible_move[i] = malloc(sizeof(mcts_t));
         node->possible_move[i]->state = new_state;
         node->possible_move[i]->parent = node;
@@ -82,6 +90,12 @@ void expand_node(mcts_t *node)
     free(legal_moves);
 }
 
+/**
+ * @brief MCTS rétropropagation
+ * 
+ * @param node le noeud à simuler
+ * @param value la valeur de la simulation
+ */
 void backpropagate(mcts_t *node, double value)
 {
     while (node != NULL)
@@ -91,27 +105,34 @@ void backpropagate(mcts_t *node, double value)
         node = node->parent;
     }
 }
+/**
+ * @brief MCTS simulation
+ * 
+ * @param game l'état du jeu
+ */
 
-/*
 double simulate_game(game_t *game)
 {
-    while (!is_terminal(game))
+    for (int i = 0; i < 4; i++)
     {
-        // Implémentez la condition de terminaison
-        int num_moves;
-        int *legal_moves = get_possible_moves(game, game->player_action, &num_moves);
-        int move = legal_moves[rand() % num_moves];
-        if (move == 0)
+        while (game->players[i]->score >=10 )                                       
         {
-            score_card(game);
+            int num_moves;
+            int *legal_moves = get_possible_moves(game, game->player_action, &num_moves);
+            int move = legal_moves[rand() % num_moves];                             // Choisir un mouvement aléatoire
+            if (move == 0)
+            {
+                score_card(game);
+            }
+            else if (move == 1)
+            {
+                steal_card(game->player_action, game);
+            }
+            free(legal_moves);
+        
         }
-        else if (move == 1)
-        {
-            steal_card(game->player_action, game);
-        }
-        free(legal_moves);
     }
-    return get_score(game, game->player_action); // Implémentez get_score pour obtenir le score final
-}*/
+    return get_score(game, game->player_action);                                    // Retourne le score du joueur actif
+}
 
 /*----------------------------------------------------------------------Implémentation des 4 phases de MCTS-----------------------------------------------------------*/
