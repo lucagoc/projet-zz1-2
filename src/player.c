@@ -47,7 +47,7 @@ mcts_t *select_node(mcts_t *root)
  */
 void expand_node(mcts_t *node)
 {
-    int *legal_moves = get_possible_moves(node->state, node->player); // Récupérer les mouvements possibles
+    int *legal_moves = get_possible_moves(node->player); // Récupérer les mouvements possibles
     node->possible_move = malloc(4 * sizeof(mcts_t *));
     for (int i = 0; i < 4; i++)                                       // Pour chaque mouvement possible
     {
@@ -106,7 +106,7 @@ double simulate_game(game_t *game)
         while (game->players[i]->score >=10 )                                       
         {
             int num_moves;
-            int *legal_moves = get_possible_moves(game, game->player_action);
+            int *legal_moves = get_possible_moves(game->player_action);
             int move = legal_moves[rand() % num_moves];                             // Choisir un mouvement aléatoire
             if (move == 0)
             {
