@@ -101,7 +101,7 @@ int select_node(mcts_t *root)
  * @brief MCTS expansion
  *
  * @param node le noeud à étendre
- 
+ *
 void expand_node(mcts_t *node)
 {
     int *legal_moves = get_possible_moves(node->player); // Récupérer les mouvements possibles

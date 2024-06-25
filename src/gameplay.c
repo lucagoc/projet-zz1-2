@@ -30,11 +30,11 @@ void free_game(game_t *game)
 
 /**
  * @brief Fonction de vérification de la victoire
- * 
+ *
  * @param game le jeu
  * @param nb_player le nombre de joueur
  */
-void check_win(game_t * game , int nb_player)
+void check_win(game_t *game, int nb_player)
 {
     for (int i = 0; i < nb_player; i++)
     {
@@ -177,10 +177,11 @@ game_t *create_game()
     game->drawn_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
     game->player_action = 0;     // Le joueur 1 commence
     game->win = 0;               // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->draw_pile_left = 105;
 
     game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
     print_all_cards(game->draw_pile);
-    game->stealing=0;
+    game->stealing = 0;
 
     return game;
 }
@@ -211,6 +212,7 @@ int get_draw_card(game_t *game)
     {
         return -1;
     }
+    game->draw_pile_left--;
 }
 
 /**
@@ -260,13 +262,12 @@ void add_card_in_tank(int player, game_t *game)
  */
 void steal_card(int input, game_t *game)
 {
-    game->stealing=input;                                                                  // on enlève les cartes au joueur volé
-
+    game->stealing = input; // on enlève les cartes au joueur volé
 }
 
 /**
  * @brief Fonction copie l'état du jeu
- * 
+ *
  * @param game l'état du jeu
  * @return copy_game_state la copie de l'état du jeu
  */
@@ -278,16 +279,16 @@ game_t *copy_game(game_t *game)
         fprintf(stderr, "Erreur d'alloction de mémoire\n");
         return NULL;
     }
-    //Copie des joueurs
-    for (int i = 0 ; i < 4 ; i++)
+    // Copie des joueurs
+    for (int i = 0; i < 4; i++)
     {
-        player_t * copy_player = malloc(sizeof(player_t));
+        player_t *copy_player = malloc(sizeof(player_t));
         if (copy_player == NULL)
         {
             fprintf(stderr, "Erreur d'alloction de mémoire\n");
             return NULL;
         }
-        for (int j = 0 ; j < 7 ; j++)
+        for (int j = 0; j < 7; j++)
         {
             copy_player->tank[j] = game->players[i]->tank[j];
         }
@@ -311,7 +312,7 @@ game_t *copy_game(game_t *game)
             return NULL;
         }
         copy_card->face = current->card->face;
-        for (int i = 0 ; i < 3 ; i++)
+        for (int i = 0; i < 3; i++)
         {
             copy_card->back[i] = current->card->back[i];
         }
@@ -323,10 +324,9 @@ game_t *copy_game(game_t *game)
     return copy_game_state;
 }
 
-
 /**
- * @brief Obtenir le score du joueur 
- * 
+ * @brief Obtenir le score du joueur
+ *
  * @param game état du jeu
  * @param player joueur actif
  * @return score le score du joueur
@@ -356,13 +356,11 @@ void game_play(game_t *game, int input)
         {
             score_card(game);
             game->player_action = (game->player_action + 1) % 4;
-
         }
         else
         {
             add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
             game->player_action = (game->player_action + 1) % 4;
-
         }
     }
     else // le joueur actif choisit de voler
@@ -377,10 +375,9 @@ void game_play(game_t *game, int input)
         {
             add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
             game->player_action = (game->player_action + 1) % 4;
-
         }
     }
-    
+
     // passage au joueur suivant
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 }
