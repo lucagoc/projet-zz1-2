@@ -102,12 +102,10 @@ void draw_draw_card(ui_t *ui, game_t *game)
         x = ui->screen_w / 2 - CARD_WIDTH / 6;
         y = ui->screen_h / 2 - CARD_HEIGHT / 6;
     }
-    int oui_debug = 1;
     for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
     {
         SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
-        SDL_RenderCopy(ui->renderer, ui->back_flag_textures[oui_debug], NULL, &draw_indicator_rect);
-        oui_debug += 1;
+        SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->draw_pile->card->back[i]], NULL, &draw_indicator_rect);
     }
 
     // Affiche la carte

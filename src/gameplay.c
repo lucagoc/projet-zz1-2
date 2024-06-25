@@ -173,6 +173,7 @@ int is_card_in_tank(int player, game_t *game)
         fprintf(stderr, "[ERROR] is_card_in_tank : no card drawn\n");
         return 0;
     }
+    fprintf(stderr, "[DEBUG] is_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
     return game->players[player]->tank[game->drawn_card_color];
 }
 
@@ -283,4 +284,5 @@ void game_play(game_t *game, int input)
 
     // passage au joueur suivant
     game->player_action = (game->player_action + 1) % 4;
+    fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 }
