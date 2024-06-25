@@ -6,6 +6,14 @@
 #define CARD_WIDTH 601
 #define CARD_HEIGHT 844
 
+#define COLOR_RED 166,68,65,255
+#define COLOR_PURPLE 110,65,166,255
+#define COLOR_BLUE 65,114,165,255
+#define COLOR_ORANGE 222,129,30,255
+#define COLOR_YELLOW 155,143,0,255
+#define COLOR_PINK 187,82,144,255
+#define COLOR_GREEN 66,177,66,255
+
 // Faire pleuvoir des confettis sur l'écran.
 void draw_confetti(ui_t *ui)
 {
@@ -84,25 +92,38 @@ void draw_luminescence(ui_t *ui, SDL_Rect *rect)
 }
 
 // Affiche des particules tournant autour d'un point
-void draw_particles(ui_t *ui, int x, int y)
+void draw_particles(ui_t *ui, game_t *game, int x, int y)
 {
     // Correction d'un problème d'allignement;
     x -= 4;
     y -= 1;
 
-    int particle_number = 100;
-    float speed = 0.00004;
+    // Définir les couleurs des particules en fonctions de l'arrière des cartes.
+    SDL_Color colors[7] = {
+        {COLOR_YELLOW},
+        {COLOR_GREEN},
+        {COLOR_PURPLE},
+        {COLOR_PINK},
+        {COLOR_BLUE},
+        {COLOR_ORANGE},
+        {COLOR_RED}};
+
+    int particle_number = 50;
+    float speed = 0.0001;
+
+    int a = game->draw_pile->card->back[0];
+    int b = game->draw_pile->card->back[1];
+    int c = game->draw_pile->card->back[2];
+
     for (int i = 0; i < particle_number; i++)
     {
         // Couleur aléatoire mais toujours la même pour un i donné.
-        if (i % 4 == 0)
-            SDL_SetRenderDrawColor(ui->renderer, 255, 0, 0, 255);
-        else if (i % 4 == 1)
-            SDL_SetRenderDrawColor(ui->renderer, 0, 255, 0, 255);
-        else if (i % 4 == 2)
-            SDL_SetRenderDrawColor(ui->renderer, 0, 0, 255, 255);
+        if (i % 3 == 0)
+            SDL_SetRenderDrawColor(ui->renderer, colors[a].r, colors[a].g, colors[a].b, colors[a].a);
+        else if (i % 3 == 1)
+            SDL_SetRenderDrawColor(ui->renderer, colors[b].r, colors[b].g, colors[b].b, colors[b].a);
         else
-            SDL_SetRenderDrawColor(ui->renderer, 255, 255, 0, 255);
+            SDL_SetRenderDrawColor(ui->renderer, colors[c].r, colors[c].g, colors[c].b, colors[c].a);
 
         int x_particle = x + 100 * cos(ui->tick * speed * i);
         int y_particle = y + 100 * sin(ui->tick * speed * i);

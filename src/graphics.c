@@ -120,7 +120,7 @@ void draw_draw_card(ui_t *ui, game_t *game)
 
         if (ui->follow_mouse)
         {
-            draw_particles(ui, ui->mouse_pos.x, ui->mouse_pos.y);
+            draw_particles(ui, game, ui->mouse_pos.x, ui->mouse_pos.y);
         }
     }
 }
