@@ -237,7 +237,6 @@ void steal_card(int input, game_t *game)
     game->players[input]->tank[game->drawn_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
 }
 
-/*------------------------------------------MCTS parts-------------------------------------*/
 /**
  * @brief Fonction copie l'état du jeu
  * 
@@ -273,7 +272,6 @@ game_t *copy_game(game_t *game)
     copy_game_state->player_action = game->player_action;
     copy_game_state->win = game->win;
 
-
     // Copie de la pile de pioche
     stack_t *copy_draw_pile = stack_create();
     stack_t *current = game->draw_pile;
@@ -287,7 +285,27 @@ game_t *copy_game(game_t *game)
     return copy_game_state;
 }
 
-/*------------------------------------------MCTS parts-------------------------------------*/ 
+/**
+ * @brief Liste des mouvements possibles
+ * 
+ * @param game l'état du jeu
+ * @param player le joueur actif
+ * @param num_moves le nombre de mouvements possibles
+ */
+int *get_possible_moves(game_t *game, int player , int *num_moves)
+{
+    (void)game;
+    (void)player;
+
+    *num_moves = 2;
+
+    int *possible_moves = malloc(2*sizeof(int));
+    possible_moves[0] = 1 ; //Scoring
+    possible_moves[1] = 0 ; //Stealing
+
+    return possible_moves;
+}
+
 
 
 /**
