@@ -187,11 +187,6 @@ void draw_draw_card(ui_t *ui, game_t *game)
     }
 }
 
-void draw_buttons(ui_t *ui, game_t *game)
-{
-    return;
-}
-
 void draw_active_player(ui_t *ui, game_t *game)
 {
     SDL_Rect draw_active_player_rect = {10, ui->screen_h / 2 + 100, 230, 70};
@@ -219,7 +214,6 @@ void draw(ui_t *ui, game_t *game)
         draw_background(ui);
         draw_players(ui, game);
         draw_active_player(ui, game);
-        draw_buttons(ui, game);
         draw_logo(ui);
         draw_draw_card(ui, game);
     }

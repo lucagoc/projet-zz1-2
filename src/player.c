@@ -32,12 +32,12 @@ void game_simulate(game_t *game, int input)
 // Renvoie un tableau des estimations de récompenses pour chaque bras
 // n le nombre de totale de partie jouée
 // Renvoie l'input i avec le meilleur score
-int ucb(game_t *game, int player, int n)
+int ucb(game_t *game, int n)
 {
     /* Initialisation */
+    int player = game->player_action;
     int C = 1; // Constante d'exploration
     int G[4];  // Gain accumulé sur la machine k
-    int input = 0;
     int max = 0;
     int n_t[4]; // Nombre de fois où l'on a joué sur la machine k
     int I[4];   // Valeur de l'indice de confiance pour chaque possibilité
@@ -87,33 +87,14 @@ int ucb(game_t *game, int player, int n)
 /*----------------------------------------------------------------------Implémentation des 4 phases de MCTS-----------------------------------------------------------*/
 
 /**
- * @brief MCTS selection
+ * @brief Sélection de la branche à explorer à l'aide de UCB
  *
  * @param root la racine de l'arbre
  */
-mcts_t *select_node(mcts_t *root)
+int select_node(mcts_t *root)
 {
-    mcts_t *node = root;
-    while (node->num_children > 0)
-    {
-        double max_uct = -1;
-        mcts_t *selected_child = NULL;
-        for (int i = 0; i < node->num_children; i++)
-        {
-            mcts_t *child = node->possible_move[i];
-
-            double c = sqrt(2); // Constante d'exploration en théorie c'est sqrt(2)
-
-            double uct = (child->accumulated_value / (child->visits + 1)) + c * sqrt(log(node->visits + 1) / (child->visits + 1)); // Calcul de l'UCT [nombre de parties gagnées / nombre de parties jouées + c * racine carrée de log(nombre de parties jouées) / nombre de parties jouées]
-            if (uct > max_uct)
-            {
-                max_uct = uct;
-                selected_child = child;
-            }
-        }
-        node = selected_child;
-    }
-    return node;
+    int n = 100;
+    return ucb(root->state, n);
 }
 
 /**

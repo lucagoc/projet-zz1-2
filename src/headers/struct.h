@@ -1,6 +1,10 @@
 #define STRUCT_H
 
 #include <stdbool.h>
+
+#define RED 0
+#define BLACK 1
+
 struct card
 {
     int back[3]; // Dos de la carte
@@ -26,8 +30,8 @@ typedef struct player player_t;
 
 struct game
 {
-    player_t *players[4];           // Tableau des joueurs, numéroté de 0 à 3
-    stack_t *draw_pile;             // Pile de pioche
+    player_t *players[4]; // Tableau des joueurs, numéroté de 0 à 3
+    stack_t *draw_pile;   // Pile de pioche
     int drawn_card_color;
     int player_action; // Joueur actif
     int win;           // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
@@ -35,15 +39,23 @@ struct game
 };
 typedef struct game game_t;
 
+// En théorie, on peut représenter de 0 à 18446744073709551615 [concaténer à] de 0 à 18446744073709551615
+// En enlevant les premier chiffres, ça nous fait des nodes de 38 chiffres (de 0 à 99999999999999999999999999999999999999)
+struct node_id
+{
+    unsigned long long id_1;
+    unsigned long long id_2;
+};
+typedef struct node_id node_id_t;
+
 struct mcts
 {
-    game_t *state;                      // L'état du jeu correspondant à ce noeud
-    int player;                         // Le joueur actif dans cet état du jeu
-    struct mcts *parent;                // Le noued parent dans l'arbre MCTS
-    struct mcts **possible_move;        // Les noueds enfants (mouvements possibles à partir de cet état)
-    int num_children;                   // Le nombre d'enfants
-    int visits;                         // Le nombre de fois que ce noeud a été visité
-    double accumulated_value;           // La valeur accumulée des simulations
+    node_id_t id;             // L'identifiant du noeud
+    game_t *state;            // L'état du jeu correspondant à ce noeud
+    struct mcts *parent;      // Le noued parent dans l'arbre MCTS
+    struct mcts **children;   // Les noueds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
+    int visits;               // Le nombre de fois que ce noeud a été visité
+    double accumulated_value; // La valeur accumulée des simulations
 };
 typedef struct mcts mcts_t;
 

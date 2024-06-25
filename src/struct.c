@@ -115,3 +115,5 @@ void stack_free(stack_t *stack)
 }
 
 /*************************** Fonctions de la structure de données pile *****************************/
+
+// Arbre rouge-Noir
