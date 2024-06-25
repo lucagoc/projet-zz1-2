@@ -146,12 +146,17 @@ void draw_face(ui_t *ui, int color, int x, int y)
 void draw_steal(ui_t *ui, game_t *game)
 {
 
+    float speed = 0.2;
+    float anime_tick = (ui->delta_t * speed);
+
     if (ui->ticks_stealing_init==0){
 
         //on démarre l'animation
         ui->last_tick=SDL_GetTicks();
         ui->animate[0]=1;
-    } else if (SDL_GetTicks() - ui->ticks_stealing_init <1000){
+        ui->ticks_stealing_init=1;
+        
+    } else if (anime_tick <1000){
         //on joue l'animation pendant 1000 ticks
 
         int size_length = ui->screen_w / 2 - 90;
