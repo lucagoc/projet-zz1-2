@@ -56,15 +56,20 @@ int is_victory(game_t * game){
 //teste la victoire
 int draw_victory(ui_t * ui, game_t * game){
 
-    int player_win = game->win ;
-    
+    int player_win = 1; //game->win ;
+    SDL_Rect drawvic = {650, 200, 300, 100};
+
     if (player_win==1){
-        
+        SDL_RenderCopy(ui->renderer, ui->victory[0], NULL, &drawvic);
+
     } else if (player_win==2){
+        SDL_RenderCopy(ui->renderer, ui->victory[1], NULL, &drawvic);
 
     } else if (player_win==3){
+        SDL_RenderCopy(ui->renderer, ui->victory[2], NULL, &drawvic);
 
     } else if (player_win==4){
+        SDL_RenderCopy(ui->renderer, ui->victory[3], NULL, &drawvic);
 
     }
 
@@ -168,7 +173,9 @@ void draw_logo(ui_t *ui)
 
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
-{
+{    
+    game->win=is_victory(game);
+
     if (ui->in_pause)
     {
         // Affiche le menu pause
@@ -183,12 +190,10 @@ void draw(ui_t *ui, game_t *game)
         draw_draw_card(ui, game);
     }
 
-    game->win=is_victory(game);
-
-    if (game->win != 0)
+    if (game->win != 0 ||true)
     {
-        draw_confetti(ui);
         draw_victory(ui, game);
+        draw_confetti(ui);
     }
 
     // Affichage
