@@ -34,15 +34,17 @@ void free_game(game_t *game)
  * @param game le jeu
  * @param nb_player le nombre de joueur
  */
-void check_win(game_t *game, int nb_player)
+bool check_win(game_t *game)
 {
-    for (int i = 0; i < nb_player; i++)
+    for (int  i = 0; i < 4 ; i++)
     {
         if (game->players[i]->score >= 10)
         {
-            game->win = i + 1;
+            game->win = 1;
+            return true;
         }
     }
+    return false;
 }
 
 /**
