@@ -287,7 +287,7 @@ bool stack_clicked(ui_t *ui, int x, int y)
 }
 
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
-int player_clicked(game_t *game, int x, int y)
+int player_clicked(int x, int y)
 {
 
     int box_size = 100;
@@ -331,7 +331,7 @@ void free_ui(ui_t *ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input, game_t *game)
+void refresh_input(ui_t *ui, int *input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -361,14 +361,13 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                     }
                     else
                     {
-                        *input = player_clicked(game, x, y);
+                        *input = player_clicked(x, y);
                         if (*input != -1) // input valide
                         {
                             ui->animate[0] = true; // flip_the_card
                             ui->last_tick = ui->tick;
                             ui->click_x = x;
                             ui->click_y = y;
-                            game->drawn_card_color = game->draw_pile->card->face;
                         }
                         ui->follow_mouse = false;
                     }
@@ -395,7 +394,6 @@ void game_interact(int *input, game_t *game, ui_t *ui)
 {
     if (!(ui->animate[0]) && *input != -1)
     {
-        fprintf(stderr, "test %d\n", *input);
         game_play(game, *input);
         *input = -1;
     }

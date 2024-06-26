@@ -31,9 +31,9 @@ typedef struct player player_t;
 struct game
 {
     player_t *players[4]; // Tableau des joueurs, numéroté de 0 à 3
-    stack_t *draw_pile;   // Pile de pioche
-    int draw_pile_left;   // Nombre de cartes restantes dans la pioche
-    int drawn_card_color;
+    int draw_pile_left[7];   // Nombre de cartes restantes dans la pioche pour chaque couleur
+    int face_card_color;
+    int back_card_color[3];
     int player_action; // Joueur actif
     int win;           // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
     int stealing;
