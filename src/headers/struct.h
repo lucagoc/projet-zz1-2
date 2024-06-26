@@ -53,8 +53,8 @@ struct mcts
 {
     node_id_t id;             // L'identifiant du noeud
     game_t *state;            // L'état du jeu correspondant à ce noeud
-    struct mcts *parent;      // Le noued parent dans l'arbre MCTS
-    struct mcts **children;   // Les noueds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
+    struct mcts *parent;      // Le noeud parent dans l'arbre MCTS
+    struct mcts **children;   // Les noeuds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
     int visits;               // Le nombre de fois que ce noeud a été visité
     double accumulated_value; // La valeur accumulée des simulations
 };

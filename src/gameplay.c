@@ -325,18 +325,6 @@ game_t *copy_game(game_t *game)
 }
 
 /**
- * @brief Obtenir le score du joueur
- *
- * @param game état du jeu
- * @param player joueur actif
- * @return score le score du joueur
- */
-int get_score(game_t *game, int player)
-{
-    return game->players[player]->score;
-}
-
-/**
  * @brief Fonction de jeu
  *
  * @param game le jeu
