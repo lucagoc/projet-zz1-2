@@ -398,7 +398,7 @@ void refresh_input(ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (game->player_action == 0 || true)
+    if (game->player_action == 0)
     {
         if (!(ui->animate[0]) && *input != -1)
         {
@@ -408,6 +408,8 @@ void game_interact(int *input, game_t *game, ui_t *ui)
     }
     else
     {
-        game_play(game, mcts(game));
+        game_t *copy = copy_game(game);
+        game_play(game, mcts(copy));
+        free_game(copy);
     }
 }

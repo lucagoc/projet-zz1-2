@@ -36,6 +36,10 @@ int is_victory(game_t *game)
  */
 void free_game(game_t *game)
 {
+    if (game == NULL)
+    {
+        return;
+    }
     for (int i = 0; i < 4; i++)
     {
         if (game->players[i] != NULL) // Nombre de joueur variable
@@ -181,7 +185,6 @@ void score_card(game_t *game)
  */
 void add_card_in_tank(int player, game_t *game)
 {
-    fprintf(stderr, "[DEBUG] add_card_in_tank : player %d, card %d\n", player, game->face_card_color);
     game->players[player]->tank[game->face_card_color] = 1; // on ajoute la carte au tank
 }
 
@@ -237,9 +240,11 @@ game_t *copy_game(game_t *game)
         copy_game_state->draw_pile_left[i] = game->draw_pile_left[i];
     }
     copy_game_state->stealing = game->stealing;
+
     copy_game_state->back_card_color[0] = game->back_card_color[0];
     copy_game_state->back_card_color[1] = game->back_card_color[1];
     copy_game_state->back_card_color[2] = game->back_card_color[2];
+    
     copy_game_state->face_card_color = game->face_card_color;
 
     return copy_game_state;
@@ -270,7 +275,6 @@ void game_play(game_t *game, int input)
     }
     else // le joueur actif choisit de voler
     {
-        fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
             steal_card(input, game);
@@ -286,7 +290,7 @@ void game_play(game_t *game, int input)
 
     // Changement de joueur
     game->player_action = (game->player_action + 1) % 4;
-    
+
     // Changement de carte
     get_draw_card(game);
 }

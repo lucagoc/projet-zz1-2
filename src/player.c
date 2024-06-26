@@ -93,7 +93,16 @@ int ucb(game_t *game, int n)
  */
 int select_node(mcts_t *root)
 {
-    int n = 100;
+    for (int i = 0; i < 4; i++)
+    {
+        if (root->children[i] == NULL)
+        {
+            return i;
+        }
+    }
+
+    // Dans l'autre cas.
+    int n = 10;
     return ucb(root->state, n);
 }
 
@@ -105,7 +114,7 @@ int select_node(mcts_t *root)
 mcts_t *create_node(mcts_t *parent, game_t *game)
 {
     mcts_t *node = malloc(sizeof(mcts_t));
-    node->state = game;
+    node->state = copy_game(game);
     node->parent = parent;
     node->visits = 0;
     for (int i = 0; i < NUM_PLAYERS; i++)
@@ -159,6 +168,10 @@ void backpropagate_node(mcts_t *node, int *value)
 
 void simulate_node(mcts_t *node)
 {
+    if(node == NULL)
+    {
+        fprintf(stderr, "[ERREUR] simulate_node le noeud est NULL\n");
+    }
     while (node->state->win == -1)
     {
         int input = rand() % NUM_PLAYERS;
@@ -180,43 +193,59 @@ bool root_explored(mcts_t *root)
     return true;
 }
 
-mcts_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
+void *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
 {
-    mcts_t *node = create_node(parent, parent->state);
-    game_play(node->state, input);
-    node->id = gen_id(node->state);
-
-    mcts_t *search = rb_tree_search(rb_tree, node->id);
-    if (search != NULL)
+    if (parent->children[input] != NULL)
     {
-        // Le noeud existe déjà.
-        free_mtsc_node(node);
-        return search;
+        int input2 = select_node(parent->children[input]);
+        return parent->children[input]->children[input2] = expand_node(parent->children[input], rb_tree, input2);
     }
+    else
+    {
+        mcts_t *node = create_node(parent, parent->state);
+        game_play(node->state, input);
+        node->id = gen_id(node->state);
 
+        mcts_t *search = rb_tree_search(rb_tree, node->id);
+        if (search != NULL)
+        {
+            // Le noeud existe déjà.
+            free_mtsc_node(node);
+            fprintf(stderr, "[WARNING] Le noeud existe déjà !\n");
+            parent->children[input] = node;
+        }
+        else
+        {
+            rb_tree = rb_tree_insert(rb_tree, node);
+        }
 
-    return node;
+        parent->children[input] = node;
+
+        // On simule le noeud
+        simulate_node(parent->children[input]);
+        parent->n_coup[input] = parent->n_coup[input];
+
+        // On récupère le score
+        int *score = get_reward(parent->children[input]->state);
+
+        // On rétro-propage le score obtenu
+        backpropagate_node(parent->children[input], score);
+        return node;
+    }
 }
 
 void mcts_aux(mcts_t *root, rb_tree_t *rb_tree)
 {
-    while (!root_explored(root))
+    int i = 0;
+    while (i < NUM_ITERATIONS)
     {
-        fprintf(stderr, "MCTS_aux : Loop entry ...\n");
         // On sélectionne un coup parmis ceux non exploré
         int input = select_node(root);
 
         // On étend le noeud
         root->children[input] = expand_node(root, rb_tree, input);
 
-        // On simule le noeud
-        simulate_node(root->children[input]);
-
-        // On récupère le score
-        int *score = get_reward(root->children[input]->state);
-
-        // On rétro-propage le score obtenu
-        backpropagate_node(root->children[input], score);
+        i++;
     }
 }
 
@@ -247,6 +276,9 @@ int mcts(game_t *game)
             best_input = i;
         }
     }
+
+    free_mtsc_node(root);
+    free_rb_tree(rb_tree);
 
     return best_input;
 }

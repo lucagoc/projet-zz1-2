@@ -90,3 +90,4 @@ node_id_t *gen_id(game_t *game);
 mcts_t *rb_tree_search(rb_tree_t *tree, node_id_t *id);
 rb_tree_t *rb_tree_insert(rb_tree_t *tree, mcts_t *value);
 rb_tree_t *rb_tree_create();
+void *free_rb_tree(rb_tree_t *tree);
