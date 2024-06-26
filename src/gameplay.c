@@ -226,9 +226,14 @@ void add_card_in_tank(int player, game_t *game)
 void steal_card(game_t *game)
 {
     fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->face_card_color);
+    printf("player volé %d \n", game->stealing);
+    printf("player voleur %d \n", game->player_action);
+
     game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
     game->players[game->stealing]->tank[game->face_card_color] = 0;
     game->player_action = (game->player_action + 1) % 4; // on passe au joueur suivant
+    game->stealing = -1; //on sort du mode vol
+
 }
 
 /**
@@ -289,7 +294,7 @@ game_t *copy_game(game_t *game)
 void game_play(game_t *game, int input)
 {
 
-    // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
+    // input vaut l'indice du joueur cliqué
 
     printf("Game id entry : \n");
     node_id_t *gen = gen_id(game);

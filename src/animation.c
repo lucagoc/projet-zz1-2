@@ -144,89 +144,90 @@ void draw_face(ui_t *ui, int color, int x, int y)
 // animation de vol de carte
 void draw_steal(ui_t *ui, game_t *game)
 {
+    if (!ui->animate[0]){
 
-    float speed = 1.0;
-    float anime_tick = (ui->delta_t * speed);
+        float speed = 1.0;
+        float anime_tick = (ui->delta_t * speed);
 
-    if (ui->ticks_stealing_init == 0)
-    {
+        if (ui->ticks_stealing_init == 0)
+        {
 
-        // on démarre l'animation
-        ui->animate[2] = 1;
-        ui->ticks_stealing_init = 1;
-        ui->last_tick = SDL_GetTicks();
-        game->players[game->stealing]->tank[game->face_card_color] = 0;
+            // on démarre l'animation
+            ui->animate[2] = 1;
+            ui->ticks_stealing_init = 1;
+            ui->last_tick = SDL_GetTicks();
+        }
+        else if (anime_tick < 1000)
+        {
+            // on joue l'animation pendant 1000 ticks
+
+            int size_length = ui->screen_w / 2 - 90;
+            int size_height = 200;
+
+            int debx;
+            int finx;
+            int deby;
+            int finy;
+
+            float speed = 0.001;
+            float param = speed * anime_tick;
+            int number_cards_stolen = game->players[game->stealing]->tank[game->face_card_color]; // nombre de cartes volées
+
+            if (game->stealing == 0) // selon la position du volé on définit d'où partent les cartes
+            {
+                debx = 0;
+                deby = ui->screen_h - size_height;
+            }
+            else if (game->stealing == 1)
+            {
+                debx = ui->screen_w - size_length;
+                deby = 0;
+            }
+            else if (game->stealing == 2)
+            {
+                debx = 0;
+                deby = 0;
+            }
+            else if (game->stealing == 3)
+            {
+                debx = ui->screen_w - size_length;
+                deby = ui->screen_h - size_height;
+            }
+
+            if (game->player_action == 0) // selon la position du voleur on définit où arrivent les cartes
+            {
+                finx = 0;
+                finy = ui->screen_h - size_height;
+            }
+            else if (game->player_action == 1)
+            {
+                finx = ui->screen_w - size_length;
+                finy = 0;
+            }
+            else if (game->player_action == 2)
+            {
+                finx = 0;
+                finy = 0;
+            }
+            else if (game->player_action == 3)
+            {
+                finx = ui->screen_w - size_length;
+                finy = ui->screen_h - size_height;
+            }
+            for (int i = 0; i < number_cards_stolen; i++)
+            {
+
+                draw_face(ui, game->face_card_color, param * finx + (1000 - param) * debx, param * finy + (1000 - param) * deby + i * 20);
+            }
+        }
+        else
+        {
+            // l'animation termine
+            ui->animate[2] = 0; //on sort du mode animation
+            ui->ticks_stealing_init = 0; // on remet à 0 pour la prochaine animation
+            ui->last_tick = SDL_GetTicks();
+            steal_card(game); //on applique le vol effectif à la fin de l'animation
+        }
     }
-    else if (anime_tick < 1000)
-    {
-        // on joue l'animation pendant 1000 ticks
 
-        int size_length = ui->screen_w / 2 - 90;
-        int size_height = 200;
-
-        int debx;
-        int finx;
-        int deby;
-        int finy;
-
-        float speed = 0.001;
-        float param = speed * anime_tick;
-        int number_cards_stolen = game->players[game->stealing]->tank[game->face_card_color]; // nombre de cartes volées
-
-        if (game->stealing == 0) // selon la position du volé on définit d'où partent les cartes
-        {
-            debx = 0;
-            deby = ui->screen_h - size_height;
-        }
-        else if (game->stealing == 1)
-        {
-            debx = ui->screen_w - size_length;
-            deby = 0;
-        }
-        else if (game->stealing == 2)
-        {
-            debx = 0;
-            deby = 0;
-        }
-        else if (game->stealing == 3)
-        {
-            debx = ui->screen_w - size_length;
-            deby = ui->screen_h - size_height;
-        }
-
-        if (game->player_action == 0) // selon la position du voleur on définit où arrivent les cartes
-        {
-            finx = 0;
-            finy = ui->screen_h - size_height;
-        }
-        else if (game->player_action == 1)
-        {
-            finx = ui->screen_w - size_length;
-            finy = 0;
-        }
-        else if (game->player_action == 2)
-        {
-            finx = 0;
-            finy = 0;
-        }
-        else if (game->player_action == 3)
-        {
-            finx = ui->screen_w - size_length;
-            finy = ui->screen_h - size_height;
-        }
-        for (int i = 0; i < number_cards_stolen; i++)
-        {
-
-            draw_face(ui, game->face_card_color, param * finx + (1000 - param) * debx, param * finy + (1000 - param) * deby + i * 20);
-        }
-    }
-    else
-    {
-        // l'animation termine
-        ui->animate[2] = 0; //on sort du mode animation
-        ui->ticks_stealing_init = 0; // on remet à 0 pour la prochaine animation
-        ui->last_tick = SDL_GetTicks();
-        steal_card(game); //on applique le vol effectif à la fin de l'animation
-        game->stealing = -1; //on sort du mode vol
-    }
 }

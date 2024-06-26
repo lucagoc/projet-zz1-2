@@ -353,7 +353,7 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                if (*input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
+                if (game->stealing ==-1 && *input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
                 {
                     int x = ui->event.button.x;
                     int y = ui->event.button.y;
@@ -371,6 +371,7 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
                             ui->click_x = x;
                             ui->click_y = y;
                             ui->animate[0] = true; // flip_the_card
+                            printf("player actif %d \n", game->player_action);
 
                             if (game->stealing==-1 && *input != game->player_action && is_card_in_tank(*input, game))
                             {
@@ -401,7 +402,7 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (!(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
+    if (game->stealing==-1 && !(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
     {
         game_play(game, *input);
         *input = -1;
