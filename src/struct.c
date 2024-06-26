@@ -48,73 +48,6 @@ stack_t *stack_push(stack_t *stack, card_t *card)
     return new_stack;
 }
 
-/**
- * @brief Retourne la face du sommet de la pile
- *
- * @param stack la pile
- * @return int
- */
-int stack_top(stack_t *stack)
-{
-    if (stack_is_empty(stack))
-    {
-        fprintf(stderr, "Erreur: pile vide\n");
-        exit(EXIT_FAILURE);
-    }
-    return stack->card->face;
-}
-
-/**
- * @brief Retire le sommet de la pile
- *
- * @param stack la pile
- */
-stack_t *stack_pop(stack_t *stack)
-{
-    if (stack_is_empty(stack))
-    {
-        fprintf(stderr, "Erreur: pile vide\n");
-        exit(EXIT_FAILURE);
-    }
-    stack_t *new_stack = stack->next;
-    free(stack);
-    return new_stack;
-}
-
-/**
- * @brief Retourne la taille de la pile
- *
- * @param stack la pile
- * @return int
- */
-int stack_size(stack_t *stack)
-{
-    int size = 0;
-    while (!stack_is_empty(stack))
-    {
-        size++;
-        stack = stack->next;
-    }
-    return size;
-}
-
-/**
- * @brief Libère la mémoire allouée à la pile
- *
- * @param stack la pile
- */
-void stack_free(stack_t *stack)
-{
-    stack_t *current = stack;
-    stack_t *next;
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current);
-        current = next;
-    }
-}
-
 /*************************** Fonctions de la structure de données pile *****************************/
 
 // Arbre rouge-Noir
@@ -152,17 +85,6 @@ int concat_sorted(int a, int b, int c)
     int concatenated = a * 100 + b * 10 + c;
 
     return concatenated;
-}
-
-void print_node_id(node_id_t id)
-{
-    printf("---------------------------------------- \n");
-    printf("id_game : %llu\n", id.id_game);
-    printf("id_player_0 : %llu\n", id.id_player_0);
-    printf("id_player_1 : %llu\n", id.id_player_1);
-    printf("id_player_2 : %llu\n", id.id_player_2);
-    printf("id_player_3 : %llu\n", id.id_player_3);
-    printf("---------------------------------------- \n");
 }
 
 node_id_t *gen_id(game_t *game)

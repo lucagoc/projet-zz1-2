@@ -256,10 +256,7 @@ void game_play(game_t *game, int input)
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
 
-    printf("Game id entry : \n");
-    node_id_t *gen = gen_id(game);
-    print_node_id(*gen);
-    free(gen);
+    
 
     if (input == game->player_action) // le joueur actif choisit de marquer
     {

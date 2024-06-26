@@ -15,7 +15,7 @@ float I_k(float G, float C, int n, int n_k)
 }
 
 // On utilise comme récompense directement le score des joueur
-int* get_reward(game_t *game)
+int *get_reward(game_t *game)
 {
     int *rewards = malloc(sizeof(int) * 4);
     for (int i = 0; i < 4; i++)
@@ -33,8 +33,8 @@ int ucb(game_t *game, int n)
 {
     /* Initialisation */
     int player = game->player_action;
-    int C = 1; // Constante d'exploration
-    int G[4];  // Gain accumulé sur la machine k
+    float C = 1.4; // Constante d'exploration
+    int G[4];      // Gain accumulé sur la machine k
     int max = 0;
     int n_t[4]; // Nombre de fois où l'on a joué sur la machine k
     int I[4];   // Valeur de l'indice de confiance pour chaque possibilité
@@ -73,7 +73,7 @@ int ucb(game_t *game, int n)
         }
         game_t *copy = copy_game(game);
         game_play(copy, max);
-        int* reward = get_reward(copy);
+        int *reward = get_reward(copy);
         G[max] += reward[player];
         n_t[max]++;
         free(reward);
@@ -123,7 +123,7 @@ mcts_t *create_node(mcts_t *parent, game_t *game)
  * @param node le noeud à simuler
  * @param value la valeur de la simulation
  */
-void backpropagate_node(mcts_t *node, int* value)
+void backpropagate_node(mcts_t *node, int *value)
 {
     // Mettre à jour les visites et la valeur accumulée de tous les noeuds parents
     while (node != NULL)
