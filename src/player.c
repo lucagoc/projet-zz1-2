@@ -13,10 +13,16 @@ float I_k(float G, float C, int n, int n_k)
 {
     return G / n_k + C * sqrt(log(n) / n_k);
 }
-// On utilise comme récompense directement le score du joueur
-int get_reward(game_t *game, int player)
+
+// On utilise comme récompense directement le score des joueur
+int* get_reward(game_t *game)
 {
-    return game->players[player]->score;
+    int *rewards = malloc(sizeof(int) * 4);
+    for (int i = 0; i < 4; i++)
+    {
+        rewards[i] = game->players[i]->score;
+    }
+    return rewards;
 }
 
 // Calcul pour le prochain coup si il faut scorer ou voler à l'aide de l'algorithme UCB (Upper Confidence Bound)
@@ -43,10 +49,11 @@ int ucb(game_t *game, int n)
     {
         game_t *copy = copy_game(game);
         game_play(copy, i % 4);
-        int reward = get_reward(copy, player);
+        int *reward = get_reward(copy);
         I[i] = I_k(G[i], C, n, 1); // 1 = le nombre de fois où l'on a déjà joué sur la machine.
-        G[i] += reward;
+        G[i] += reward[i];
         free_game(copy);
+        free(reward);
     }
 
     // On joue n fois sur toute les machines
@@ -66,9 +73,10 @@ int ucb(game_t *game, int n)
         }
         game_t *copy = copy_game(game);
         game_play(copy, max);
-        int reward = get_reward(copy, player);
-        G[max] += reward;
+        int* reward = get_reward(copy);
+        G[max] += reward[player];
         n_t[max]++;
+        free(reward);
         free_game(copy);
     }
 
@@ -93,24 +101,20 @@ int select_node(mcts_t *root)
  *
  * @param node le noeud à étendre
  */
-void expand_node(mcts_t *node)
+mcts_t *create_node(mcts_t *parent, game_t *game)
 {
-    if (node->children == NULL)
+    mcts_t *node = malloc(sizeof(mcts_t));
+    node->state = game;
+    node->parent = parent;
+    node->visits = 0;
+    for (int i = 0; i < 4; i++)
     {
-        node->children = malloc(4 * sizeof(mcts_t));
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                node->children[i] = malloc(sizeof(mcts_t));
-                node->children[i]->state = copy_game(node->state);
-                game_play(node->children[i]->state, i);
-                node->children[i]->parent = node;
-                node->children[i]->children = NULL;
-                node->children[i]->visits = 0;
-                node->children[i]->accumulated_value = 0;
-            }
-        }
+        node->gain_coup[i] = 0;
+        node->n_coup[i] = 0;
+        node->children[i] = NULL;
     }
+
+    return node;
 }
 
 /**
@@ -119,46 +123,85 @@ void expand_node(mcts_t *node)
  * @param node le noeud à simuler
  * @param value la valeur de la simulation
  */
-void backpropagate_node(mcts_t *node, double value)
+void backpropagate_node(mcts_t *node, int* value)
 {
     // Mettre à jour les visites et la valeur accumulée de tous les noeuds parents
     while (node != NULL)
     {
         node->visits++;
-        node->accumulated_value += value;
+
+        for (int i = 0; i < 4; i++)
+        {
+            node->gain_coup[i] += value[i];
+        }
+
         node = node->parent;
     }
 }
 
 void simulate_node(mcts_t *node)
 {
+    while (node->state->win == -1)
+    {
+        int input = rand() % 4;
+        game_play(node->state, input);
+    }
+
     return;
 }
+
+int root_explored(mcts_t *root)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (root->children[i] == NULL)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+mcts_t *expand_node(mcts_t *parent, int input)
+{
+    mcts_t *node = create_node(parent, parent->state);
+    game_play(node->state, input);
+    node->id = gen_id(node->state);
+    return node;
+}
+
+void mcts_aux(mcts_t *root)
+{
+    while (!root_explored(root))
+    {
+        // On sélectionne un coup parmis ceux non exploré
+        int input = select_node(root);
+
+        // On étend le noeud
+        root->children[input] = expand_node(root, input);
+
+        // On simule le noeud
+        simulate_node(root->children[input]);
+
+        // On récupère le score
+        int *score = get_reward(root->children[input]->state);
+
+        // On rétro-propage le score obtenu
+        backpropagate_node(root->children[input], score);
+    }
+}
+
 /**
- * @brief MCTS_rec
+ * @brief MCTS
  *
  * @param game l'état du jeu
  *
  */
-void mcts_rec(mcts_t *node)
+void mcts(game_t *game)
 {
-    int already_play[4];
-    for (int i = 0; i < 4; i++)
-    {
-        already_play[i] = 0;
-    }
-    
-    while (node->visits < NUM_ITERATIONS)
-    {
-        int input = select_node(node);
-        if (already_play[input] == 0)
-        {
-            expand_node(node);
-            already_play[input] = 1;
-        }
-        simulate_node(node);
-        backpropagate_node(node, 0);
-    }
+    mcts_t *root = create_node(NULL, game);
+    root->id = gen_id(root->state);
+    mcts_aux(root);
 }
 
 /*----------------------------------------------------------------------Implémentation des phases de MCTS-----------------------------------------------------------*/
@@ -177,4 +220,3 @@ player_t *create_player()
     }
     return player;
 }
-
