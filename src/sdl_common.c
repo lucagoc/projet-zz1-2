@@ -192,6 +192,12 @@ void load_textures(ui_t *ui)
     ui->victory[1] = load_texture_from_image("assets/ui/pl2.png", ui->window, ui->renderer);
     ui->victory[2] = load_texture_from_image("assets/ui/pl3.png", ui->window, ui->renderer);
     ui->victory[3] = load_texture_from_image("assets/ui/pl4.png", ui->window, ui->renderer);
+    ui->active_player_textures[0] = load_texture_from_image("assets/ui/bas-gauche.png", ui->window, ui->renderer);
+    ui->active_player_textures[1] = load_texture_from_image("assets/ui/haut-droit.png", ui->window, ui->renderer);
+    ui->active_player_textures[2] = load_texture_from_image("assets/ui/haut-gauche.png", ui->window, ui->renderer);
+    ui->active_player_textures[3] = load_texture_from_image("assets/ui/bas-droit.png", ui->window, ui->renderer);
+
+
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);
