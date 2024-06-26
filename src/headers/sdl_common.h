@@ -49,6 +49,6 @@ struct ui_s
 typedef struct ui_s ui_t;
 
 ui_t *create_ui();
-void refresh_input(ui_t *ui, int *input);
+void refresh_input(game_t * game, ui_t *ui, int *input);
 void free_ui(ui_t *ui);
 void game_interact(int *input, game_t *game, ui_t *ui);

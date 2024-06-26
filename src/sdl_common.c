@@ -337,7 +337,7 @@ void free_ui(ui_t *ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input)
+void refresh_input(game_t * game, ui_t *ui, int *input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -370,6 +370,10 @@ void refresh_input(ui_t *ui, int *input)
                         *input = player_clicked(x, y);
                         if (*input != -1) // input valide
                         {
+                            if (*input != game->player_action && is_card_in_tank(input, game)){
+                                game->stealing=*input; //si on est dans le cas d'un vol on lance l'animation
+                            }
+                            
                             ui->animate[0] = true; // flip_the_card
                             ui->last_tick = ui->tick;
                             ui->click_x = x;

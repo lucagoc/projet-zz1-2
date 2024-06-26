@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
 
     while (ui->program_on)
     {
-        refresh_input(ui, input);
+        refresh_input(game, ui, input);
         game_interact(input, game, ui); // (Attention pour les animations à ne rien faire si aucune input)
         draw(ui, game);
     }

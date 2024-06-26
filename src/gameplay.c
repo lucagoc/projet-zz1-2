@@ -3,7 +3,6 @@
 #include <time.h>
 #include <stdbool.h>
 
-#include "headers/struct.h"
 #include "headers/gameplay.h"
 
 #define NUMBER_FACE 7       // Nombre de couleurs
@@ -23,7 +22,7 @@ bool is_draw_pile_empty(game_t *game)
     return true;
 }
 
-//Retourne le joueur qui a le plus de points
+// Retourne le joueur qui a le plus de points
 int max_4(int p1, int p2, int p3, int p4)
 {
     if (p1 >= p2 && p1 >= p3 && p1 >= p4)
@@ -91,7 +90,6 @@ void free_game(game_t *game)
     }
     free(game);
 }
-
 
 // Dépile la pile et renvoie la couleur de la première carte, retourne -1 si la pile est vide
 // Retourne 1 si la carte à bien été générée
@@ -226,9 +224,13 @@ void add_card_in_tank(int player, game_t *game)
  * @param input l'input du joueur
  * @param game le jeu
  */
-void steal_card(int input, game_t *game)
+void steal_card(game_t *game)
 {
-    game->stealing = input; // on enlève les cartes au joueur volé
+    fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->face_card_color);
+    game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
+    game->players[game->stealing]->tank[game->face_card_color] = 0;
+    game->player_action = (game->player_action + 1) % 4; // on passe au joueur suivant
+
 }
 
 /**
@@ -314,8 +316,9 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-
-            steal_card(input, game);
+            if (game->stealing==0){
+                steal_card(game);
+            }
         }
         else
         {

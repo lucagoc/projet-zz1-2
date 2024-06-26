@@ -1,7 +1,6 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
-
-#include "headers/sdl_common.h"
+#include "headers/gameplay.h"
 
 #define CARD_WIDTH 601
 #define CARD_HEIGHT 844
@@ -156,6 +155,8 @@ void draw_steal(ui_t *ui, game_t *game)
         ui->animate[2] = 1;
         ui->ticks_stealing_init = 1;
         ui->last_tick = SDL_GetTicks();
+        game->players[game->stealing]->tank[game->face_card_color] = 0;
+
     }
     else if (anime_tick < 1000)
     {
@@ -223,12 +224,10 @@ void draw_steal(ui_t *ui, game_t *game)
     } else {
         //l'animation termine
         ui->animate[2]=0;
-        fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->face_card_color);
-        game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
-        game->players[game->stealing]->tank[game->face_card_color] = 0;
-        game->stealing=0;
         ui->ticks_stealing_init=0; //on remet à 0 pour la prochaine animation
-        game->player_action = (game->player_action + 1) % 4; //on passe au joueur suivant
         ui->last_tick = SDL_GetTicks();
+        steal_card(game);
+        game->stealing = 0;
+
     }
 }
