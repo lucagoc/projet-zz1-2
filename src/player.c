@@ -37,7 +37,7 @@ int ucb(game_t *game, int n)
 {
     /* Initialisation */
     int player = game->player_action;
-    float C = 1.4;      // Constante d'exploration
+    float C = 0.5;      // Constante d'exploration
     int G[NUM_PLAYERS]; // Gain accumulé sur la machine k
     int max = 0;
     int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine k
