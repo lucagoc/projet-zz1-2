@@ -207,6 +207,13 @@ rb_tree_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
     {
         mcts_t *node = create_node(parent, parent->state);
         game_play(node->state, input);
+
+        // Jouer 3 coups aléatoires pour revenir au prochain
+        for (int i = 0; i < NUM_PLAYERS-1; i++)
+        {
+            game_play(node->state, rand() % NUM_PLAYERS);
+        }
+        
         node->id = gen_id(node->state);
 
         mcts_t *search = rb_tree_search(rb_tree, node->id);
