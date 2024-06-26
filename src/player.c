@@ -34,8 +34,8 @@ int ucb(game_t *game, int n)
 {
     /* Initialisation */
     int player = game->player_action;
-    float C = 1.4; // Constante d'exploration
-    int G[NUM_PLAYERS];      // Gain accumulé sur la machine k
+    float C = 1.4;      // Constante d'exploration
+    int G[NUM_PLAYERS]; // Gain accumulé sur la machine k
     int max = 0;
     int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine k
     int I[NUM_PLAYERS];   // Valeur de l'indice de confiance pour chaque possibilité
@@ -118,6 +118,23 @@ mcts_t *create_node(mcts_t *parent, game_t *game)
     return node;
 }
 
+void *free_mtsc_node(mcts_t *node)
+{
+    if (node == NULL)
+    {
+        return NULL;
+    }
+
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        free_mtsc_node(node->children[i]);
+    }
+
+    free_game(node->state);
+    free(node);
+    return NULL;
+}
+
 /**
  * @brief MCTS rétropropagation
  *
@@ -163,23 +180,34 @@ bool root_explored(mcts_t *root)
     return true;
 }
 
-mcts_t *expand_node(mcts_t *parent, int input)
+mcts_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
 {
     mcts_t *node = create_node(parent, parent->state);
     game_play(node->state, input);
     node->id = gen_id(node->state);
+
+    mcts_t *search = rb_tree_search(rb_tree, node->id);
+    if (search != NULL)
+    {
+        // Le noeud existe déjà.
+        free_mtsc_node(node);
+        return search;
+    }
+
+
     return node;
 }
 
-void mcts_aux(mcts_t *root)
+void mcts_aux(mcts_t *root, rb_tree_t *rb_tree)
 {
     while (!root_explored(root))
     {
+        fprintf(stderr, "MCTS_aux : Loop entry ...\n");
         // On sélectionne un coup parmis ceux non exploré
         int input = select_node(root);
 
         // On étend le noeud
-        root->children[input] = expand_node(root, input);
+        root->children[input] = expand_node(root, rb_tree, input);
 
         // On simule le noeud
         simulate_node(root->children[input]);
@@ -196,13 +224,31 @@ void mcts_aux(mcts_t *root)
  * @brief MCTS
  *
  * @param game l'état du jeu
- *
+ * @return le meilleur coup à jouer
  */
-void mcts(game_t *game)
+int mcts(game_t *game)
 {
     mcts_t *root = create_node(NULL, game);
     root->id = gen_id(root->state);
-    mcts_aux(root);
+
+    rb_tree_t *rb_tree = rb_tree_create();
+    rb_tree = rb_tree_insert(rb_tree, root);
+
+    mcts_aux(root, rb_tree);
+
+    // On choisit le meilleur coup
+    int best_input = 0;
+    int max = -100;
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        if (max < root->children[i]->gain_coup[game->player_action])
+        {
+            max = root->children[i]->gain_coup[game->player_action];
+            best_input = i;
+        }
+    }
+
+    return best_input;
 }
 
 /*----------------------------------------------------------------------Implémentation des phases de MCTS-----------------------------------------------------------*/

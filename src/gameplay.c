@@ -12,7 +12,7 @@
 
 /*
  * @brief Test si un joueur gagne.
- * 
+ *
  * @param game le jeu
  */
 int is_victory(game_t *game)
@@ -123,7 +123,7 @@ game_t *create_game()
 
     game->face_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
     game->player_action = 0;    // Le joueur 1 commence
-    game->win = -1;              // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->win = -1;             // Initialisation du statut de victoire à 0 (personne n'a gagné)
     game->back_card_color[0] = -1;
     game->back_card_color[1] = -1;
     game->back_card_color[2] = -1;
@@ -193,7 +193,8 @@ void add_card_in_tank(int player, game_t *game)
  */
 void steal_card(int input, game_t *game)
 {
-    game->stealing = input; // on enlève les cartes au joueur volé
+    game->players[game->player_action]->tank[game->face_card_color] += game->players[input]->tank[game->face_card_color] + 1; // on récupère les cartes volées
+    game->players[input]->tank[game->face_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
 }
 
 /**
@@ -256,8 +257,6 @@ void game_play(game_t *game, int input)
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
 
-    
-
     if (input == game->player_action) // le joueur actif choisit de marquer
     {
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
@@ -276,7 +275,6 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-
             steal_card(input, game);
         }
         else
@@ -288,7 +286,7 @@ void game_play(game_t *game, int input)
 
     // Si quelqu'un gagne
     game->win = is_victory(game);
-    
+
     // Changement de carte
     get_draw_card(game);
 

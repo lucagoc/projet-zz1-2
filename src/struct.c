@@ -144,8 +144,8 @@ node_id_t *gen_id(game_t *game)
     return id;
 }
 
-// Les rb_tree utilise strcmp comme relation d'ordre
-rb_tree_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
+// Cherche un ID dans l'arbre rouge-noir et renvoie le noeud correspondant ou null si introuvable
+mcts_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
 {
     if (tree == NULL)
     {
@@ -155,7 +155,7 @@ rb_tree_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
     int cmp = memcmp(&tree->value->id, id, sizeof(node_id_t));
     if (cmp == 0)
     {
-        return tree;
+        return tree->value;
     }
     else if (cmp < 0)
     {
@@ -240,4 +240,17 @@ rb_tree_t *rb_tree_insert(rb_tree_t *tree, mcts_t *value)
 
     rb_tree_insert_fixup(&tree);
     return tree;
+}
+
+void *free_rb_tree(rb_tree_t *tree)
+{
+    if (tree == NULL)
+    {
+        return NULL;
+    }
+
+    free_rb_tree(tree->left);
+    free_rb_tree(tree->right);
+    free(tree);
+    return NULL;
 }
