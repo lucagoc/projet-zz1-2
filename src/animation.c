@@ -169,7 +169,7 @@ void draw_steal(ui_t *ui, game_t *game)
         int finy;
 
         float speed = 0.001;
-        int param;
+        int param = anime_tick * speed;
         int number_cards_stolen = game->players[game->stealing]->tank[game->drawn_card_color]; //nombre de cartes volées
 
         if (game->stealing == 0)  //selon la position du volé on définit d'où partent les cartes
@@ -214,9 +214,8 @@ void draw_steal(ui_t *ui, game_t *game)
             finy = ui->screen_h - size_height;
         }
 
-        for (int i = 0; i < number_cards_stolen * 10; i += 10)
+        for (int i = 0; i < number_cards_stolen; i++)
         {
-            param = (SDL_GetTicks() - ui->ticks_stealing_init) * 10 * speed;
 
             draw_face(ui, game->drawn_card_color, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby +i*20);
         }
