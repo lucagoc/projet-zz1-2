@@ -170,7 +170,7 @@ void draw_steal(ui_t *ui, game_t *game)
         int finy;
 
         float speed = 0.001;
-        int param;
+        float param=speed * anime_tick;
         int number_cards_stolen = game->players[game->stealing]->tank[game->face_card_color]; //nombre de cartes volées
 
         if (game->stealing == 0) // selon la position du volé on définit d'où partent les cartes
