@@ -26,6 +26,7 @@ int main(int argc, char const *argv[])
 
     free_game(game);
     free_ui(ui);
+    free(input);
 
     return 0;
 }
