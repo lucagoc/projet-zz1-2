@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "headers/struct.h"
-#include "headers/player.h"
 #include "headers/gameplay.h"
 
 #define NUM_ARMS 10         // Nombre de bras

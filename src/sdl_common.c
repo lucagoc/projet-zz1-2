@@ -3,7 +3,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 
-#include "headers/sdl_common.h"
 #include "headers/gameplay.h"
 
 #define SCREEN_WIDTH 1600
@@ -197,8 +196,6 @@ void load_textures(ui_t *ui)
     ui->active_player_textures[2] = load_texture_from_image("assets/ui/haut-gauche.png", ui->window, ui->renderer);
     ui->active_player_textures[3] = load_texture_from_image("assets/ui/bas-droit.png", ui->window, ui->renderer);
 
-
-
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);
 
@@ -337,7 +334,7 @@ void free_ui(ui_t *ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(game_t * game, ui_t *ui, int *input)
+void refresh_input(game_t *game, ui_t *ui, int *input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -370,14 +367,16 @@ void refresh_input(game_t * game, ui_t *ui, int *input)
                         *input = player_clicked(x, y);
                         if (*input != -1) // input valide
                         {
-                            if (*input != game->player_action && is_card_in_tank(input, game)){
-                                game->stealing=*input; //si on est dans le cas d'un vol on lance l'animation
-                            }
-                            
-                            ui->animate[0] = true; // flip_the_card
                             ui->last_tick = ui->tick;
                             ui->click_x = x;
                             ui->click_y = y;
+                            ui->animate[0] = true; // flip_the_card
+
+                            if (game->stealing==-1 && *input != game->player_action && is_card_in_tank(*input, game))
+                            {
+                                game->stealing = *input; // si on est dans le cas d'un vol on lance l'animation
+                            }
+
                         }
                         ui->follow_mouse = false;
                     }
@@ -402,7 +401,7 @@ void refresh_input(game_t * game, ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (!(ui->animate[0]) && *input != -1)
+    if (!(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
     {
         game_play(game, *input);
         *input = -1;

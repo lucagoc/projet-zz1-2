@@ -3,9 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "headers/sdl_common.h"
 #include "headers/graphics.h"
-#include "headers/gameplay.h"
 
 int main(int argc, char const *argv[])
 {

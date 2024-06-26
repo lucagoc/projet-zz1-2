@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
-
 #include "headers/gameplay.h"
 
 #define NUMBER_FACE 7       // Nombre de couleurs
@@ -168,7 +167,7 @@ game_t *create_game()
 
     // Tirer une première carte
     get_draw_card(game);
-    game->stealing = 0;
+    game->stealing = -1;
 
     return game;
 }
@@ -230,7 +229,6 @@ void steal_card(game_t *game)
     game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
     game->players[game->stealing]->tank[game->face_card_color] = 0;
     game->player_action = (game->player_action + 1) % 4; // on passe au joueur suivant
-
 }
 
 /**
@@ -316,7 +314,8 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-            if (game->stealing==0){
+            if (game->stealing == -1)
+            {
                 steal_card(game);
             }
         }

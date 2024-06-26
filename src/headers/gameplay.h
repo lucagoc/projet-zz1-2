@@ -9,3 +9,4 @@ void score_card(game_t *game);
 void steal_card(game_t *game);
 int get_score(game_t *game, int player);
 int is_victory(game_t *game);
+int is_card_in_tank(int player, game_t *game);
