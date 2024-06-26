@@ -46,16 +46,23 @@ void free_game(game_t *game)
     free(game);
 }
 
-bool is_draw_pile_empty(game_t *game)
+/**
+ * @brief Fonction de vérification de la victoire
+ *
+ * @param game le jeu
+ * @param nb_player le nombre de joueur
+ */
+bool check_win(game_t *game)
 {
-    for (int i = 0; i < 7; i++)
+    for (int  i = 0; i < 4 ; i++)
     {
         if (game->draw_pile_left[i] > 0)
         {
-            return false;
+            game->win = 1;
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 // Dépile la pile et renvoie la couleur de la première carte, retourne -1 si la pile est vide
@@ -242,18 +249,6 @@ game_t *copy_game(game_t *game)
     copy_game_state->face_card_color = game->face_card_color;
 
     return copy_game_state;
-}
-
-/**
- * @brief Obtenir le score du joueur
- *
- * @param game état du jeu
- * @param player joueur actif
- * @return score le score du joueur
- */
-int get_score(game_t *game, int player)
-{
-    return game->players[player]->score;
 }
 
 /**
