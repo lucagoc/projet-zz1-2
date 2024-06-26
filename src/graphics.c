@@ -42,42 +42,15 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
 }
 
 // teste la victoire
-int is_victory(game_t *game)
-{
-
-    for (int i = 0; i < 4; i++)
-    {
-        if (game->players[i]->score >= 10)
-        {
-            return i;
-        }
-    }
-
-    return 0;
-}
-
-// teste la victoire
 void draw_victory(ui_t *ui, game_t *game)
 {
 
     int player_win = game->win;
     SDL_Rect drawvic = {650, 200, 300, 100};
 
-    if (player_win == 1)
+    if (player_win > -1)
     {
-        SDL_RenderCopy(ui->renderer, ui->victory[0], NULL, &drawvic);
-    }
-    else if (player_win == 2)
-    {
-        SDL_RenderCopy(ui->renderer, ui->victory[1], NULL, &drawvic);
-    }
-    else if (player_win == 3)
-    {
-        SDL_RenderCopy(ui->renderer, ui->victory[2], NULL, &drawvic);
-    }
-    else if (player_win == 4)
-    {
-        SDL_RenderCopy(ui->renderer, ui->victory[3], NULL, &drawvic);
+        SDL_RenderCopy(ui->renderer, ui->victory[player_win], NULL, &drawvic);
     }
 }
 
@@ -208,9 +181,6 @@ void draw_logo(ui_t *ui)
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
 {
-
-    game->win = is_victory(game);
-
     if (ui->in_pause)
     {
         // Affiche le menu pause

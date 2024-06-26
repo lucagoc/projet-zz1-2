@@ -10,6 +10,25 @@
 #define NUMBER_CARD 105     // Nombre de cartes
 #define NUMBER_MIX_STACK 20 // Nombre de mélange de cartes
 
+/*
+ * @brief Test si un joueur gagne.
+ * 
+ * @param game le jeu
+ */
+int is_victory(game_t *game)
+{
+
+    for (int i = 0; i < 4; i++)
+    {
+        if (game->players[i]->score >= 10)
+        {
+            return i;
+        }
+    }
+
+    return 0;
+}
+
 /**
  *@brief Libération de la mémoire du jeu
  *
@@ -25,23 +44,6 @@ void free_game(game_t *game)
         }
     }
     free(game);
-}
-
-/**
- * @brief Fonction de vérification de la victoire
- *
- * @param game le jeu
- * @param nb_player le nombre de joueur
- */
-void check_win(game_t *game, int nb_player)
-{
-    for (int i = 0; i < nb_player; i++)
-    {
-        if (game->players[i]->score >= 10)
-        {
-            game->win = i + 1;
-        }
-    }
 }
 
 bool is_draw_pile_empty(game_t *game)
@@ -130,7 +132,7 @@ game_t *create_game()
     {
         game->draw_pile_left[i] = 15; // Initialisation de la pile de cartes
     }
-    
+
     // Tirer une première carte
     get_draw_card(game);
     game->stealing = 0;
@@ -155,7 +157,7 @@ void distribute_card(game_t *game, int nb_player)
     for (int i = 0; i < nb_player; i++)
     {
         game->players[i]->tank[game->face_card_color] = 1; // on ajoute la carte au tank du joueur
-        get_draw_card(game);                                // on dépile
+        get_draw_card(game);                               // on dépile
     }
 }
 
@@ -294,6 +296,9 @@ void game_play(game_t *game, int input)
         }
     }
 
+    // Si quelqu'un gagne
+    game->win = is_victory(game);
+    
     // Changement de carte
     get_draw_card(game);
 

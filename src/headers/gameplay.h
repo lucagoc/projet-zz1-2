@@ -7,3 +7,4 @@ game_t *copy_game(game_t *game);
 void score_card(game_t *game);
 void steal_card(int input, game_t *game);
 int get_score(game_t *game, int player);
+int is_victory(game_t *game);
