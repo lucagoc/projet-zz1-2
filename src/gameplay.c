@@ -15,8 +15,24 @@
  *
  * @param game le jeu
  */
-int is_victory(game_t *game)
+int is_victory(game_t *game, int res_card)
 {
+    
+    if (res_card == -1) // Le joueur au meilleur score gagne la partie
+    {
+        int max = game->players[0]->score;
+        int j = 0;
+        for (int i = 1; i < NUM_PLAYERS; i++)
+        {
+            if (max < game->players[i]->score)
+            {
+                max = game->players[i]->score;
+                j = i;
+            }
+        }
+
+        return j;
+    }
 
     for (int i = 0; i < 4; i++)
     {
@@ -30,7 +46,7 @@ int is_victory(game_t *game)
 }
 
 /**
- *@brief Libération de la mémoire du jeu
+ * @brief Libération de la mémoire du jeu
  *
  * @param game le jeu
  */
@@ -50,6 +66,11 @@ void free_game(game_t *game)
     free(game);
 }
 
+/**
+ * @brief Test si la pioche est vide
+ *
+ * @param game le jeu
+ */
 bool is_draw_pile_empty(game_t *game)
 {
     for (int i = 0; i < 7; i++)
@@ -62,9 +83,12 @@ bool is_draw_pile_empty(game_t *game)
     return true;
 }
 
-// Dépile la pile et renvoie la couleur de la première carte, retourne -1 si la pile est vide
-// Retourne 1 si la carte à bien été générée
-// Les cartes sont générée à la volée
+/**
+ * @brief Génére la prochaine carte à tirer
+ *
+ * @param game le jeu
+ * @return 1 si la carte est tirée, -1 sinon
+ */
 int get_draw_card(game_t *game)
 {
     if (is_draw_pile_empty(game))
@@ -214,7 +238,8 @@ game_t *copy_game(game_t *game)
         fprintf(stderr, "Erreur d'alloction de mémoire\n");
         return NULL;
     }
-    // Copie des joueurs
+
+    /* Copie des joueurs */
     for (int i = 0; i < 4; i++)
     {
         player_t *copy_player = malloc(sizeof(player_t));
@@ -231,20 +256,22 @@ game_t *copy_game(game_t *game)
         copy_player->last_scored_card = game->players[i]->last_scored_card;
         copy_game_state->players[i] = copy_player;
     }
-    copy_game_state->face_card_color = game->face_card_color;
-    copy_game_state->player_action = game->player_action;
-    copy_game_state->win = game->win;
 
+    /* Copie des cartes */
     for (int i = 0; i < 7; i++)
     {
         copy_game_state->draw_pile_left[i] = game->draw_pile_left[i];
     }
-    copy_game_state->stealing = game->stealing;
+    for (int i = 0; i < 3; i++)
+    {
+        copy_game_state->back_card_color[i] = game->back_card_color[i];
+    }
 
-    copy_game_state->back_card_color[0] = game->back_card_color[0];
-    copy_game_state->back_card_color[1] = game->back_card_color[1];
-    copy_game_state->back_card_color[2] = game->back_card_color[2];
-    
+    /* Copie des caractéristiques */
+    copy_game_state->face_card_color = game->face_card_color;
+    copy_game_state->player_action = game->player_action;
+    copy_game_state->win = game->win;
+    copy_game_state->stealing = game->stealing;
     copy_game_state->face_card_color = game->face_card_color;
 
     return copy_game_state;
@@ -259,38 +286,30 @@ game_t *copy_game(game_t *game)
 
 void game_play(game_t *game, int input)
 {
-
-    // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
-
     if (input == game->player_action) // le joueur actif choisit de marquer
     {
-        if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
+        if (is_card_in_tank(game->player_action, game))
         {
             score_card(game);
         }
         else
         {
-            add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
+            add_card_in_tank(game->player_action, game);
         }
     }
     else // le joueur actif choisit de voler
     {
-        if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
+        if (is_card_in_tank(input, game))
         {
             steal_card(input, game);
         }
         else
         {
-            add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
+            add_card_in_tank(input, game);
         }
     }
 
-    // Si quelqu'un gagne
-    game->win = is_victory(game);
-
-    // Changement de joueur
+    int res_card = get_draw_card(game);
+    game->win = is_victory(game, res_card);
     game->player_action = (game->player_action + 1) % 4;
-
-    // Changement de carte
-    get_draw_card(game);
 }

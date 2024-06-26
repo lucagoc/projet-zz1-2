@@ -122,43 +122,51 @@ mcts_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
     }
 }
 
-void rb_tree_rotate_left(rb_tree_t **tree)
+// Rotation gauche, renvoie le nouveau noeud racine
+rb_tree_t *rb_tree_rotate_left(rb_tree_t *tree)
 {
-    rb_tree_t *right = (*tree)->right;
-    (*tree)->right = right->left;
-    right->left = *tree;
-    *tree = right;
+    rb_tree_t *new_root = tree->right;
+    tree->right = new_root->left;
+    new_root->left = tree;
+    return new_root;
 }
 
-void rb_tree_rotate_right(rb_tree_t **tree)
+// Rotation droite, renvoie le nouveau noeud racine
+rb_tree_t *rb_tree_rotate_right(rb_tree_t *tree)
 {
-    rb_tree_t *left = (*tree)->left;
-    (*tree)->left = left->right;
-    left->right = *tree;
-    *tree = left;
+    rb_tree_t *new_root = tree->left;
+    tree->left = new_root->right;
+    new_root->right = tree;
+    return new_root;
 }
 
-void rb_tree_flip_colors(rb_tree_t *tree)
+rb_tree_t *rb_tree_flip_colors(rb_tree_t *tree)
 {
     tree->color = RED;
     tree->left->color = BLACK;
     tree->right->color = BLACK;
+    return tree;
 }
 
-void rb_tree_insert_fixup(rb_tree_t **tree)
+rb_tree_t *rb_tree_insert_fixup(rb_tree_t *tree)
 {
-    if ((*tree)->left != NULL && (*tree)->left->color == RED && (*tree)->left->left != NULL && (*tree)->left->left->color == RED)
+    if (tree->left != NULL && tree->left->color == RED && tree->left->left != NULL && tree->left->left->color == RED)
     {
-        rb_tree_rotate_right(tree);
+        tree = rb_tree_rotate_right(tree);
+        tree = rb_tree_flip_colors(tree);
     }
-    if ((*tree)->right != NULL && (*tree)->right->color == RED)
+    if (tree->right != NULL && tree->right->color == RED && tree->right->left != NULL && tree->right->left->color == RED)
     {
-        rb_tree_rotate_left(tree);
+        tree->right = rb_tree_rotate_right(tree->right);
+        tree = rb_tree_rotate_left(tree);
+        tree = rb_tree_flip_colors(tree);
     }
-    if ((*tree)->left != NULL && (*tree)->left->color == RED && (*tree)->right != NULL && (*tree)->right->color == RED)
+    if (tree->left != NULL && tree->left->color == RED && tree->right != NULL && tree->right->color == RED)
     {
-        rb_tree_flip_colors(*tree);
+        tree = rb_tree_flip_colors(tree);
     }
+
+    return tree;
 }
 
 // Les rb_tree utilise strcmp comme relation d'ordre
@@ -193,7 +201,7 @@ rb_tree_t *rb_tree_insert(rb_tree_t *tree, mcts_t *value)
         tree->right = rb_tree_insert(tree->right, value);
     }
 
-    rb_tree_insert_fixup(&tree);
+    tree = rb_tree_insert_fixup(tree);
     return tree;
 }
 

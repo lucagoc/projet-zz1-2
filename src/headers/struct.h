@@ -62,7 +62,7 @@ struct mcts
     struct mcts *children[NUM_PLAYERS]; // Les noeuds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
     int visits;               // Le nombre de fois que ce noeud a été visité
     int n_coup[NUM_PLAYERS];
-    double gain_coup[NUM_PLAYERS];    
+    double gain_coup[NUM_PLAYERS];  
 };
 typedef struct mcts mcts_t;
 

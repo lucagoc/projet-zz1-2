@@ -6,8 +6,8 @@
 #include "headers/player.h"
 #include "headers/gameplay.h"
 
-#define NUM_PLAYERS 4       // Nombre de joueurs
-#define NUM_ARMS 10         // Nombre de bras
+#define NUM_PLAYERS 4      // Nombre de joueurs
+#define NUM_ARMS 10        // Nombre de bras
 #define NUM_ITERATIONS 100 // Nombre total d'itérations
 #define UCB_ITERATIONS 10  // Nombre d'itérations pour UCB
 
@@ -143,7 +143,7 @@ void *free_mtsc_node(mcts_t *node)
     {
         free_mtsc_node(node->children[i]);
     }
-
+    free(node->id);
     free_game(node->state);
     free(node);
     return NULL;
@@ -173,7 +173,7 @@ void backpropagate_node(mcts_t *node, int *value)
 
 void simulate_node(mcts_t *node)
 {
-    if(node == NULL)
+    if (node == NULL)
     {
         fprintf(stderr, "[ERREUR] simulate_node le noeud est NULL\n");
     }
@@ -198,12 +198,12 @@ bool root_explored(mcts_t *root)
     return true;
 }
 
-void *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
+rb_tree_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
 {
     if (parent->children[input] != NULL)
     {
         int input2 = select_node(parent->children[input]);
-        return parent->children[input]->children[input2] = expand_node(parent->children[input], rb_tree, input2);
+        rb_tree = expand_node(parent->children[input], rb_tree, input2);
     }
     else
     {
@@ -235,11 +235,13 @@ void *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
 
         // On rétro-propage le score obtenu
         backpropagate_node(parent->children[input], score);
-        return node;
+        free(score);
     }
+
+    return rb_tree;
 }
 
-void mcts_aux(mcts_t *root, rb_tree_t *rb_tree)
+rb_tree_t *mcts_aux(mcts_t *root, rb_tree_t *rb_tree)
 {
     int i = 0;
     while (i < NUM_ITERATIONS)
@@ -248,10 +250,12 @@ void mcts_aux(mcts_t *root, rb_tree_t *rb_tree)
         int input = select_node(root);
 
         // On étend le noeud
-        root->children[input] = expand_node(root, rb_tree, input);
+        rb_tree = expand_node(root, rb_tree, input);
 
         i++;
     }
+
+    return rb_tree;
 }
 
 /**
@@ -268,7 +272,7 @@ int mcts(game_t *game)
     rb_tree_t *rb_tree = rb_tree_create();
     rb_tree = rb_tree_insert(rb_tree, root);
 
-    mcts_aux(root, rb_tree);
+    rb_tree = mcts_aux(root, rb_tree);
 
     // On choisit le meilleur coup
     int best_input = 0;
