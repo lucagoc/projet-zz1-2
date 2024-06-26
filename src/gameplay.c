@@ -123,7 +123,7 @@ game_t *create_game()
 
     game->face_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
     game->player_action = 0;    // Le joueur 1 commence
-    game->win = 0;              // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->win = -1;              // Initialisation du statut de victoire à 0 (personne n'a gagné)
     game->back_card_color[0] = -1;
     game->back_card_color[1] = -1;
     game->back_card_color[2] = -1;
