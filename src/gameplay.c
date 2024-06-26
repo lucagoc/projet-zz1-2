@@ -26,7 +26,7 @@ int is_victory(game_t *game)
         }
     }
 
-    return 0;
+    return -1;
 }
 
 /**
