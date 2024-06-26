@@ -289,7 +289,7 @@ bool stack_clicked(ui_t *ui, int x, int y)
 }
 
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
-int player_clicked(game_t *game, int x, int y)
+int player_clicked(int x, int y)
 {
     // OUI c'est des magic numbers, mais c'est pour le prototype
     if (x < 800 && y < 100)
@@ -330,7 +330,7 @@ void free_ui(ui_t *ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input, game_t *game)
+void refresh_input(ui_t *ui, int *input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -360,7 +360,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                     }
                     else
                     {
-                        *input = player_clicked(game, x, y);
+                        *input = player_clicked(x, y);
                         if (*input != -1) // input valide
                         {
                             ui->animate[0] = true; // flip_the_card

@@ -93,8 +93,7 @@ int get_draw_card(game_t *game)
     game->back_card_color[(d + 2) % 3] = b;
 
     game->draw_pile_left[r] = game->draw_pile_left[r] - 1;
-
-    fprintf(stderr, "[DEBUG] get_draw_card : c: %d, b: %d %d %d\n", game->face_card_color, game->back_card_color[0], game->back_card_color[1], game->back_card_color[2]);
+    return 1;
 }
 
 /**
