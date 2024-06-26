@@ -13,7 +13,6 @@ float I_k(float G, float C, int n, int n_k)
 {
     return G / n_k + C * sqrt(log(n) / n_k);
 }
-
 // On utilise comme récompense directement le score du joueur
 int get_reward(game_t *game, int player)
 {
@@ -97,42 +96,31 @@ int select_node(mcts_t *root)
     return ucb(root->state, n);
 }
 
+
 /**
  * @brief MCTS expansion
- *
+ * 
  * @param node le noeud à étendre
- *
-void expand_node(mcts_t *node)
+ */
+void expand_node(mcts_t * node)
 {
-    int *legal_moves = get_possible_moves(node->player); // Récupérer les mouvements possibles
-    node->possible_move = malloc(4 * sizeof(mcts_t *));
-    for (int i = 0; i < 4; i++) // Pour chaque mouvement possible
+    if (node->children == NULL)
     {
-        game_t *new_state = copy_game(node->state);
-
-        // Appliquer le mouvement pour obtenir le nouvel état
-
-        if (legal_moves[i] == 0)
+        node->children = malloc(4 * sizeof(mcts_t ));
         {
-            score_card(new_state);
+            for (int i = 0; i < 4 ; i++)
+            {
+                node->children[i] = malloc(sizeof(mcts_t));
+                node->children[i]->state = copy_game(node->state);
+                game_play(node->children[i]->state, i);
+                node->children[i]->parent = node;
+                node->children[i]->children = NULL;
+                node->children[i]->visits = 0;
+                node->children[i]->accumulated_value = 0;
+            }
         }
-        else
-        {
-            steal_card(new_state->player_action, new_state);
-        }
-        // Créer un nouveau noeud pour le nouvel état
-        node->possible_move[i] = malloc(sizeof(mcts_t));
-        node->possible_move[i]->state = new_state;
-        node->possible_move[i]->parent = node;
-        node->possible_move[i]->player = (node->player + 1) % 4; // Prochain joueur
-        node->possible_move[i]->num_children = 0;
-        node->possible_move[i]->possible_move = NULL;
-        node->possible_move[i]->visits = 0;
-        node->possible_move[i]->accumulated_value = 0;
     }
-    node->num_children = 4;
-    free(legal_moves);
-}*/
+} 
 
 /**
  * @brief MCTS rétropropagation
@@ -140,7 +128,7 @@ void expand_node(mcts_t *node)
  * @param node le noeud à simuler
  * @param value la valeur de la simulation
  */
-void backpropagate(mcts_t *node, double value)
+void backpropagate_node(mcts_t *node, double value)
 {
     // Mettre à jour les visites et la valeur accumulée de tous les noeuds parents
     while (node != NULL)
@@ -150,34 +138,7 @@ void backpropagate(mcts_t *node, double value)
         node = node->parent;
     }
 }
-/**
- * @brief MCTS simulation
- *
- * @param game l'état du jeu
- 
 
-double simulate_game(game_t *game)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        while (game->players[i]->score >= 10)
-        {
-            int num_moves;
-            int *legal_moves = get_possible_moves(game->player_action);
-            int move = legal_moves[rand() % num_moves]; // Choisir un mouvement aléatoire
-            if (move == 0)
-            {
-                score_card(game);
-            }
-            else if (move == 1)
-            {
-                steal_card(game->player_action, game);
-            }
-            free(legal_moves);
-        }
-    }
-    return get_score(game, game->player_action); // Retourne le score du joueur actif
-}*/
 
 /*----------------------------------------------------------------------Implémentation des 4 phases de MCTS-----------------------------------------------------------*/
 
