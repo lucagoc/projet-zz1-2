@@ -65,6 +65,18 @@ bool check_win(game_t *game)
     return false;
 }
 
+bool is_draw_pile_empty(game_t *game)
+{
+    for (int i = 0; i < 7; i++)
+    {
+        if (game->draw_pile_left[i] > 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 // Dépile la pile et renvoie la couleur de la première carte, retourne -1 si la pile est vide
 // Retourne 1 si la carte à bien été générée
 // Les cartes sont générée à la volée
