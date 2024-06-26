@@ -402,7 +402,7 @@ void game_interact(int *input, game_t *game, ui_t *ui)
     {
         return;
     }
-    if (false && game->player_action == 0)
+    if (game->player_action == 0)
     {
         if (!(ui->animate[0]) && *input != -1)
         {

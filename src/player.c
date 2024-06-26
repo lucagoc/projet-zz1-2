@@ -27,20 +27,21 @@ int get_reward(game_t *game, int player)
 // Renvoie un tableau des estimations de récompenses pour chaque bras
 // n le nombre de totale de partie jouée
 // Renvoie l'input i avec le meilleur score
-int ucb(game_t *game, int n)
+int ucb(mcts_t *root, int n)
 {
+    game_t *game = root->state;
     /* Initialisation */
     int player = game->player_action;
-    float C = 0.5;      // Constante d'exploration
-    int G[NUM_PLAYERS]; // Gain accumulé sur la machine k
+    float C = 0.4699;      // Constante d'exploration
     int max = 0;
-    int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine k
+    int G[NUM_PLAYERS];   // Valeur de la récompense pour chaque possibilité
+    int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine
     int I[NUM_PLAYERS];   // Valeur de l'indice de confiance pour chaque possibilité
     for (int i = 0; i < NUM_PLAYERS; i++)
     {
-        G[i] = 0;
+        G[i] = root->gain_coup[i];
         I[i] = 0;
-        n_t[i] = 0;
+        n_t[i] = root->n_coup[i];
     }
 
     // On joue une fois sur toute les machines
@@ -99,7 +100,7 @@ int select_node(mcts_t *root)
     }
 
     // Dans l'autre cas.
-    return ucb(root->state, UCB_ITERATIONS);
+    return ucb(root, UCB_ITERATIONS);
 }
 
 /**
@@ -160,6 +161,7 @@ void backpropagate_node(mcts_t *node, int value)
         node->visits++;
 
         node->gain_coup[back_input] += value;
+        node->n_coup[back_input]++;
 
         back_input = node->from_input;
         node = node->parent;
@@ -232,7 +234,7 @@ rb_tree_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
 
         // On simule le noeud
         simulate_node(parent->children[input]);
-        parent->n_coup[input] += 1;
+        parent->n_coup[input] = parent->n_coup[input] + 1;
 
         // On récupère le score
         int score = get_reward(parent->children[input]->state, player);
@@ -281,15 +283,24 @@ int mcts(game_t *game)
 
     // On choisit le meilleur coup
     int best_input = 0;
-    int max = -100;
+    float max = -100;
     for (int i = 0; i < NUM_PLAYERS; i++)
     {
-        if (max < root->children[i]->gain_coup[game->player_action])
+        float a = root->gain_coup[i]/(float)root->n_coup[i];
+        if (max < a)
         {
-            max = root->children[i]->gain_coup[game->player_action];
+            max = a;
             best_input = i;
         }
     }
+
+    /*
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        fprintf(stderr, "Coup %d : %d\n", i, root->gain_coup[i]);
+        fprintf(stderr, "Nombre de coup %d : %d\n", i, root->n_coup[i]);
+    }*/
+    
 
     fprintf(stderr, "Meilleur coup : %d\n", best_input);
 
