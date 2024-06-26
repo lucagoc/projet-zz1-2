@@ -4,25 +4,71 @@
 #include <stdbool.h>
 
 #include "headers/struct.h"
+#include "headers/gameplay.h"
 
 #define NUMBER_FACE 7       // Nombre de couleurs
 #define NUMBER_BACK 3       // Nombre d'indicateur au dos de la carte
 #define NUMBER_CARD 105     // Nombre de cartes
 #define NUMBER_MIX_STACK 20 // Nombre de mélange de cartes
 
+bool is_draw_pile_empty(game_t *game)
+{
+    for (int i = 0; i < 7; i++)
+    {
+        if (game->draw_pile_left[i] > 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+//Retourne le joueur qui a le plus de points
+int max_4(int p1, int p2, int p3, int p4)
+{
+    if (p1 >= p2 && p1 >= p3 && p1 >= p4)
+    {
+        return 1;
+    }
+    else if (p2 >= p1 && p2 >= p3 && p2 >= p4)
+    {
+        return 2;
+    }
+    else if (p3 >= p1 && p3 >= p2 && p3 >= p4)
+    {
+        return 3;
+    }
+    else
+    {
+        return 4;
+    }
+}
+
 /*
  * @brief Test si un joueur gagne.
- * 
+ *
  * @param game le jeu
  */
 int is_victory(game_t *game)
 {
 
-    for (int i = 0; i < 4; i++)
+    if (is_draw_pile_empty(game))
     {
-        if (game->players[i]->score >= 10)
+        int score_1 = get_reward(game, 1);
+        int score_2 = get_reward(game, 2);
+        int score_3 = get_reward(game, 3);
+        int score_4 = get_reward(game, 4);
+
+        return max_4(score_1, score_2, score_3, score_4);
+    }
+    else
+    {
+        for (int i = 0; i < 4; i++)
         {
-            return i;
+            if (game->players[i]->score >= 10)
+            {
+                return i;
+            }
         }
     }
 
@@ -46,17 +92,6 @@ void free_game(game_t *game)
     free(game);
 }
 
-bool is_draw_pile_empty(game_t *game)
-{
-    for (int i = 0; i < 7; i++)
-    {
-        if (game->draw_pile_left[i] > 0)
-        {
-            return false;
-        }
-    }
-    return true;
-}
 
 // Dépile la pile et renvoie la couleur de la première carte, retourne -1 si la pile est vide
 // Retourne 1 si la carte à bien été générée
@@ -291,7 +326,7 @@ void game_play(game_t *game, int input)
 
     // Si quelqu'un gagne
     game->win = is_victory(game);
-    
+
     // Changement de carte
     get_draw_card(game);
 
