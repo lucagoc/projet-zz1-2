@@ -200,10 +200,11 @@ void draw(ui_t *ui, game_t *game)
         draw_confetti(ui);
     }
 
+    /*
     if (game->stealing > 0)
     { // si on est dans une animation de vol
         draw_steal(ui, game);
-    }
+    }*/
 
     // Affichage
     SDL_RenderPresent(ui->renderer);

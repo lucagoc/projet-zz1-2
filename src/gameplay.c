@@ -194,7 +194,7 @@ void add_card_in_tank(int player, game_t *game)
 void steal_card(int input, game_t *game)
 {
     game->players[game->player_action]->tank[game->face_card_color] += game->players[input]->tank[game->face_card_color] + 1; // on récupère les cartes volées
-    game->players[input]->tank[game->face_card_color] = 0;                                                                     // on enlève les cartes au joueur volé
+    game->players[input]->tank[game->face_card_color] = 0;                                                                    // on enlève les cartes au joueur volé
 }
 
 /**
@@ -262,12 +262,10 @@ void game_play(game_t *game, int input)
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
         {
             score_card(game);
-            game->player_action = (game->player_action + 1) % 4;
         }
         else
         {
             add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
-            game->player_action = (game->player_action + 1) % 4;
         }
     }
     else // le joueur actif choisit de voler
@@ -280,21 +278,15 @@ void game_play(game_t *game, int input)
         else
         {
             add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
-            game->player_action = (game->player_action + 1) % 4;
         }
     }
 
     // Si quelqu'un gagne
     game->win = is_victory(game);
 
+    // Changement de joueur
+    game->player_action = (game->player_action + 1) % 4;
+    
     // Changement de carte
     get_draw_card(game);
-
-    // passage au joueur suivant
-    fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
-
-    printf("Game id out : \n");
-    node_id_t *gen2 = gen_id(game);
-    print_node_id(*gen2);
-    free(gen2);
 }

@@ -5,6 +5,7 @@
 
 #include "headers/sdl_common.h"
 #include "headers/gameplay.h"
+#include "headers/player.h"
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
@@ -79,12 +80,11 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->back_flag_textures[i]);
     }
-    
 
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
-        //SDL_DestroyTexture(ui->player_textures[i]);
+        // SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
     }
 
@@ -398,9 +398,16 @@ void refresh_input(ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (!(ui->animate[0]) && *input != -1)
+    if (game->player_action == 0 || true)
     {
-        game_play(game, *input);
-        *input = -1;
+        if (!(ui->animate[0]) && *input != -1)
+        {
+            game_play(game, *input);
+            *input = -1;
+        }
+    }
+    else
+    {
+        game_play(game, mcts(game));
     }
 }
