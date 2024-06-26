@@ -10,6 +10,20 @@ struct pos_s
 };
 typedef struct pos_s pos_t;
 
+/*  Type propriété d'animation
+ *  (Bien dommage qu'il n'y a pas de fonction dans les structs en C :'( )
+ */
+struct anim_props_s
+{
+    pos_t pos;           // Position de l'animation
+    int start_frame;     // Frame de départ
+    int number_of_frame; // Pendant combien de frame est jouée l'animation
+    float speed;         // Vitesse
+    bool loop;           // Doit-elle boucler ?
+    bool playing;        // L'animation est-elle terminée ?
+};
+typedef struct anim_props_s anim_props_t;
+
 struct ui_s
 {
     /* SDL */
@@ -19,10 +33,11 @@ struct ui_s
     int screen_h;
     SDL_Event event;
     pos_t mouse_pos;
+    pos_t click;
 
     /* Textures */
-    SDL_Texture *front_card_textures[7]; 
-    SDL_Texture *back_flag_textures[7];  
+    SDL_Texture *front_card_textures[7];
+    SDL_Texture *back_flag_textures[7];
     SDL_Texture *back_card_texture[2];
     SDL_Texture *player_textures[4];
     SDL_Texture *interface_textures[4];
@@ -31,13 +46,7 @@ struct ui_s
     SDL_Texture *score_textures[10];
 
     /* Animation */
-    bool animate[3]; // 0: flip_the_card, 1: draw_particles, 3:vol de cartes
-    int click_x;
-    int click_y;
-    unsigned long long last_tick;
-    unsigned long long tick;
-    unsigned long long delta_t;
-    bool follow_mouse;
+    anim_props_t *animations;   // Tableau d'animation.
 
     bool in_pause;
     bool program_on;
@@ -45,6 +54,13 @@ struct ui_s
     int ticks_stealing_init;
 };
 typedef struct ui_s ui_t;
+
+struct ui_input_s
+{
+    pos_t click;
+    pos_t cursor;
+    int key;
+};
 
 ui_t *create_ui();
 void refresh_input(ui_t *ui, int *input, game_t *game);

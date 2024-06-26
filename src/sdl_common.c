@@ -60,7 +60,6 @@ void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *rendere
     }
 }
 
-
 /**
  * @brief Décharge toutes les textures du jeu
  *
@@ -81,7 +80,6 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
-
     }
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
@@ -202,22 +200,22 @@ void load_textures(ui_t *ui)
     ui->interface_textures[1] = render_text("SCORE", "assets/fonts/Vividly-Regular.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
     ui->interface_textures[2] = render_text("STEAL", "assets/fonts/Vividly-Regular.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
     ui->interface_textures[3] = render_text("Good game !", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[4] = render_text("Joueur 1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[5] = render_text("Joueur 2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[4] = render_text("Joueur 1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
+    ui->interface_textures[5] = render_text("Joueur 2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
+    ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
+    ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
 
     /* --------------------------------------------- SCORE ------------------------------------------------*/
-    ui->score_textures[0] = render_text("0", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[1] = render_text("1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[2] = render_text("2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[3] = render_text("3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[4] = render_text("4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[5] = render_text("5", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[6] = render_text("6", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[7] = render_text("7", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[0] = render_text("0", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[1] = render_text("1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[2] = render_text("2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[3] = render_text("3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[4] = render_text("4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[5] = render_text("5", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[6] = render_text("6", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[7] = render_text("7", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
 
     return;
 }
@@ -261,6 +259,18 @@ void init_sdl(ui_t *ui)
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
+/* Mettre ici toutes les initialisations */
+anim_props_t *create_animations()
+{
+    anim_props_t *animations = malloc(sizeof(anim_props_t) * 10);
+    for (int i = 0; i < 10; i++)
+    {
+        init_animation(animations[i], (pos_t){0, 0}, 300);
+    }
+    return animations;
+
+}
+
 ui_t *create_ui()
 {
     ui_t *ui = malloc(sizeof(ui_t));
@@ -270,16 +280,14 @@ ui_t *create_ui()
     init_sdl(ui);
     ui->in_pause = false;
     ui->program_on = true;
-
-    ui->tick = 0;
-    ui->last_tick = 0;
-    ui->animate[0] = false;
-    ui->animate[1] = false;
-    ui->follow_mouse = false;
-    ui->ticks_stealing_init=0;
-    ui->animate[2]=0;
+    ui->ticks_stealing_init = 0;
 
     return ui;
+}
+
+void create_ui_input()
+{
+    
 }
 
 // si les coordonnées cliquées correspondent à la pile
@@ -289,7 +297,7 @@ bool stack_clicked(ui_t *ui, int x, int y)
 }
 
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
-int player_clicked(game_t *game, int x, int y)
+int player_clicked(int x, int y)
 {
     // OUI c'est des magic numbers, mais c'est pour le prototype
     if (x < 800 && y < 100)
@@ -330,7 +338,7 @@ void free_ui(ui_t *ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input, game_t *game)
+void refresh_input(ui_t *ui, ui_input_t* ui_input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -349,29 +357,7 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                if (*input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
-                {
-                    int x = ui->event.button.x;
-                    int y = ui->event.button.y;
-
-                    if (stack_clicked(ui, x, y))
-                    {
-                        ui->follow_mouse = !ui->follow_mouse;
-                    }
-                    else
-                    {
-                        *input = player_clicked(game, x, y);
-                        if (*input != -1) // input valide
-                        {
-                            ui->animate[0] = true; // flip_the_card
-                            ui->last_tick = ui->tick;
-                            ui->click_x = x;
-                            ui->click_y = y;
-                            game->drawn_card_color = game->draw_pile->card->face;
-                        }
-                        ui->follow_mouse = false;
-                    }
-                }
+                
             }
             break;
 
@@ -394,7 +380,6 @@ void game_interact(int *input, game_t *game, ui_t *ui)
 {
     if (!(ui->animate[0]) && *input != -1)
     {
-        fprintf(stderr, "test %d\n", *input);
         game_play(game, *input);
         *input = -1;
     }

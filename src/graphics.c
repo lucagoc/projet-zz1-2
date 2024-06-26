@@ -41,11 +41,14 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
     }
 }
 
-//teste la victoire
-int is_victory(game_t * game){
+// teste la victoire
+int is_victory(game_t *game)
+{
 
-    for(int i=0; i<4; i++){
-        if (game->players[i]->score>=10){
+    for (int i = 0; i < 4; i++)
+    {
+        if (game->players[i]->score >= 10)
+        {
             return i;
         }
     }
@@ -53,26 +56,29 @@ int is_victory(game_t * game){
     return 0;
 }
 
-//teste la victoire
-void draw_victory(ui_t * ui, game_t * game){
+// teste la victoire
+void draw_victory(ui_t *ui, game_t *game)
+{
 
-    int player_win = game->win ;
+    int player_win = game->win;
     SDL_Rect drawvic = {650, 200, 300, 100};
 
-    if (player_win==1){
+    if (player_win == 1)
+    {
         SDL_RenderCopy(ui->renderer, ui->victory[0], NULL, &drawvic);
-
-    } else if (player_win==2){
-        SDL_RenderCopy(ui->renderer, ui->victory[1], NULL, &drawvic);
-
-    } else if (player_win==3){
-        SDL_RenderCopy(ui->renderer, ui->victory[2], NULL, &drawvic);
-
-    } else if (player_win==4){
-        SDL_RenderCopy(ui->renderer, ui->victory[3], NULL, &drawvic);
-
     }
-
+    else if (player_win == 2)
+    {
+        SDL_RenderCopy(ui->renderer, ui->victory[1], NULL, &drawvic);
+    }
+    else if (player_win == 3)
+    {
+        SDL_RenderCopy(ui->renderer, ui->victory[2], NULL, &drawvic);
+    }
+    else if (player_win == 4)
+    {
+        SDL_RenderCopy(ui->renderer, ui->victory[3], NULL, &drawvic);
+    }
 }
 
 void draw_score(ui_t *ui, game_t *game, int player, int x, int y)
@@ -97,7 +103,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[0] != NULL) // En bas à gauche
     {
-        if(game->player_action == 0)
+        if (game->player_action == 0)
             SDL_SetRenderDrawColor(ui->renderer, active.r, active.g, active.b, active.a);
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
@@ -112,7 +118,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[1] != NULL) // En haut à droite
     {
-        if(game->player_action == 1)
+        if (game->player_action == 1)
             SDL_SetRenderDrawColor(ui->renderer, active.r, active.g, active.b, active.a);
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
@@ -124,7 +130,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[2] != NULL) // En haut à gauche
     {
-        if(game->player_action == 2)
+        if (game->player_action == 2)
             SDL_SetRenderDrawColor(ui->renderer, active.r, active.g, active.b, active.a);
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
@@ -136,7 +142,7 @@ void draw_players(ui_t *ui, game_t *game)
 
     if (game->players[3] != NULL) // En bas à droite
     {
-        if(game->player_action == 3)
+        if (game->player_action == 3)
             SDL_SetRenderDrawColor(ui->renderer, active.r, active.g, active.b, active.a);
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
@@ -166,7 +172,7 @@ void draw_draw_card(ui_t *ui, game_t *game)
 
     if (ui->animate[0]) // flip_the_card
     {
-        flip_the_card(ui, game, ui->click_x, ui->click_y);
+        flip_the_card(ui, game, ui->click.x, ui->click.y);
     }
     else
     {
@@ -201,9 +207,9 @@ void draw_logo(ui_t *ui)
 
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
-{    
+{
 
-    game->win=is_victory(game);
+    game->win = is_victory(game);
 
     if (ui->in_pause)
     {
@@ -221,10 +227,10 @@ void draw(ui_t *ui, game_t *game)
     if (game->win != 0)
     {
         draw_victory(ui, game);
-        draw_confetti(ui);
     }
 
-    if (game->stealing>0){ //si on est dans une animation de vol
+    if (game->stealing > 0)
+    { // si on est dans une animation de vol
         draw_steal(ui, game);
     }
 
