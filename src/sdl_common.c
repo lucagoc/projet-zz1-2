@@ -402,7 +402,7 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (game->stealing<=-1 && !(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
+    if (game->stealing==-1 && !(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
     {
         game_play(game, *input);
         *input = -1;
