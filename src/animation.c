@@ -69,6 +69,13 @@ void flip_the_card(ui_t *ui, game_t *game, int x, int y)
         SDL_Rect card = {x - card_width / 2, y - card_height / 2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->face_card_color], NULL, &card);
     }
+    else if (anime_tick < 500)
+    {
+        card_width = CARD_WIDTH / descale;
+        card_height = CARD_HEIGHT / descale;
+        SDL_Rect card = {x - card_width / 2, y - card_height / 2, card_width, card_height};
+        SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->face_card_color], NULL, &card);
+    }
     else
     {
         ui->animate[0] = false;
