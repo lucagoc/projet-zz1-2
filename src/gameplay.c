@@ -46,25 +46,6 @@ void free_game(game_t *game)
     free(game);
 }
 
-/**
- * @brief Fonction de vérification de la victoire
- *
- * @param game le jeu
- * @param nb_player le nombre de joueur
- */
-bool check_win(game_t *game)
-{
-    for (int  i = 0; i < 4 ; i++)
-    {
-        if (game->draw_pile_left[i] > 0)
-        {
-            game->win = 1;
-            return true;
-        }
-    }
-    return false;
-}
-
 bool is_draw_pile_empty(game_t *game)
 {
     for (int i = 0; i < 7; i++)
