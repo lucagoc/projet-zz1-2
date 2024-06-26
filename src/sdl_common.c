@@ -367,7 +367,6 @@ void refresh_input(ui_t *ui, int *input, game_t *game)
                             ui->last_tick = ui->tick;
                             ui->click_x = x;
                             ui->click_y = y;
-                            game->drawn_card_color = game->draw_pile->card->face;
                         }
                         ui->follow_mouse = false;
                     }
@@ -394,7 +393,6 @@ void game_interact(int *input, game_t *game, ui_t *ui)
 {
     if (!(ui->animate[0]) && *input != -1)
     {
-        fprintf(stderr, "test %d\n", *input);
         game_play(game, *input);
         *input = -1;
     }

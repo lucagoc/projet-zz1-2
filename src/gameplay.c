@@ -24,7 +24,6 @@ void free_game(game_t *game)
             free(game->players[i]);
         }
     }
-    stack_free(game->draw_pile);
     free(game);
 }
 
@@ -45,112 +44,57 @@ void check_win(game_t *game, int nb_player)
     }
 }
 
-/**
- *@brief Initialisation des cartes
- *
- *@param card La carte qu'on veut initialiser
- *@param face_color La couleur de face
- *@param back_color La couleur de dos
- */
-
-card_t *init_card(int face_color)
+bool is_draw_pile_empty(game_t *game)
 {
-    card_t *card = malloc(sizeof(card_t));
-    card->face = face_color; // Définition de la face avant
+    for (int i = 0; i < 7; i++)
+    {
+        if (game->draw_pile_left[i] > 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Dépile la pile et renvoie la couleur de la première carte, retourne -1 si la pile est vide
+// Retourne 1 si la carte à bien été générée
+// Les cartes sont générée à la volée
+int get_draw_card(game_t *game)
+{
+    if (is_draw_pile_empty(game))
+    {
+        return -1;
+    }
+
+    // Prendre une carte dans le paquet
+    int r = (rand() % NUMBER_FACE);
+    while (game->draw_pile_left[r] <= 0)
+    {
+        r = rand() % NUMBER_FACE;
+    }
+    game->face_card_color = r;
 
     /* Couleur d'indicateur */
     int a = -1;
     int b = -1;
-    while (a == -1 || a == face_color)
+    while (a == -1 || a == r)
     {
         a = rand() % NUMBER_FACE;
     }
-    while (b == -1 || b == face_color || b == a)
+    while (b == -1 || b == r || b == a)
     {
         b = rand() % NUMBER_FACE;
     }
 
     // Mettre les 3 couleurs en positions aléatoires
-    int r = rand() % 3;
-    card->back[r] = face_color;
-    card->back[(r + 1) % 3] = a;
-    card->back[(r + 2) % 3] = b;
+    int d = rand() % 3;
+    game->back_card_color[d] = r;
+    game->back_card_color[(d + 1) % 3] = a;
+    game->back_card_color[(d + 2) % 3] = b;
 
-    return card;
-}
+    game->draw_pile_left[r] = game->draw_pile_left[r] - 1;
 
-stack_t *mix_cards(stack_t *origin)
-{
-    // On crée 7 pile
-    stack_t *stacks[NUMBER_MIX_STACK];
-    for (int i = 0; i < NUMBER_MIX_STACK; i++)
-    {
-        stacks[i] = stack_create();
-    }
-
-    // On distribue les cartes aléatoirement dans les piles
-    stack_t *current = origin;
-    while (current != NULL)
-    {
-        int r = rand() % NUMBER_MIX_STACK;
-        fprintf(stderr, "[DEBUG] mix_cards : %d\n", r);
-        stacks[r] = stack_push(stacks[r], current->card);
-        current = current->next;
-    }
-
-    // On remet les cartes dans la pile originale
-    stack_t *res = NULL;
-    for (int i = 0; i < NUMBER_MIX_STACK; i++)
-    {
-        while (!stack_is_empty(stacks[i]))
-        {
-            res = stack_push(res, stacks[i]->card);
-            stacks[i] = stack_pop(stacks[i]);
-        }
-    }
-
-    return res;
-}
-
-/**
- * @brief Initialisation de la pile de pioche de manière aléatoire
- *
- * @param game Le jeu
- */
-stack_t *init_draw_card()
-{
-    stack_t *res = stack_create();
-    srand(time(NULL));
-
-    // Créer les cartes en assurant qu'il y a 15 cartes de chaque couleur
-    for (int i = 0; i < NUMBER_FACE; i++)
-    {
-        for (int j = 0; j < 15; j++)
-        {
-            card_t *new = init_card(i);
-            res = stack_push(res, new);
-        }
-    }
-
-    // Mélanger les cartes
-    for (int i = 0; i < 1000; i++) // Mélanger 100 fois
-    {
-        res = mix_cards(res);
-    }
-
-    return res;
-}
-
-// Affiche toutes les cartes d'une stack (debug)
-void print_all_cards(stack_t *stack)
-{
-    stack_t *current = stack;
-    while (current != NULL)
-    {
-        printf("Face : %d\n", current->card->face);
-        printf("Back : %d %d %d\n", current->card->back[0], current->card->back[1], current->card->back[2]);
-        current = current->next;
-    }
+    fprintf(stderr, "[DEBUG] get_draw_card : c: %d, b: %d %d %d\n", game->face_card_color, game->back_card_color[0], game->back_card_color[1], game->back_card_color[2]);
 }
 
 /**
@@ -160,6 +104,8 @@ game_t *create_game()
 {
     game_t *game;
     game = malloc(sizeof(game_t));
+
+    srand(time(NULL)); // Initialisation de la graine pour la génération aléatoire
 
     // Initialisation des joueurs à 0
     for (int i = 0; i < 4; i++)
@@ -174,13 +120,20 @@ game_t *create_game()
         game->players[i] = newplayer;
     }
 
-    game->drawn_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
-    game->player_action = 0;     // Le joueur 1 commence
-    game->win = 0;               // Initialisation du statut de victoire à 0 (personne n'a gagné)
-    game->draw_pile_left = 105;
+    game->face_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
+    game->player_action = 0;    // Le joueur 1 commence
+    game->win = 0;              // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->back_card_color[0] = -1;
+    game->back_card_color[1] = -1;
+    game->back_card_color[2] = -1;
 
-    game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
-    print_all_cards(game->draw_pile);
+    for (int i = 0; i < 7; i++)
+    {
+        game->draw_pile_left[i] = 15; // Initialisation de la pile de cartes
+    }
+    
+    // Tirer une première carte
+    get_draw_card(game);
     game->stealing = 0;
 
     return game;
@@ -189,30 +142,7 @@ game_t *create_game()
 // Renvoie 0 si la couleur n'est pas dans le tank de player, i>0 sinon
 int is_card_in_tank(int player, game_t *game)
 {
-    if (game->drawn_card_color > 7 || game->drawn_card_color < 0)
-    {
-        fprintf(stderr, "[ERROR] is_card_in_tank : no card drawn\n");
-        return 0;
-    }
-    fprintf(stderr, "[DEBUG] is_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
-
-    return game->players[player]->tank[game->drawn_card_color];
-}
-
-// Dépile la pile et renvoie la couleur de la première carte
-int get_draw_card(game_t *game)
-{
-    if (game->draw_pile != NULL)
-    {
-        int drawn_card_color = game->draw_pile->card->face; // on récupère la couleur du haut de la pile
-        game->draw_pile = game->draw_pile->next;            // on passe à l'élément suivant de la pile
-        return drawn_card_color;
-    }
-    else
-    {
-        return -1;
-    }
-    game->draw_pile_left--;
+    return game->players[player]->tank[game->face_card_color];
 }
 
 /**
@@ -225,8 +155,8 @@ void distribute_card(game_t *game, int nb_player)
 {
     for (int i = 0; i < nb_player; i++)
     {
-        game->players[i]->tank[game->draw_pile->card->face] = 1; // on ajoute la carte au tank du joueur
-        game->draw_pile = game->draw_pile->next;                 // on passe à l'élément suivant de la pile
+        game->players[i]->tank[game->face_card_color] = 1; // on ajoute la carte au tank du joueur
+        get_draw_card(game);                                // on dépile
     }
 }
 
@@ -237,9 +167,9 @@ void distribute_card(game_t *game, int nb_player)
  */
 void score_card(game_t *game)
 {
-    game->players[game->player_action]->score += game->players[game->player_action]->tank[game->drawn_card_color] + 1; // on ajoute les cartes au score du joueur
-    game->players[game->player_action]->tank[game->drawn_card_color] = 0;                                              // on enlève les cartes du tank
-    game->players[game->player_action]->last_scored_card = game->drawn_card_color;                                     // on affiche la carte en haut de la pile de score
+    game->players[game->player_action]->score += game->players[game->player_action]->tank[game->face_card_color] + 1; // on ajoute les cartes au score du joueur
+    game->players[game->player_action]->tank[game->face_card_color] = 0;                                              // on enlève les cartes du tank
+    game->players[game->player_action]->last_scored_card = game->face_card_color;                                     // on affiche la carte en haut de la pile de score
 }
 
 /**
@@ -250,8 +180,8 @@ void score_card(game_t *game)
  */
 void add_card_in_tank(int player, game_t *game)
 {
-    fprintf(stderr, "[DEBUG] add_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
-    game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
+    fprintf(stderr, "[DEBUG] add_card_in_tank : player %d, card %d\n", player, game->face_card_color);
+    game->players[player]->tank[game->face_card_color] = 1; // on ajoute la carte au tank
 }
 
 /**
@@ -296,30 +226,19 @@ game_t *copy_game(game_t *game)
         copy_player->last_scored_card = game->players[i]->last_scored_card;
         copy_game_state->players[i] = copy_player;
     }
-    copy_game_state->drawn_card_color = game->drawn_card_color;
+    copy_game_state->face_card_color = game->face_card_color;
     copy_game_state->player_action = game->player_action;
     copy_game_state->win = game->win;
 
-    // Copie de la pile de pioche
-    stack_t *copy_draw_pile = stack_create();
-    stack_t *current = game->draw_pile;
-    while (current != NULL)
+    for (int i = 0; i < 7; i++)
     {
-        card_t *copy_card = malloc(sizeof(card_t));
-        if (copy_card == NULL)
-        {
-            fprintf(stderr, "Erreur d'alloction de mémoire\n");
-            return NULL;
-        }
-        copy_card->face = current->card->face;
-        for (int i = 0; i < 3; i++)
-        {
-            copy_card->back[i] = current->card->back[i];
-        }
-        copy_draw_pile = stack_push(copy_draw_pile, copy_card);
-        current = current->next;
+        copy_game_state->draw_pile_left[i] = game->draw_pile_left[i];
     }
-    copy_game_state->draw_pile = copy_draw_pile;
+    copy_game_state->stealing = game->stealing;
+    copy_game_state->back_card_color[0] = game->back_card_color[0];
+    copy_game_state->back_card_color[1] = game->back_card_color[1];
+    copy_game_state->back_card_color[2] = game->back_card_color[2];
+    copy_game_state->face_card_color = game->face_card_color;
 
     return copy_game_state;
 }
@@ -348,8 +267,6 @@ void game_play(game_t *game, int input)
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
 
-    game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
-
     if (input == game->player_action) // le joueur actif choisit de marquer
     {
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
@@ -377,6 +294,9 @@ void game_play(game_t *game, int input)
             game->player_action = (game->player_action + 1) % 4;
         }
     }
+
+    // Changement de carte
+    get_draw_card(game);
 
     // passage au joueur suivant
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);

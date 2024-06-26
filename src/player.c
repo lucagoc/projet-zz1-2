@@ -20,14 +20,6 @@ int get_reward(game_t *game, int player)
     return game->players[player]->score;
 }
 
-// Possède le même comportement que game_play mais en simulant la partie.
-void game_simulate(game_t *game, int input)
-{
-    // On "cache" en donnant une valeur au hasard à l'avant par rapport au information à l'arrière de la carte
-    game->draw_pile->card->face = game->draw_pile->card->back[rand()%3];
-    game_play(game, input);
-}
-
 // Calcul pour le prochain coup si il faut scorer ou voler à l'aide de l'algorithme UCB (Upper Confidence Bound)
 // Renvoie un tableau des estimations de récompenses pour chaque bras
 // n le nombre de totale de partie jouée
@@ -74,7 +66,7 @@ int ucb(game_t *game, int n)
             }
         }
         game_t *copy = copy_game(game);
-        game_simulate(copy, max);
+        game_play(copy, max);
         int reward = get_reward(copy, player);
         G[max] += reward;
         n_t[max]++;

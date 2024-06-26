@@ -67,7 +67,7 @@ void flip_the_card(ui_t *ui, game_t *game, int x, int y)
         card_width = (CARD_WIDTH * (anime_tick - 300) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
         SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
-        SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->drawn_card_color], NULL, &card);
+        SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->face_card_color], NULL, &card);
     }
     else
     {
@@ -111,9 +111,9 @@ void draw_particles(ui_t *ui, game_t *game, int x, int y)
     int particle_number = 50;
     float speed = 0.0001;
 
-    int a = game->draw_pile->card->back[0];
-    int b = game->draw_pile->card->back[1];
-    int c = game->draw_pile->card->back[2];
+    int a = game->back_card_color[0];
+    int b = game->back_card_color[1];
+    int c = game->back_card_color[2];
 
     for (int i = 0; i < particle_number; i++)
     {
@@ -170,7 +170,7 @@ void draw_steal(ui_t *ui, game_t *game)
 
         float speed = 0.001;
         int param;
-        int number_cards_stolen = game->players[game->stealing]->tank[game->drawn_card_color]; //nombre de cartes volées
+        int number_cards_stolen = game->players[game->stealing]->tank[game->face_card_color]; //nombre de cartes volées
 
         if (game->stealing == 0)  //selon la position du volé on définit d'où partent les cartes
         {
@@ -218,15 +218,15 @@ void draw_steal(ui_t *ui, game_t *game)
         {
             param = (SDL_GetTicks() - ui->ticks_stealing_init) * 10 * speed;
 
-            draw_face(ui, game->drawn_card_color, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby +i*20);
+            draw_face(ui, game->face_card_color, param * finx + (100 - param) * debx, param * finy + (100 - param) * deby +i*20);
         }
 
     } else {
         //l'animation termine
         ui->animate[2]=0;
-        fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->drawn_card_color);
-        game->players[game->player_action]->tank[game->drawn_card_color] += game->players[game->stealing]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
-        game->players[game->stealing]->tank[game->drawn_card_color] = 0;
+        fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->face_card_color);
+        game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
+        game->players[game->stealing]->tank[game->face_card_color] = 0;
         game->stealing=0;
         ui->ticks_stealing_init=0; //on remet à 0 pour la prochaine animation
         game->player_action = (game->player_action + 1) % 4; //on passe au joueur suivant
