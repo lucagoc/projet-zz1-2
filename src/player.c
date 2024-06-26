@@ -9,7 +9,7 @@
 #define NUM_PLAYERS 4      // Nombre de joueurs
 #define NUM_ARMS 10        // Nombre de bras
 #define NUM_ITERATIONS 200 // Nombre total d'itérations
-#define UCB_ITERATIONS 50  // Nombre d'itérations pour UCB
+#define UCB_ITERATIONS 100  // Nombre d'itérations pour UCB
 
 float I_k(float G, float C, int n, int n_k)
 {
@@ -18,14 +18,9 @@ float I_k(float G, float C, int n, int n_k)
 }
 
 // On utilise comme récompense directement le score des joueur
-int *get_reward(game_t *game)
+int get_reward(game_t *game, int player)
 {
-    int *rewards = malloc(sizeof(int) * 4);
-    for (int i = 0; i < NUM_PLAYERS; i++)
-    {
-        rewards[i] = game->players[i]->score;
-    }
-    return rewards;
+    return game->players[player]->score;
 }
 
 // Calcul pour le prochain coup si il faut scorer ou voler à l'aide de l'algorithme UCB (Upper Confidence Bound)
@@ -53,12 +48,11 @@ int ucb(game_t *game, int n)
     {
         game_t *copy = copy_game(game);
         game_play(copy, i % 4);
-        int *reward = get_reward(copy);
+        int reward = get_reward(copy, player);
         I[i] = I_k(G[i], C, n, 1); // 1 = le nombre de fois où l'on a déjà joué sur la machine.
-        G[i] += reward[i];
+        G[i] += reward;
         n_t[i]++;
         free_game(copy);
-        free(reward);
     }
 
     // On joue n fois sur toute les machines
@@ -78,10 +72,9 @@ int ucb(game_t *game, int n)
         }
         game_t *copy = copy_game(game);
         game_play(copy, max);
-        int *reward = get_reward(copy);
-        G[max] += reward[player];
+        int reward = get_reward(copy, player);
+        G[max] += reward;
         n_t[max]++;
-        free(reward);
         free_game(copy);
     }
 
@@ -120,6 +113,8 @@ mcts_t *create_node(mcts_t *parent, game_t *game)
     node->state = copy_game(game);
     node->parent = parent;
     node->visits = 0;
+    node->gain_coup = malloc(sizeof(int) * NUM_PLAYERS);
+    node->n_coup = malloc(sizeof(int) * NUM_PLAYERS);
     for (int i = 0; i < NUM_PLAYERS; i++)
     {
         node->gain_coup[i] = 0;
@@ -141,6 +136,8 @@ void *free_mtsc_node(mcts_t *node)
     {
         free_mtsc_node(node->children[i]);
     }
+    free(node->gain_coup);
+    free(node->n_coup);
     free(node->id);
     free_game(node->state);
     free(node);
@@ -153,18 +150,18 @@ void *free_mtsc_node(mcts_t *node)
  * @param node le noeud à simuler
  * @param value la valeur de la simulation
  */
-void backpropagate_node(mcts_t *node, int *value)
+void backpropagate_node(mcts_t *node, int value)
 {
+    int back_input = node->from_input;
+    node = node->parent;
     // Mettre à jour les visites et la valeur accumulée de tous les noeuds parents
     while (node != NULL)
     {
         node->visits++;
 
-        for (int i = 0; i < NUM_PLAYERS; i++)
-        {
-            node->gain_coup[i] += value[i];
-        }
+        node->gain_coup[back_input] += value;
 
+        back_input = node->from_input;
         node = node->parent;
     }
 }
@@ -205,15 +202,17 @@ rb_tree_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
     }
     else
     {
+        int player = parent->state->player_action;
         mcts_t *node = create_node(parent, parent->state);
-        game_play(node->state, input);
+        node->from_input = input;
+        game_play(node->state, input); // Jouer une fois
 
-        // Jouer 3 coups aléatoires pour revenir au prochain
-        for (int i = 0; i < NUM_PLAYERS-1; i++)
+        // Jouer N-1 coups aléatoires pour revenir à la prochaine vue
+        for (int i = 0; i < NUM_PLAYERS - 1; i++)
         {
             game_play(node->state, rand() % NUM_PLAYERS);
         }
-        
+
         node->id = gen_id(node->state);
 
         mcts_t *search = rb_tree_search(rb_tree, node->id);
@@ -233,14 +232,14 @@ rb_tree_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
 
         // On simule le noeud
         simulate_node(parent->children[input]);
-        parent->n_coup[input] = parent->n_coup[input];
+        parent->n_coup[input] += 1;
 
         // On récupère le score
-        int *score = get_reward(parent->children[input]->state);
+        int score = get_reward(parent->children[input]->state, player);
+        node->gain_coup[input] = score;
 
         // On rétro-propage le score obtenu
         backpropagate_node(parent->children[input], score);
-        free(score);
     }
 
     return rb_tree;
@@ -254,7 +253,7 @@ rb_tree_t *mcts_aux(mcts_t *root, rb_tree_t *rb_tree)
         // On sélectionne un coup parmis ceux non exploré
         int input = select_node(root);
 
-        // On étend le noeud
+        // On étend le noeud, simule, rétro-propage
         rb_tree = expand_node(root, rb_tree, input);
 
         i++;
@@ -273,6 +272,7 @@ int mcts(game_t *game)
 {
     mcts_t *root = create_node(NULL, game);
     root->id = gen_id(root->state);
+    root->from_input = -1; // utilisé pour faire remonter le score
 
     rb_tree_t *rb_tree = rb_tree_create();
     rb_tree = rb_tree_insert(rb_tree, root);
@@ -291,9 +291,10 @@ int mcts(game_t *game)
         }
     }
 
+    fprintf(stderr, "Meilleur coup : %d\n", best_input);
+
     free_mtsc_node(root);
     free_rb_tree(rb_tree);
-
     return best_input;
 }
 

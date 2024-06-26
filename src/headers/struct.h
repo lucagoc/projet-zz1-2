@@ -61,8 +61,9 @@ struct mcts
     struct mcts *parent;      // Le noeud parent dans l'arbre MCTS
     struct mcts *children[NUM_PLAYERS]; // Les noeuds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
     int visits;               // Le nombre de fois que ce noeud a été visité
-    int n_coup[NUM_PLAYERS];
-    double gain_coup[NUM_PLAYERS];  
+    int from_input;           // L'input qui a mené à ce noeud
+    int *n_coup;
+    int *gain_coup;
 };
 typedef struct mcts mcts_t;
 
