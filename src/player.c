@@ -6,6 +6,7 @@
 #include "headers/player.h"
 #include "headers/gameplay.h"
 
+#define NUM_PLAYERS 4       // Nombre de joueurs
 #define NUM_ARMS 10         // Nombre de bras
 #define NUM_ITERATIONS 1000 // Nombre total d'itérations
 
@@ -18,7 +19,7 @@ float I_k(float G, float C, int n, int n_k)
 int *get_reward(game_t *game)
 {
     int *rewards = malloc(sizeof(int) * 4);
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         rewards[i] = game->players[i]->score;
     }
@@ -34,18 +35,18 @@ int ucb(game_t *game, int n)
     /* Initialisation */
     int player = game->player_action;
     float C = 1.4; // Constante d'exploration
-    int G[4];      // Gain accumulé sur la machine k
+    int G[NUM_PLAYERS];      // Gain accumulé sur la machine k
     int max = 0;
-    int n_t[4]; // Nombre de fois où l'on a joué sur la machine k
-    int I[4];   // Valeur de l'indice de confiance pour chaque possibilité
-    for (int i = 0; i < 4; i++)
+    int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine k
+    int I[NUM_PLAYERS];   // Valeur de l'indice de confiance pour chaque possibilité
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         G[i] = 0;
         I[i] = 0;
     }
 
     // On joue une fois sur toute les machines
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         game_t *copy = copy_game(game);
         game_play(copy, i % 4);
@@ -58,13 +59,13 @@ int ucb(game_t *game, int n)
 
     // On joue n fois sur toute les machines
     // On choisit la machine avec l'indice de confiance le plus élevé
-    for (int i = 4; i < n; i++)
+    for (int i = NUM_PLAYERS; i < n; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < NUM_PLAYERS; j++)
         {
             I[j] = I_k(G[j], C, n, n_t[j]);
         }
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < NUM_PLAYERS; j++)
         {
             if (I[j] > I[max])
             {
@@ -107,7 +108,7 @@ mcts_t *create_node(mcts_t *parent, game_t *game)
     node->state = game;
     node->parent = parent;
     node->visits = 0;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         node->gain_coup[i] = 0;
         node->n_coup[i] = 0;
@@ -130,7 +131,7 @@ void backpropagate_node(mcts_t *node, int *value)
     {
         node->visits++;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < NUM_PLAYERS; i++)
         {
             node->gain_coup[i] += value[i];
         }
@@ -143,23 +144,23 @@ void simulate_node(mcts_t *node)
 {
     while (node->state->win == -1)
     {
-        int input = rand() % 4;
+        int input = rand() % NUM_PLAYERS;
         game_play(node->state, input);
     }
 
     return;
 }
 
-int root_explored(mcts_t *root)
+bool root_explored(mcts_t *root)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         if (root->children[i] == NULL)
         {
-            return 0;
+            return false;
         }
     }
-    return 1;
+    return true;
 }
 
 mcts_t *expand_node(mcts_t *parent, int input)
@@ -214,7 +215,7 @@ player_t *create_player()
     player_t *player = malloc(sizeof(player_t));
     player->score = 0;
     player->last_scored_card = 0;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         player->tank[i] = 0;
     }
