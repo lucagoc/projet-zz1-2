@@ -226,7 +226,8 @@ void draw_steal(ui_t *ui, game_t *game)
             ui->animate[2] = 0; //on sort du mode animation
             ui->ticks_stealing_init = 0; // on remet à 0 pour la prochaine animation
             ui->last_tick = SDL_GetTicks();
-            steal_card(game); //on applique le vol effectif à la fin de l'animation
+            game->stealing = -1; //on sort du mode vol
+
         }
     }
 

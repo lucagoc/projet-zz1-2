@@ -225,14 +225,13 @@ void add_card_in_tank(int player, game_t *game)
  */
 void steal_card(game_t *game)
 {
+
     fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->face_card_color);
     printf("player volé %d \n", game->stealing);
     printf("player voleur %d \n", game->player_action);
 
     game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
     game->players[game->stealing]->tank[game->face_card_color] = 0;
-    game->player_action = (game->player_action + 1) % 4; // on passe au joueur suivant
-    game->stealing = -1; //on sort du mode vol
 
 }
 
@@ -306,12 +305,10 @@ void game_play(game_t *game, int input)
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
         {
             score_card(game);
-            game->player_action = (game->player_action + 1) % 4;
         }
         else
         {
             add_card_in_tank(game->player_action, game); // s'il tombe sur une couleur qu'il n'a pas
-            game->player_action = (game->player_action + 1) % 4;
         }
     }
     else // le joueur actif choisit de voler
@@ -319,17 +316,16 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-            if (game->stealing == -1)
-            {
-                steal_card(game);
-            }
+            game->stealing=input;
+            steal_card(game);
         }
         else
         {
             add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
-            game->player_action = (game->player_action + 1) % 4;
         }
     }
+    
+    game->player_action = (game->player_action + 1) % 4;
 
     // Si quelqu'un gagne
     game->win = is_victory(game);
