@@ -6,13 +6,13 @@
 #define CARD_WIDTH 601
 #define CARD_HEIGHT 844
 
-#define COLOR_RED 166,68,65,255
-#define COLOR_PURPLE 110,65,166,255
-#define COLOR_BLUE 65,114,165,255
-#define COLOR_ORANGE 222,129,30,255
-#define COLOR_YELLOW 155,143,0,255
-#define COLOR_PINK 187,82,144,255
-#define COLOR_GREEN 66,177,66,255
+#define COLOR_RED 166, 68, 65, 255
+#define COLOR_PURPLE 110, 65, 166, 255
+#define COLOR_BLUE 65, 114, 165, 255
+#define COLOR_ORANGE 222, 129, 30, 255
+#define COLOR_YELLOW 155, 143, 0, 255
+#define COLOR_PINK 187, 82, 144, 255
+#define COLOR_GREEN 66, 177, 66, 255
 
 // Faire pleuvoir des confettis sur l'écran.
 void draw_confetti(ui_t *ui)
@@ -50,23 +50,23 @@ void flip_the_card(ui_t *ui, game_t *game, int x, int y)
     if (anime_tick < 200)
     {
         SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, anime_tick * 255 / 200);
-        SDL_Rect background = {x - card_width / 2, y - card_height/2 + 20, card_width, card_height - 40};
+        SDL_Rect background = {x - card_width / 2, y - card_height / 2 + 20, card_width, card_height - 40};
         SDL_RenderFillRect(ui->renderer, &background);
-        SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
+        SDL_Rect card = {x - card_width / 2, y - card_height / 2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &card);
     }
     else if (anime_tick < 300)
     {
         card_width = (CARD_WIDTH * (300 - anime_tick) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
-        SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
+        SDL_Rect card = {x - card_width / 2, y - card_height / 2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->back_card_texture[1], NULL, &card);
     }
     else if (anime_tick < 400)
     {
         card_width = (CARD_WIDTH * (anime_tick - 300) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
-        SDL_Rect card = {x - card_width / 2, y - card_height/2, card_width, card_height};
+        SDL_Rect card = {x - card_width / 2, y - card_height / 2, card_width, card_height};
         SDL_RenderCopy(ui->renderer, ui->front_card_textures[game->drawn_card_color], NULL, &card);
     }
     else
@@ -149,16 +149,17 @@ void draw_steal(ui_t *ui, game_t *game)
     float speed = 1.0;
     float anime_tick = (ui->delta_t * speed);
 
-    if (ui->ticks_stealing_init==0){
+    if (ui->ticks_stealing_init == 0)
+    {
 
-        //on démarre l'animation
-        ui->animate[2]=1;
-        ui->ticks_stealing_init=1;
+        // on démarre l'animation
+        ui->animate[2] = 1;
+        ui->ticks_stealing_init = 1;
         ui->last_tick = SDL_GetTicks();
-
-
-    } else if (anime_tick <1000){
-        //on joue l'animation pendant 1000 ticks
+    }
+    else if (anime_tick < 1000)
+    {
+        // on joue l'animation pendant 1000 ticks
 
         int size_length = ui->screen_w / 2 - 90;
         int size_height = 200;
@@ -171,14 +172,13 @@ void draw_steal(ui_t *ui, game_t *game)
         float speed = 0.001;
         float param = anime_tick * speed;
 
-        printf("animetick: %f \n", anime_tick);
+        // printf("animetick: %f \n", anime_tick);
 
-        printf("param: %f \n", param);
+        // printf("param: %f \n", param);
 
+        int number_cards_stolen = game->players[game->stealing]->tank[game->drawn_card_color]; // nombre de cartes volées
 
-        int number_cards_stolen = game->players[game->stealing]->tank[game->drawn_card_color]; //nombre de cartes volées
-
-        if (game->stealing == 0)  //selon la position du volé on définit d'où partent les cartes
+        if (game->stealing == 0) // selon la position du volé on définit d'où partent les cartes
         {
             debx = 0;
             deby = ui->screen_h - size_height;
@@ -199,7 +199,7 @@ void draw_steal(ui_t *ui, game_t *game)
             deby = ui->screen_h - size_height;
         }
 
-        if (game->player_action == 0) //selon la position du voleur on définit où arrivent les cartes
+        if (game->player_action == 0) // selon la position du voleur on définit où arrivent les cartes
         {
             finx = 0;
             finy = ui->screen_h - size_height;
@@ -222,20 +222,19 @@ void draw_steal(ui_t *ui, game_t *game)
         for (int i = 0; i < number_cards_stolen; i++)
         {
 
-            draw_face(ui, game->drawn_card_color, param * finx + (1000 - param) * debx, param * finy + (1000 - param) * deby +i*20);
+            draw_face(ui, game->drawn_card_color, param * finx + (1000 - param) * debx, param * finy + (1000 - param) * deby + i * 20);
         }
-
-    } else {
-        //l'animation termine
-        ui->animate[2]=0;
+    }
+    else
+    {
+        // l'animation termine
+        ui->animate[2] = 0;
         fprintf(stderr, "[DEBUG] steal_card : player %d, card %d\n", game->stealing, game->drawn_card_color);
         game->players[game->player_action]->tank[game->drawn_card_color] += game->players[game->stealing]->tank[game->drawn_card_color] + 1; // on récupère les cartes volées
         game->players[game->stealing]->tank[game->drawn_card_color] = 0;
-        game->stealing=0;
-        ui->ticks_stealing_init=0; //on remet à 0 pour la prochaine animation
-        game->player_action = (game->player_action + 1) % 4; //on passe au joueur suivant
+        game->stealing = 0;
+        ui->ticks_stealing_init = 0;                         // on remet à 0 pour la prochaine animation
+        game->player_action = (game->player_action + 1) % 4; // on passe au joueur suivant
         ui->last_tick = SDL_GetTicks();
-
     }
-
 }
