@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "headers/struct.h"
-#include "headers/gameplay.h"
+#include "headers/player.h"
 
 #define NUMBER_FACE 7       // Nombre de couleurs
 #define NUMBER_BACK 3       // Nombre d'indicateur au dos de la carte
