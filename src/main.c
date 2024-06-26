@@ -7,13 +7,12 @@
 #include "headers/graphics.h"
 #include "headers/gameplay.h"
 
-
 int main(int argc, char const *argv[])
 {
     (void)argc;
     (void)argv;
 
-    int* input = malloc(sizeof(int));
+    int *input = malloc(sizeof(int));
     *input = -1;
     ui_t *ui = create_ui();
     game_t *game = create_game();
