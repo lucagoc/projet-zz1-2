@@ -256,6 +256,11 @@ void game_play(game_t *game, int input)
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
 
+    printf("Game id entry : \n");
+    node_id_t *gen = gen_id(game);
+    print_node_id(*gen);
+    free(gen);
+
     if (input == game->player_action) // le joueur actif choisit de marquer
     {
         if (is_card_in_tank(game->player_action, game)) // S'il tombe sur une bonne couleur qu'il a
@@ -292,4 +297,9 @@ void game_play(game_t *game, int input)
 
     // passage au joueur suivant
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
+
+    printf("Game id out : \n");
+    node_id_t *gen2 = gen_id(game);
+    print_node_id(*gen2);
+    free(gen2);
 }

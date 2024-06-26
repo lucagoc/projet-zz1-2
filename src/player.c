@@ -88,19 +88,18 @@ int select_node(mcts_t *root)
     return ucb(root->state, n);
 }
 
-
 /**
  * @brief MCTS expansion
- * 
+ *
  * @param node le noeud à étendre
  */
-void expand_node(mcts_t * node)
+void expand_node(mcts_t *node)
 {
     if (node->children == NULL)
     {
-        node->children = malloc(4 * sizeof(mcts_t ));
+        node->children = malloc(4 * sizeof(mcts_t));
         {
-            for (int i = 0; i < 4 ; i++)
+            for (int i = 0; i < 4; i++)
             {
                 node->children[i] = malloc(sizeof(mcts_t));
                 node->children[i]->state = copy_game(node->state);
@@ -112,7 +111,7 @@ void expand_node(mcts_t * node)
             }
         }
     }
-} 
+}
 
 /**
  * @brief MCTS rétropropagation
@@ -131,6 +130,36 @@ void backpropagate_node(mcts_t *node, double value)
     }
 }
 
+void simulate_node(mcts_t *node)
+{
+    return;
+}
+/**
+ * @brief MCTS_rec
+ *
+ * @param game l'état du jeu
+ *
+ */
+void mcts_rec(mcts_t *node)
+{
+    int already_play[4];
+    for (int i = 0; i < 4; i++)
+    {
+        already_play[i] = 0;
+    }
+    
+    while (node->visits < NUM_ITERATIONS)
+    {
+        int input = select_node(node);
+        if (already_play[input] == 0)
+        {
+            expand_node(node);
+            already_play[input] = 1;
+        }
+        simulate_node(node);
+        backpropagate_node(node, 0);
+    }
+}
 
 /*----------------------------------------------------------------------Implémentation des phases de MCTS-----------------------------------------------------------*/
 
@@ -148,3 +177,4 @@ player_t *create_player()
     }
     return player;
 }
+

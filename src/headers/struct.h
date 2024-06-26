@@ -40,12 +40,14 @@ struct game
 };
 typedef struct game game_t;
 
-// En théorie, on peut représenter de 0 à 18446744073709551615 [concaténer à] de 0 à 18446744073709551615
-// En enlevant les premier chiffres, ça nous fait des nodes de 38 chiffres (de 0 à 99999999999999999999999999999999999999)
+// 19 chiffres par id
 struct node_id
 {
-    unsigned long long id_1;
-    unsigned long long id_2;
+    unsigned long long id_game;         // Nombre de cartes dans la pile par couleur, joueur qui joue. 
+    unsigned long long id_player_0;     // Nombre de carte dans le deck, score
+    unsigned long long id_player_1;     // ...
+    unsigned long long id_player_2;     // ...
+    unsigned long long id_player_3;     // ...
 };
 typedef struct node_id node_id_t;
 
@@ -60,6 +62,15 @@ struct mcts
 };
 typedef struct mcts mcts_t;
 
+struct rb_tree
+{
+    mcts_t *value;
+    struct rb_tree *left;
+    struct rb_tree *right;
+    int color;
+};
+typedef struct rb_tree rb_tree_t;
+
 /******************** Fonctions utiles pour la pile *************************/
 stack_t *stack_create();
 bool stack_is_empty(stack_t *stack);
@@ -69,3 +80,6 @@ stack_t *stack_pop(stack_t *stack);
 int stack_size(stack_t *stack);
 void stack_free(stack_t *stack);
 /******************** Fonctions utiles pour la pile *************************/
+
+void print_node_id(node_id_t id);
+node_id_t *gen_id(game_t *game);
