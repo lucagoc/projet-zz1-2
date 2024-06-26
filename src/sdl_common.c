@@ -398,7 +398,11 @@ void refresh_input(ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (game->player_action == 0)
+    if(game->win != -1)
+    {
+        return;
+    }
+    if (false && game->player_action == 0)
     {
         if (!(ui->animate[0]) && *input != -1)
         {

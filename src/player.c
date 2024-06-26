@@ -8,13 +8,12 @@
 
 #define NUM_PLAYERS 4      // Nombre de joueurs
 #define NUM_ARMS 10        // Nombre de bras
-#define NUM_ITERATIONS 100 // Nombre total d'itérations
-#define UCB_ITERATIONS 10  // Nombre d'itérations pour UCB
+#define NUM_ITERATIONS 200 // Nombre total d'itérations
+#define UCB_ITERATIONS 50  // Nombre d'itérations pour UCB
 
 float I_k(float G, float C, int n, int n_k)
 {
     float res = G / n_k + C * sqrt(log(n) / n_k);
-    fprintf(stderr, "G: %f, C: %f, n: %d, n_k: %d res: %f\n", G, C, n, n_k, res);
     return res;
 }
 
@@ -69,7 +68,6 @@ int ucb(game_t *game, int n)
         for (int j = 0; j < NUM_PLAYERS; j++)
         {
             I[j] = I_k(G[j], C, n, n_t[j]);
-            fprintf(stderr, "I[%d] = %d\n", j, I[j]);
         }
         for (int j = 0; j < NUM_PLAYERS; j++)
         {
