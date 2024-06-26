@@ -89,10 +89,10 @@ int get_draw_card(game_t *game)
     }
 
     // Mettre les 3 couleurs en positions aléatoires
-    int d = rand() % 3;
+    int d = rand() % NUMBER_BACK;
     game->back_card_color[d] = r;
-    game->back_card_color[(d + 1) % 3] = a;
-    game->back_card_color[(d + 2) % 3] = b;
+    game->back_card_color[(d + 1) % NUMBER_BACK] = a;
+    game->back_card_color[(d + 2) % NUMBER_BACK] = b;
 
     game->draw_pile_left[r] = game->draw_pile_left[r] - 1;
     return 1;
@@ -128,7 +128,7 @@ game_t *create_game()
     game->back_card_color[1] = -1;
     game->back_card_color[2] = -1;
 
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < NUMBER_FACE; i++)
     {
         game->draw_pile_left[i] = 15; // Initialisation de la pile de cartes
     }
@@ -219,7 +219,7 @@ game_t *copy_game(game_t *game)
             fprintf(stderr, "Erreur d'alloction de mémoire\n");
             return NULL;
         }
-        for (int j = 0; j < 7; j++)
+        for (int j = 0; j < NUMBER_FACE; j++)
         {
             copy_player->tank[j] = game->players[i]->tank[j];
         }
@@ -231,7 +231,7 @@ game_t *copy_game(game_t *game)
     copy_game_state->player_action = game->player_action;
     copy_game_state->win = game->win;
 
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < NUMBER_FACE; i++)
     {
         copy_game_state->draw_pile_left[i] = game->draw_pile_left[i];
     }
