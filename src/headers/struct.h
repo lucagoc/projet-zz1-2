@@ -5,6 +5,9 @@
 #define RED 0
 #define BLACK 1
 
+#define NUM_COLORS 7
+#define NUM_PLAYERS 4
+
 struct card
 {
     int back[3]; // Dos de la carte
@@ -22,7 +25,7 @@ typedef struct stack stack_t;
 
 struct player
 {
-    int tank[7];          // Carte tank de joueur
+    int tank[NUM_COLORS];          // Carte tank de joueur
     int score;            // Score du joueur
     int last_scored_card; // Valeur de la dernière carte jouée
 };
@@ -30,8 +33,8 @@ typedef struct player player_t;
 
 struct game
 {
-    player_t *players[4];  // Tableau des joueurs, numéroté de 0 à 3
-    int draw_pile_left[7]; // Nombre de cartes restantes dans la pioche pour chaque couleur
+    player_t *players[NUM_PLAYERS];  // Tableau des joueurs, numéroté de 0 à 3
+    int draw_pile_left[NUM_COLORS]; // Nombre de cartes restantes dans la pioche pour chaque couleur
     int face_card_color;
     int back_card_color[3];
     int player_action; // Joueur actif
@@ -56,10 +59,10 @@ struct mcts
     node_id_t *id;             // L'identifiant du noeud
     game_t *state;            // L'état du jeu correspondant à ce noeud
     struct mcts *parent;      // Le noeud parent dans l'arbre MCTS
-    struct mcts *children[4]; // Les noeuds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
+    struct mcts *children[NUM_PLAYERS]; // Les noeuds enfants (mouvements possibles à partir de cet état) [input donnée en entrée]
     int visits;               // Le nombre de fois que ce noeud a été visité
-    int n_coup[4];
-    double gain_coup[4];    
+    int n_coup[NUM_PLAYERS];
+    double gain_coup[NUM_PLAYERS];    
 };
 typedef struct mcts mcts_t;
 

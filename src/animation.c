@@ -6,6 +6,8 @@
 #define CARD_WIDTH 601
 #define CARD_HEIGHT 844
 
+#define NUM_COLORS 7
+
 #define COLOR_RED 166, 68, 65, 255
 #define COLOR_PURPLE 110, 65, 166, 255
 #define COLOR_BLUE 65, 114, 165, 255
@@ -106,7 +108,7 @@ void draw_particles(ui_t *ui, game_t *game, int x, int y)
     y -= 1;
 
     // Définir les couleurs des particules en fonctions de l'arrière des cartes.
-    SDL_Color colors[7] = {
+    SDL_Color colors[NUM_COLORS] = {
         {COLOR_YELLOW},
         {COLOR_GREEN},
         {COLOR_PURPLE},
