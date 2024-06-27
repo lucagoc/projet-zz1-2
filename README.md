@@ -1,6 +1,6 @@
 # Mantis
 
-![demo](.github/demo.webm)
+![demo](.github/demo.gif)
 
 Mantis est un jeu de cartes aux règles simples, mais qui demande une certaine stratégie pour gagner. Le but est d'obtenir 10 points le plus vite possible avant les autres joueurs. Pour cela, vous tirer une carte dans la pioche face cachée et vous avez 2 possibilités:
 - Soit scorer : Retourner la carte et si vous posséder une ou plusieurs cartes de même couleur, vous pouvez les placées devant vous et ajouter le nombre de points à votre score.
