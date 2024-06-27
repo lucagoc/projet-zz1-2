@@ -32,7 +32,7 @@ int ucb(mcts_t *root, int n)
     game_t *game = root->state;
     /* Initialisation */
     int player = game->player_action;
-    float C = 0.4699; // Constante d'exploration
+    float C = 1.4; // Constante d'exploration
     int max = 0;
     int G[NUM_PLAYERS];   // Valeur de la récompense pour chaque possibilité
     int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine
@@ -293,6 +293,8 @@ int mcts(game_t *game)
             best_input = i;
         }
     }
+
+    printf("Best input : %d\n", best_input);
 
     free_mtsc_node(root);
     free_rb_tree(rb_tree);
