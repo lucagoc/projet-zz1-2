@@ -381,11 +381,12 @@ void refresh_input(ui_t *ui, int *input)
                     if (ui->in_pause)
                     {
                         if (is_continue_clicked(ui, x, y))
-                        {
+                        {                            
                             ui->in_pause = false;
                         }
                         else if (is_quit_clicked(ui, x, y))
                         {
+                            //SDL_SetTextureColorMod(ui->pause_texture[1], 150, 150, 150);
                             ui->program_on = false;
                         }
                         else
