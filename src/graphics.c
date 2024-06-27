@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <time.h>
 
 #include "headers/sdl_common.h"
 #include "headers/animation.h"
@@ -181,8 +182,40 @@ void draw_logo(ui_t *ui)
 /*------------------------------------------ PAUSE -----------------------------------------------*/
 void draw_background_pause(ui_t *ui)
 {
-    SDL_SetRenderDrawColor(ui->renderer, 238, 230, 255, 10); // N'active pas la transparence
-    SDL_RenderClear(ui->renderer);
+
+    srand(time(NULL));
+
+    // Couleurs de départ et de fin pour le gradient
+
+    int start_R = rand() % 256;
+    int start_G = rand() % 256;
+    int start_B = rand() % 256;
+
+    int end_R = rand() % 256;
+    int end_G = rand() % 256;
+    int end_B = rand() % 256;
+
+    int screen_height = ui->screen_h;
+    int screen_width = ui->screen_w;
+
+    // Calculer les incréments de couleur
+
+    float step_R = (float)(end_R - start_R) / screen_height;
+    float step_G = (float)(end_G - start_G) / screen_height;
+    float step_B = (float)(end_B - start_B) / screen_height;
+
+    // Dessiner le gradient
+
+    for (int y = 0; y < screen_height; ++y)
+    {
+        int current_R = start_R + (int)(step_R * y);
+        int current_G = start_G + (int)(step_G * y);
+        int current_B = start_B + (int)(step_B * y);
+
+        SDL_SetRenderDrawColor(ui->renderer, current_R, current_G, current_B, 255);
+
+        SDL_RenderDrawLine(ui->renderer, 0, y, screen_width, y);
+    }
 }
 
 void draw_menu_pause(ui_t *ui)

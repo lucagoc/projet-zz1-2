@@ -77,6 +77,7 @@ void flip_the_card(ui_t *ui, game_t *game, int x, int y)
     }
 }
 
+
 // Donne un effet de luminescences à un SDL_Rect.
 void draw_luminescence(ui_t *ui, SDL_Rect *rect)
 {
