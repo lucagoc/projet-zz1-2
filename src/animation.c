@@ -72,6 +72,7 @@ void fct_move_animation(anim_props_t *anim, SDL_Renderer *renderer, long unsigne
 
 void fct_anim_confettis(anim_props_t *anim, SDL_Renderer *renderer, long unsigned frame)
 {
+    float speed = 0.00001;
     for (int i = 0; i < 100; i++)
     {
         // Couleur aléatoire mais toujours la même pour un i donné.
@@ -84,8 +85,8 @@ void fct_anim_confettis(anim_props_t *anim, SDL_Renderer *renderer, long unsigne
         else
             SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 
-        int x = fmod((frame * 10 * i), anim->size.x);
-        int y = fmod((frame * 10 * i), anim->size.y);
+        int x = (sin(frame*i*speed)*sin(frame*i*speed)*anim->size.x);
+        int y = fmod((frame * i * speed * 1000), anim->size.y);
         SDL_Rect confetti = {x, y, 10, 10};
         SDL_RenderFillRect(renderer, &confetti);
     }

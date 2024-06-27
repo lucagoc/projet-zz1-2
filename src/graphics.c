@@ -109,11 +109,10 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
 void draw_victory(ui_t *ui, game_t *game)
 {
     SDL_Rect vic_rect = {650, 200, 300, 100};
-
-    if (game->win > -1)
-    {
-        SDL_RenderCopy(ui->renderer, ui->victory[game->win], NULL, &vic_rect);
-    }
+    SDL_RenderCopy(ui->renderer, ui->victory[game->win], NULL, &vic_rect);
+    ui->animations[3]->size.x = ui->screen_w;
+    ui->animations[3]->size.y = ui->screen_h;
+    fct_anim_confettis(ui->animations[3], ui->renderer, SDL_GetTicks());
 }
 
 /**
