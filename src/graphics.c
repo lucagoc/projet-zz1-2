@@ -215,14 +215,14 @@ void draw_draw_card(ui_t *ui, game_t *game)
 
 void draw_active_player(ui_t *ui, game_t *game)
 {
-    SDL_Rect draw_active_player_rect = {10, ui->screen_h / 2 + 100, 230, 70};
+    SDL_Rect draw_active_player_rect = {50, ui->screen_h / 2 + 150, 230, 70};
 
     SDL_RenderCopy(ui->renderer, ui->interface_textures[game->player_action + 4], NULL, &draw_active_player_rect);
 }
 
 void draw_logo(ui_t *ui)
 {
-    SDL_Rect draw_logo_rect = {10, ui->screen_h / 2 - 100, 200, 200};
+    SDL_Rect draw_logo_rect = {-25, ui->screen_h / 2 - 225, 400, 400};
     SDL_RenderCopy(ui->renderer, ui->interface_textures[0], NULL, &draw_logo_rect);
 }
 
