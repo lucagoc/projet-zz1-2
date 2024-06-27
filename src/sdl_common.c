@@ -77,13 +77,12 @@ void unload_textures(ui_t *ui)
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
-        //SDL_DestroyTexture(ui->player_textures[i]);
+        // SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
         SDL_DestroyTexture(ui->active_player_textures[i]);
         SDL_DestroyTexture(ui->background[i]);
-
     }
-   SDL_DestroyTexture(ui->triangle);
+    SDL_DestroyTexture(ui->triangle);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     for (int i = 0; i < 8; i++)
@@ -345,7 +344,8 @@ void free_ui(ui_t *ui)
  * @param input Structure des entrées
  */
 void refresh_input(game_t *game, ui_t *ui, int *input)
-{                            printf("player actif %d \n", game->player_action);
+{
+    printf("player actif %d \n", game->player_action);
 
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -364,7 +364,7 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                if (game->stealing ==-1 && *input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
+                if (game->stealing == -1 && *input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
                 {
                     int x = ui->event.button.x;
                     int y = ui->event.button.y;
@@ -383,11 +383,10 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
                             ui->click_y = y;
                             ui->animate[0] = true; // flip_the_card
 
-                            if (game->stealing==-1 && *input != game->player_action && is_card_in_tank(*input, game))
+                            if (game->stealing == -1 && *input != game->player_action && is_card_in_tank(*input, game))
                             {
                                 game->stealing = *input; // si on est dans le cas d'un vol on lance l'animation
                             }
-
                         }
                         ui->follow_mouse = false;
                     }
@@ -412,7 +411,7 @@ void refresh_input(game_t *game, ui_t *ui, int *input)
 
 void game_interact(int *input, game_t *game, ui_t *ui)
 {
-    if (game->stealing==-1 && !(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
+    if (game->stealing == -1 && !(ui->animate[2]) && !(ui->animate[0]) && *input != -1)
     {
         game_play(game, *input);
         *input = -1;

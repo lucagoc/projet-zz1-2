@@ -21,8 +21,8 @@ struct ui_s
     pos_t mouse_pos;
 
     /* Textures */
-    SDL_Texture *front_card_textures[7]; 
-    SDL_Texture *back_flag_textures[7];  
+    SDL_Texture *front_card_textures[7];
+    SDL_Texture *back_flag_textures[7];
     SDL_Texture *back_card_texture[2];
     SDL_Texture *player_textures[4];
     SDL_Texture *interface_textures[8];
@@ -34,7 +34,6 @@ struct ui_s
     SDL_Texture *triangle;
 
     SDL_Texture *background[4];
-
 
     /* Animation */
     bool animate[3]; // 0: flip_the_card, 1: draw_particles, 3:vol de cartes
@@ -53,6 +52,6 @@ struct ui_s
 typedef struct ui_s ui_t;
 
 ui_t *create_ui();
-void refresh_input(game_t * game, ui_t *ui, int *input);
+void refresh_input(game_t *game, ui_t *ui, int *input);
 void free_ui(ui_t *ui);
 void game_interact(int *input, game_t *game, ui_t *ui);

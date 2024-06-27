@@ -232,7 +232,6 @@ void steal_card(game_t *game)
 
     game->players[game->player_action]->tank[game->face_card_color] += game->players[game->stealing]->tank[game->face_card_color] + 1; // on récupère les cartes volées
     game->players[game->stealing]->tank[game->face_card_color] = 0;
-
 }
 
 /**
@@ -316,7 +315,7 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-            game->stealing=input;
+            game->stealing = input;
             steal_card(game);
         }
         else
@@ -324,7 +323,7 @@ void game_play(game_t *game, int input)
             add_card_in_tank(input, game); // s'il tombe sur une couleur qu'il n'a pas
         }
     }
-    
+
     game->player_action = (game->player_action + 1) % 4;
 
     // Si quelqu'un gagne
