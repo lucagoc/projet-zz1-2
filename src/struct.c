@@ -5,118 +5,6 @@
 
 #include "headers/struct.h"
 
-/*************************** Fonctions de la structure de données pile *****************************/
-/**
- * @brief Création d'une pile vide
- *
- * @return stack_t*
- */
-stack_t *stack_create()
-{
-    return NULL;
-}
-
-/**
- * @brief Vérifie si la pile est vide
- *
- * @param stack la pile à vérifier
- * @return int
- */
-bool stack_is_empty(stack_t *stack)
-{
-    return stack == NULL;
-}
-
-/**
- * @brief Ajoute un élément à la pile
- *
- * @param stack la pile
- * @param face la face de la carte
- * @param back le dos de la carte
- * @return stack_t*
- */
-stack_t *stack_push(stack_t *stack, card_t *card)
-{
-    stack_t *new_stack = malloc(sizeof(stack_t));
-    if (new_stack == NULL)
-    {
-        fprintf(stderr, "Erreur d'allocation de mémoire\n");
-        exit(EXIT_FAILURE);
-    }
-    new_stack->card = card;
-    new_stack->next = stack;
-    return new_stack;
-}
-
-/**
- * @brief Retourne la face du sommet de la pile
- *
- * @param stack la pile
- * @return int
- */
-int stack_top(stack_t *stack)
-{
-    if (stack_is_empty(stack))
-    {
-        fprintf(stderr, "Erreur: pile vide\n");
-        exit(EXIT_FAILURE);
-    }
-    return stack->card->face;
-}
-
-/**
- * @brief Retire le sommet de la pile
- *
- * @param stack la pile
- */
-stack_t *stack_pop(stack_t *stack)
-{
-    if (stack_is_empty(stack))
-    {
-        fprintf(stderr, "Erreur: pile vide\n");
-        exit(EXIT_FAILURE);
-    }
-    stack_t *new_stack = stack->next;
-    free(stack);
-    return new_stack;
-}
-
-/**
- * @brief Retourne la taille de la pile
- *
- * @param stack la pile
- * @return int
- */
-int stack_size(stack_t *stack)
-{
-    int size = 0;
-    while (!stack_is_empty(stack))
-    {
-        size++;
-        stack = stack->next;
-    }
-    return size;
-}
-
-/**
- * @brief Libère la mémoire allouée à la pile
- *
- * @param stack la pile
- */
-void stack_free(stack_t *stack)
-{
-    stack_t *current = stack;
-    stack_t *next;
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current);
-        current = next;
-    }
-}
-
-/*************************** Fonctions de la structure de données pile *****************************/
-
 // Arbre rouge-Noir
 rb_tree_t *rb_tree_create()
 {
@@ -152,17 +40,6 @@ int concat_sorted(int a, int b, int c)
     int concatenated = a * 100 + b * 10 + c;
 
     return concatenated;
-}
-
-void print_node_id(node_id_t id)
-{
-    printf("---------------------------------------- \n");
-    printf("id_game : %llu\n", id.id_game);
-    printf("id_player_0 : %llu\n", id.id_player_0);
-    printf("id_player_1 : %llu\n", id.id_player_1);
-    printf("id_player_2 : %llu\n", id.id_player_2);
-    printf("id_player_3 : %llu\n", id.id_player_3);
-    printf("---------------------------------------- \n");
 }
 
 node_id_t *gen_id(game_t *game)
@@ -222,8 +99,8 @@ node_id_t *gen_id(game_t *game)
     return id;
 }
 
-// Les rb_tree utilise strcmp comme relation d'ordre
-rb_tree_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
+// Cherche un ID dans l'arbre rouge-noir et renvoie le noeud correspondant ou null si introuvable
+mcts_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
 {
     if (tree == NULL)
     {
@@ -233,7 +110,7 @@ rb_tree_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
     int cmp = memcmp(&tree->value->id, id, sizeof(node_id_t));
     if (cmp == 0)
     {
-        return tree;
+        return tree->value;
     }
     else if (cmp < 0)
     {
@@ -245,43 +122,51 @@ rb_tree_t *rb_tree_search(rb_tree_t *tree, node_id_t *id)
     }
 }
 
-void rb_tree_rotate_left(rb_tree_t **tree)
+// Rotation gauche, renvoie le nouveau noeud racine
+rb_tree_t *rb_tree_rotate_left(rb_tree_t *tree)
 {
-    rb_tree_t *right = (*tree)->right;
-    (*tree)->right = right->left;
-    right->left = *tree;
-    *tree = right;
+    rb_tree_t *new_root = tree->right;
+    tree->right = new_root->left;
+    new_root->left = tree;
+    return new_root;
 }
 
-void rb_tree_rotate_right(rb_tree_t **tree)
+// Rotation droite, renvoie le nouveau noeud racine
+rb_tree_t *rb_tree_rotate_right(rb_tree_t *tree)
 {
-    rb_tree_t *left = (*tree)->left;
-    (*tree)->left = left->right;
-    left->right = *tree;
-    *tree = left;
+    rb_tree_t *new_root = tree->left;
+    tree->left = new_root->right;
+    new_root->right = tree;
+    return new_root;
 }
 
-void rb_tree_flip_colors(rb_tree_t *tree)
+rb_tree_t *rb_tree_flip_colors(rb_tree_t *tree)
 {
     tree->color = RED;
     tree->left->color = BLACK;
     tree->right->color = BLACK;
+    return tree;
 }
 
-void rb_tree_insert_fixup(rb_tree_t **tree)
+rb_tree_t *rb_tree_insert_fixup(rb_tree_t *tree)
 {
-    if ((*tree)->left != NULL && (*tree)->left->color == RED && (*tree)->left->left != NULL && (*tree)->left->left->color == RED)
+    if (tree->left != NULL && tree->left->color == RED && tree->left->left != NULL && tree->left->left->color == RED)
     {
-        rb_tree_rotate_right(tree);
+        tree = rb_tree_rotate_right(tree);
+        tree = rb_tree_flip_colors(tree);
     }
-    if ((*tree)->right != NULL && (*tree)->right->color == RED)
+    if (tree->right != NULL && tree->right->color == RED && tree->right->left != NULL && tree->right->left->color == RED)
     {
-        rb_tree_rotate_left(tree);
+        tree->right = rb_tree_rotate_right(tree->right);
+        tree = rb_tree_rotate_left(tree);
+        tree = rb_tree_flip_colors(tree);
     }
-    if ((*tree)->left != NULL && (*tree)->left->color == RED && (*tree)->right != NULL && (*tree)->right->color == RED)
+    if (tree->left != NULL && tree->left->color == RED && tree->right != NULL && tree->right->color == RED)
     {
-        rb_tree_flip_colors(*tree);
+        tree = rb_tree_flip_colors(tree);
     }
+
+    return tree;
 }
 
 // Les rb_tree utilise strcmp comme relation d'ordre
@@ -316,6 +201,19 @@ rb_tree_t *rb_tree_insert(rb_tree_t *tree, mcts_t *value)
         tree->right = rb_tree_insert(tree->right, value);
     }
 
-    rb_tree_insert_fixup(&tree);
+    tree = rb_tree_insert_fixup(tree);
     return tree;
+}
+
+void *free_rb_tree(rb_tree_t *tree)
+{
+    if (tree == NULL)
+    {
+        return NULL;
+    }
+
+    free_rb_tree(tree->left);
+    free_rb_tree(tree->right);
+    free(tree);
+    return NULL;
 }

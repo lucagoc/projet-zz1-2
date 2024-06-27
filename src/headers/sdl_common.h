@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include "headers/struct.h"
 
+#define NUM_PLAYERS 4
+#define NUM_COLORS 7
+
 struct pos_s
 {
     int x;
@@ -38,10 +41,10 @@ struct ui_s
     SDL_Event event;
 
     /* Textures */
-    SDL_Texture *front_card_textures[7];
-    SDL_Texture *back_flag_textures[7];
+    SDL_Texture *front_card_textures[NUM_COLORS]; 
+    SDL_Texture *back_flag_textures[NUM_COLORS];  
     SDL_Texture *back_card_texture[2];
-    SDL_Texture *player_textures[4];
+    SDL_Texture *player_textures[NUM_PLAYERS];
     SDL_Texture *interface_textures[4];
     SDL_Texture *button_textures[8];
     SDL_Texture *victory[4];

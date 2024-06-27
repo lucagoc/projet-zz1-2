@@ -255,10 +255,11 @@ void draw(ui_t *ui, game_t *game)
         draw_draw_card(ui, game);
     }
 
-    if (game->win != -1)
+    if (game->win > -1)
     {
         draw_victory(ui, game);
     }
+
 
     // Affichage
     SDL_RenderPresent(ui->renderer);

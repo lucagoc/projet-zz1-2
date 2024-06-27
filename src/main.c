@@ -6,6 +6,7 @@
 #include "headers/sdl_common.h"
 #include "headers/graphics.h"
 #include "headers/gameplay.h"
+#include "headers/player.h"
 
 int main(int argc, char const *argv[])
 {
@@ -21,8 +22,13 @@ int main(int argc, char const *argv[])
         refresh_input(ui, ui_input);
         int input = process_input(ui_input, game, ui);
 
-        if (game->win == -1 && input != -1)
+        if (game->win == -1 && input != -1 && game->player_action == 0)
         {
+            game_play(game, input);
+        }
+        else if(game->player_action != 0 && game->win == -1)
+        {
+            int input = mcts(game);
             game_play(game, input);
         }
 
@@ -31,6 +37,7 @@ int main(int argc, char const *argv[])
 
     free_game(game);
     free_ui(ui);
+    free(ui_input);
 
     return 0;
 }
