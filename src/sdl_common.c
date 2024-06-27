@@ -285,9 +285,14 @@ ui_t *create_ui()
     return ui;
 }
 
-void create_ui_input()
+ui_input_t *create_ui_input()
 {
-    
+    ui_input_t *ui_input = malloc(sizeof(ui_input_t));
+    ui_input->click = (pos_t){0, 0};
+    ui_input->cursor = (pos_t){0, 0};
+    ui_input->key = 0;
+
+    return ui_input;
 }
 
 // si les coordonnées cliquées correspondent à la pile
@@ -333,7 +338,7 @@ void free_ui(ui_t *ui)
 }
 
 /*
- * @brief Fonction pour récupérer les événements
+ * @brief Fonction pour récupérer les événements lié à l'interface utilisateur
  *
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
@@ -342,8 +347,8 @@ void refresh_input(ui_t *ui, ui_input_t* ui_input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    ui->mouse_pos.x = x;
-    ui->mouse_pos.y = y;
+    ui_input->cursor.x = x;
+    ui_input->cursor.y = y;
 
     /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
@@ -357,7 +362,8 @@ void refresh_input(ui_t *ui, ui_input_t* ui_input)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                
+                ui_input->click.x = x;
+                ui_input->click.y = y;
             }
             break;
 
@@ -376,11 +382,10 @@ void refresh_input(ui_t *ui, ui_input_t* ui_input)
     }
 }
 
-void game_interact(int *input, game_t *game, ui_t *ui)
+void game_interact(int input, game_t *game)
 {
-    if (!(ui->animate[0]) && *input != -1)
+    if (game->player_action == 0 && game->win == -1)
     {
-        game_play(game, *input);
-        *input = -1;
+        game_play(game, input);
     }
 }

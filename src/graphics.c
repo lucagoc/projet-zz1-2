@@ -159,38 +159,15 @@ void draw_draw_card(ui_t *ui, game_t *game)
     int x = 0;
     int y = 0;
 
-    if (ui->follow_mouse)
+    for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
     {
-        x = ui->mouse_pos.x - CARD_WIDTH / 6;
-        y = ui->mouse_pos.y - CARD_HEIGHT / 6;
-    }
-    else
-    {
-        x = ui->screen_w / 2 - CARD_WIDTH / 6;
-        y = ui->screen_h / 2 - CARD_HEIGHT / 6;
+        SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
+        SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->draw_pile->card->back[i]], NULL, &draw_indicator_rect);
     }
 
-    if (ui->animate[0]) // flip_the_card
-    {
-        flip_the_card(ui, game, ui->click.x, ui->click.y);
-    }
-    else
-    {
-        for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
-        {
-            SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
-            SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->draw_pile->card->back[i]], NULL, &draw_indicator_rect);
-        }
-
-        // Affiche la carte
-        SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
-        SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
-
-        if (ui->follow_mouse)
-        {
-            draw_particles(ui, game, ui->mouse_pos.x, ui->mouse_pos.y);
-        }
-    }
+    // Affiche la carte
+    SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
+    SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
 }
 
 void draw_active_player(ui_t *ui, game_t *game)
@@ -237,6 +214,4 @@ void draw(ui_t *ui, game_t *game)
     // Affichage
     SDL_RenderPresent(ui->renderer);
     SDL_Delay(15); // ~ 60 FPS
-    ui->tick = SDL_GetTicks();
-    ui->delta_t = ui->tick - ui->last_tick;
 }
