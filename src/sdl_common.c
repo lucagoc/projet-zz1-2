@@ -385,6 +385,12 @@ int player_clicked(pos_t click)
 
 void free_ui(ui_t *ui)
 {
+    for (int i = 0; i < 10; i++)
+    {
+        free(ui->animations[i]->texture);
+        free(ui->animations[i]);
+    }
+    
     free(ui->animations);
     unload_textures(ui);
     free(ui);
