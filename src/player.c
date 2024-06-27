@@ -339,7 +339,16 @@ int mcts(game_t *game)
         }
     }
 
-    printf("Best input : %d\n", best_input);
+    // Print toute les valeurs
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        fprintf(stderr, "Coup %d : ", i);
+        for (int j = 0; j < NUM_PLAYERS; j++)
+        {
+            printf("%f ", root->gain_coup[i][j]/(float)root->n_coup[i]);
+        }
+        printf("\n");
+    }
 
     free_mtsc_node(root);
     free_rb_tree(rb_tree);
