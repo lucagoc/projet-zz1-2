@@ -49,7 +49,9 @@ struct ui_s
     SDL_Texture *button_textures[8];
     SDL_Texture *victory[4];
     SDL_Texture *score_textures[10];
-    SDL_Texture *background_texture[3];
+    SDL_Texture *background[4];
+    SDL_Texture *active_player_textures[4];
+    SDL_Texture *triangle;
 
     SDL_Texture *pause_texture[2];
 

@@ -234,6 +234,15 @@ void load_textures(ui_t *ui)
 
     ui->pause_texture[0] = load_texture_from_image("assets/ui/button_continue.png", ui->window, ui->renderer);
     ui->pause_texture[1] = load_texture_from_image("assets/ui/button_quit.png", ui->window, ui->renderer);
+    ui->active_player_textures[0] = load_texture_from_image("assets/ui/bas-gauche.png", ui->window, ui->renderer);
+    ui->active_player_textures[1] = load_texture_from_image("assets/ui/haut-droit.png", ui->window, ui->renderer);
+    ui->active_player_textures[2] = load_texture_from_image("assets/ui/haut-gauche.png", ui->window, ui->renderer);
+    ui->active_player_textures[3] = load_texture_from_image("assets/ui/bas-droit.png", ui->window, ui->renderer);
+    ui->triangle = load_texture_from_image("assets/ui/triangle.png", ui->window, ui->renderer);
+    ui->background[0] = load_texture_from_image("assets/ui/layer0.png", ui->window, ui->renderer);
+    ui->background[1] = load_texture_from_image("assets/ui/layer1.png", ui->window, ui->renderer);
+    ui->background[2] = load_texture_from_image("assets/ui/layer2.png", ui->window, ui->renderer);
+    ui->background[3] = load_texture_from_image("assets/ui/layer3.png", ui->window, ui->renderer);
 
     return;
 }

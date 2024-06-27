@@ -12,10 +12,38 @@
 #define CARD_HEIGHT 844
 
 // Affiche le fond d'écran.
+// Affiche le fond d'écran.
 void draw_background(ui_t *ui)
 {
-    SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
+
+    SDL_SetRenderDrawColor(ui->renderer, 220, 220, 255, 255);
     SDL_RenderClear(ui->renderer);
+
+    int mouseX;
+    int mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+
+    unsigned long tick = SDL_GetTicks();
+
+    mouseX -= ui->screen_w / 2;
+    mouseY -= ui->screen_h / 2;
+
+    float parallX = 0.03;
+    float parallY = 0.04;
+
+    SDL_Rect layer0_draw = {0, 0,
+                            ui->screen_w, ui->screen_h};
+    SDL_Rect layer1_draw = {-1200 + ((int)round(tick * 0.02)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
+                            ui->screen_w + ((int)round(tick * 0.02)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
+    SDL_Rect layer2_draw = {-1200 + ((int)round(tick * 0.05)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
+                            ui->screen_w + ((int)round(tick * 0.05)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
+    SDL_Rect layer3_draw = {-1200 + ((int)round(tick * 0.15)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
+                            ui->screen_w + ((int)round(tick * 0.15)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
+
+    SDL_RenderCopy(ui->renderer, ui->background[0], NULL, &layer0_draw);
+    SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw);
+    SDL_RenderCopy(ui->renderer, ui->background[2], NULL, &layer2_draw);
+    SDL_RenderCopy(ui->renderer, ui->background[3], NULL, &layer3_draw);
 }
 
 void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
@@ -75,7 +103,7 @@ void draw_players(ui_t *ui, game_t *game)
     int padding = 25;
 
     SDL_Color inactive = {128, 128, 128, 255};
-    SDL_Color active = {255, 0, 0, 255};
+    SDL_Color active = {255, 0, 0, 150};
 
     if (game->players[0] != NULL) // En bas à gauche
     {
@@ -84,10 +112,16 @@ void draw_players(ui_t *ui, game_t *game)
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
         SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};
-        SDL_RenderFillRect(ui->renderer, &player_background);
+        SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
+
+        // SDL_RenderFillRect(ui->renderer, &player_background);
         draw_player_tank(ui, game->players[0], padding, ui->screen_h - size_height + padding);
         draw_score(ui, game, 0, 10, ui->screen_h - 50);
-
+        if (game->player_action == 0)
+        {
+            SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};
+            SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
+        }
         // SDL_Rect player_avatar_rect = {ui->screen_w - 40, ui->screen_h - 80, 40, 40};
         // SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &player_avatar_rect); Pour l'affichage d'un éventuel avatar.
     }
@@ -99,9 +133,15 @@ void draw_players(ui_t *ui, game_t *game)
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
         SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
-        SDL_RenderFillRect(ui->renderer, &player_background);
+        SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
+
         draw_player_tank(ui, game->players[1], ui->screen_w - size_length + padding, padding);
         draw_score(ui, game, 1, ui->screen_w - 60, 10);
+        if (game->player_action == 1)
+        {
+            SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
+            SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
+        }
     }
 
     if (game->players[2] != NULL) // En haut à gauche
@@ -111,9 +151,14 @@ void draw_players(ui_t *ui, game_t *game)
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
         SDL_Rect player_background = {0, 0, size_length, size_height};
-        SDL_RenderFillRect(ui->renderer, &player_background);
+        SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
         draw_player_tank(ui, game->players[2], padding, padding);
         draw_score(ui, game, 2, 10, 10);
+        if (game->player_action == 2)
+        {
+            SDL_Rect player_background = {0, 0, size_length, size_height};
+            SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
+        }
     }
 
     if (game->players[3] != NULL) // En bas à droite
@@ -123,9 +168,14 @@ void draw_players(ui_t *ui, game_t *game)
         else
             SDL_SetRenderDrawColor(ui->renderer, inactive.r, inactive.g, inactive.b, inactive.a);
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
-        SDL_RenderFillRect(ui->renderer, &player_background);
+        SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
         draw_player_tank(ui, game->players[3], ui->screen_w - size_length + padding, ui->screen_h - size_height + padding);
         draw_score(ui, game, 3, ui->screen_w - 60, ui->screen_h - 50);
+        if (game->player_action == 3)
+        {
+            SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
+            SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
+        }
     }
 }
 
