@@ -11,6 +11,14 @@
 #define CARD_WIDTH 601
 #define CARD_HEIGHT 844
 
+#define TANK_HEIGHT 200
+#define TANK_WIDTH 200
+
+#define AVATAR_SIZE 100
+
+#define SCORE_WIDTH 30
+#define SCORE_HEIGHT 50
+
 // Affiche le fond d'écran.
 // Affiche le fond d'écran.
 void draw_background(ui_t *ui)
@@ -82,19 +90,19 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
 // teste la victoire
 void draw_victory(ui_t *ui, game_t *game)
 {
-    SDL_Rect drawvic = {650, 200, 300, 100};
+    SDL_Rect vic_rect = {650, 200, 300, 100};
 
     if (game->win > -1)
     {
-        SDL_RenderCopy(ui->renderer, ui->victory[game->win], NULL, &drawvic);
+        SDL_RenderCopy(ui->renderer, ui->victory[game->win], NULL, &vic_rect);
     }
 }
 
-void draw_score(ui_t *ui, game_t *game, int player, int x, int y)
+void draw_score(ui_t *ui, game_t *game, int player, pos_t pos)
 {
-    SDL_Rect units = {x, y, 30, 50};
+    SDL_Rect units = {pos.x, pos.y, SCORE_WIDTH, SCORE_HEIGHT};
     SDL_RenderCopy(ui->renderer, ui->score_textures[game->players[player]->score / 10], NULL, &units);
-    SDL_Rect tens = {x + 30, y, 30, 50};
+    SDL_Rect tens = {pos.x + SCORE_WIDTH, pos.y, SCORE_WIDTH, SCORE_HEIGHT};
     SDL_RenderCopy(ui->renderer, ui->score_textures[game->players[player]->score % 10], NULL, &tens);
 }
 
@@ -120,13 +128,13 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
 
         draw_player_tank(ui, game->players[0], padding, ui->screen_h - size_height + padding);
-        draw_score(ui, game, 0, 10, ui->screen_h - 50);
+        draw_score(ui, game, 0, (pos_t){10, ui->screen_h - SCORE_HEIGHT});
         if (game->player_action == 0)
         {
             SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};
             SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
         }
-        SDL_Rect player_avatar_rect = {0, ui->screen_h - 300, 100, 100};
+        SDL_Rect player_avatar_rect = {0, ui->screen_h - (AVATAR_SIZE + TANK_HEIGHT), AVATAR_SIZE, AVATAR_SIZE};
         SDL_RenderCopy(ui->renderer, ui->player_textures[0], NULL, &player_avatar_rect);
     }
 
@@ -140,13 +148,13 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
 
         draw_player_tank(ui, game->players[1], ui->screen_w - size_length + padding, padding);
-        draw_score(ui, game, 1, ui->screen_w - 60, 10);
+        draw_score(ui, game, 1, (pos_t){ui->screen_w - (SCORE_WIDTH*2), 10});
         if (game->player_action == 1)
         {
             SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
             SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
         }
-        SDL_Rect player_avatar_rect = {ui->screen_w - 100, 200, 100, 100};
+        SDL_Rect player_avatar_rect = {ui->screen_w - AVATAR_SIZE, TANK_HEIGHT, AVATAR_SIZE, AVATAR_SIZE};
         SDL_RenderCopy(ui->renderer, ui->player_textures[1], NULL, &player_avatar_rect);
     }
 
@@ -159,13 +167,13 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_Rect player_background = {0, 0, size_length, size_height};
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
         draw_player_tank(ui, game->players[2], padding, padding);
-        draw_score(ui, game, 2, 10, 10);
+        draw_score(ui, game, 2, (pos_t){10, 10});
         if (game->player_action == 2)
         {
             SDL_Rect player_background = {0, 0, size_length, size_height};
             SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
         }
-        SDL_Rect player_avatar_rect = {0, 200, 100, 100};
+        SDL_Rect player_avatar_rect = {0, TANK_HEIGHT, AVATAR_SIZE, AVATAR_SIZE};
         SDL_RenderCopy(ui->renderer, ui->player_textures[2], NULL, &player_avatar_rect);
     }
 
@@ -178,13 +186,13 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
         draw_player_tank(ui, game->players[3], ui->screen_w - size_length + padding, ui->screen_h - size_height + padding);
-        draw_score(ui, game, 3, ui->screen_w - 60, ui->screen_h - 50);
+        draw_score(ui, game, 3, (pos_t){ui->screen_w - (SCORE_WIDTH*2), ui->screen_h - SCORE_HEIGHT});
         if (game->player_action == 3)
         {
             SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
             SDL_RenderCopy(ui->renderer, ui->active_player_textures[game->player_action], NULL, &player_background);
         }
-        SDL_Rect player_avatar_rect = {ui->screen_w - 100, ui->screen_h - 300, 100, 100};
+        SDL_Rect player_avatar_rect = {ui->screen_w - AVATAR_SIZE, ui->screen_h - (AVATAR_SIZE + TANK_HEIGHT), AVATAR_SIZE, AVATAR_SIZE};
         SDL_RenderCopy(ui->renderer, ui->player_textures[3], NULL, &player_avatar_rect);
     }
 }
