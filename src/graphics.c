@@ -167,7 +167,7 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
 
-        draw_player_tank(ui, game->players[1], ui->screen_w - (size_length + padding), padding);
+        draw_player_tank(ui, game->players[1], ui->screen_w - (size_length) + padding, padding);
         draw_score(ui, game, 1, (pos_t){ui->screen_w - (SCORE_WIDTH * 2), 10});
         if (game->player_action == 1)
         {

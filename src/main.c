@@ -9,6 +9,12 @@
 #include "headers/player.h"
 #include "headers/debug.h"
 
+/**
+ * @brief Fonction qui permet de rafraichir les inputs
+ * 
+ * @param ui
+ * @param ui_input
+ */
 int main(int argc, char const *argv[])
 {
     (void)argc;

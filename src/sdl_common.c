@@ -284,7 +284,7 @@ bool is_continue_clicked(ui_t *ui, pos_t pos)
 
 /**
  * @brief Vérifie si le bouton quitter est cliqué
- * 
+ *
  * @param ui Structure de l'interface utilisateur
  * @param pos Position du clic
  */
@@ -424,7 +424,7 @@ bool stack_clicked(ui_input_t *ui_input)
 
 /**
  * @brief Récupère le joueur cliqué
- * 
+ *
  * @param click Position du clic
  * @return int Joueur cliqué
  * @return -1 Aucun joueur cliqué
@@ -701,9 +701,9 @@ int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
             ui->animations[1]->size.y = CARD_HEIGHT / 6;
             start_animation(ui->animations[1], 3000);
         }
-        anim_find_target(ui->animations[1], player);
-        ui->animations[2]->pos.x = ui->animations[1]->target.x;
-        ui->animations[2]->pos.y = ui->animations[1]->target.y;
+        anim_find_target(ui->animations[2], player);
+        ui->animations[2]->pos.x = ui->animations[2]->target.x;
+        ui->animations[2]->pos.y = ui->animations[2]->target.y;
         ui->animations[2]->number_of_frame = 3000;
         ui->animations[2]->param[0] = game->face_card_color;
         start_animation(ui->animations[2], 0);
