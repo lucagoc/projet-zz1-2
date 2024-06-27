@@ -43,7 +43,7 @@ struct ui_s
     /* Textures */
     SDL_Texture *front_card_textures[NUM_COLORS];
     SDL_Texture *back_flag_textures[NUM_COLORS];
-    SDL_Texture *back_card_texture[2];
+    SDL_Texture *back_card_texture[3];
     SDL_Texture *player_textures[NUM_PLAYERS];
     SDL_Texture *interface_textures[4];
     SDL_Texture *button_textures[8];

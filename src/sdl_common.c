@@ -203,6 +203,7 @@ void load_textures(ui_t *ui)
 
     ui->back_card_texture[0] = load_texture_from_image("assets/cards/back.png", ui->window, ui->renderer);
     ui->back_card_texture[1] = load_texture_from_image("assets/cards/back_blank.png", ui->window, ui->renderer);
+    ui->back_card_texture[2] = load_texture_from_image("assets/cards/back_black.png", ui->window, ui->renderer);
 
     ui->back_flag_textures[0] = load_texture_from_image("assets/cards/back_flag_0.png", ui->window, ui->renderer);
     ui->back_flag_textures[1] = load_texture_from_image("assets/cards/back_flag_1.png", ui->window, ui->renderer);
@@ -346,7 +347,6 @@ anim_props_t **create_animations()
         animations[i]->texture = malloc(sizeof(SDL_Texture *) * 10);
         animations[i]->playing = false;
         animations[i]->loop = false;
-        init_animation(animations[i], (pos_t){0, 0}, 300);
         for (int j = 0; j < 10; j++)
         {
             animations[i]->param[j] = 0;
@@ -370,6 +370,7 @@ void load_textures_anim(ui_t *ui)
         }
         ui->animations[j]->texture[7] = ui->back_card_texture[0];
         ui->animations[j]->texture[8] = ui->back_card_texture[1];
+        ui->animations[j]->texture[9] = ui->back_card_texture[2];
     }
 }
 

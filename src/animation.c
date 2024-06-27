@@ -60,15 +60,6 @@ void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim
     }
 }
 
-void init_animation(anim_props_t *animation, pos_t pos, int number_of_frame)
-{
-    animation->pos.x = pos.x;
-    animation->pos.y = pos.y;
-    animation->start_frame = -100000;
-    animation->number_of_frame = number_of_frame;
-    animation->playing = false;
-}
-
 void fct_move_animation(anim_props_t *anim, SDL_Renderer *renderer, long unsigned frame)
 {
     float x = anim->pos.x + (anim->target.x - anim->pos.x) * ease_out_quint(frame /(double)anim->number_of_frame);
@@ -112,9 +103,12 @@ void fct_anim_flip(anim_props_t *anim, SDL_Renderer *renderer, long unsigned fra
 
     if (anime_tick < 200)
     {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, anime_tick * 255 / 200);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Transition du noir au blanc
         SDL_Rect background = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2 + 20, card_width, card_height - 40};
         SDL_RenderFillRect(renderer, &background);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, anime_tick * 255 / 200);
+        SDL_Rect background_2 = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2 + 20, card_width, card_height - 40};
+        SDL_RenderFillRect(renderer, &background_2);
         SDL_Rect card = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2, card_width, card_height};
         SDL_RenderCopy(renderer, anim->texture[7], NULL, &card);
     }
