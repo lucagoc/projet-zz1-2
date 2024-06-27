@@ -113,9 +113,6 @@ void draw_players(ui_t *ui, game_t *game)
     int size_height = 200;
     int padding = 25;
 
-    SDL_Color inactive = {128, 128, 128, 255};
-    SDL_Color active = {255, 0, 0, 150};
-
     if (game->players[0] != NULL) // En bas à gauche
     {
         SDL_Rect player_background = {0, ui->screen_h - size_height, size_length, size_height};

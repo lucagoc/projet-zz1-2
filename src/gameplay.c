@@ -175,7 +175,6 @@ game_t *create_game()
 
     // Tirer une première carte
     get_draw_card(game);
-    game->stealing = 0;
 
     return game;
 }
@@ -282,7 +281,6 @@ game_t *copy_game(game_t *game)
     copy_game_state->face_card_color = game->face_card_color;
     copy_game_state->player_action = game->player_action;
     copy_game_state->win = game->win;
-    copy_game_state->stealing = game->stealing;
     copy_game_state->face_card_color = game->face_card_color;
 
     return copy_game_state;
