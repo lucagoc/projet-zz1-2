@@ -181,7 +181,7 @@ void draw_logo(ui_t *ui)
 /*------------------------------------------ PAUSE -----------------------------------------------*/
 void draw_background_pause(ui_t *ui)
 {
-    SDL_SetRenderDrawColor(ui->renderer, 255, 153, 204, 0); //N'active pas la transparence
+    SDL_SetRenderDrawColor(ui->renderer, 238, 230, 255, 10); //N'active pas la transparence
     SDL_RenderClear(ui->renderer);
 }
 
