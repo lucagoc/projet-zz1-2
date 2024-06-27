@@ -85,7 +85,7 @@ void unload_textures(ui_t *ui)
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
-        // SDL_DestroyTexture(ui->player_textures[i]);
+        SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
     }
 
@@ -112,6 +112,13 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->pause_texture[i]);
     }
+
+    for (int i = 0; i < 4; i++)
+    {
+        SDL_DestroyTexture(ui->active_player_textures[i]);
+    }
+
+    SDL_DestroyTexture(ui->triangle);
 }
 
 /**
@@ -197,10 +204,10 @@ void load_textures(ui_t *ui)
     ui->back_flag_textures[6] = load_texture_from_image("assets/cards/back_flag_6.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
-    // ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
-    // ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
-    // ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
-    // ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
+    ui->player_textures[0] = load_texture_from_image("assets/players/player_0.png", ui->window, ui->renderer);
+    ui->player_textures[1] = load_texture_from_image("assets/players/player_1.png", ui->window, ui->renderer);
+    ui->player_textures[2] = load_texture_from_image("assets/players/player_2.png", ui->window, ui->renderer);
+    ui->player_textures[3] = load_texture_from_image("assets/players/player_3.png", ui->window, ui->renderer);
     ui->victory[0] = load_texture_from_image("assets/ui/pl1.png", ui->window, ui->renderer);
     ui->victory[1] = load_texture_from_image("assets/ui/pl2.png", ui->window, ui->renderer);
     ui->victory[2] = load_texture_from_image("assets/ui/pl3.png", ui->window, ui->renderer);
@@ -247,16 +254,22 @@ void load_textures(ui_t *ui)
     return;
 }
 
-bool is_continue_clicked(ui_t *ui, int x, int y)
+bool is_continue_clicked(ui_t *ui, pos_t pos)
 {
     (void)ui;
-    return (x >= 550 && x <= 1145 && y >= 250 && y <= 390);
+    return (pos.x >= 550 && pos.x <= 1145 && pos.y >= 250 && pos.y <= 390);
 }
 
-bool is_quit_clicked(ui_t *ui, int x, int y)
+/**
+ * @brief Vérifie si le bouton quitter est cliqué
+ * 
+ * @param ui Structure de l'interface utilisateur
+ * @param pos Position du clic
+ */
+bool is_quit_clicked(ui_t *ui, pos_t pos)
 {
     (void)ui;
-    return (x >= 540 && x <= 1148 && y >= 500 && y <= 640);
+    return (pos.x >= 540 && pos.x <= 1148 && pos.y >= 500 && pos.y <= 640);
 }
 
 /**
@@ -298,7 +311,11 @@ void init_sdl(ui_t *ui)
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
-/* Mettre ici toutes les initialisations */
+/**
+ * @brief Crée une structure d'animation
+ *
+ * @return anim_props_t** Tableau de structure d'animation
+ */
 anim_props_t **create_animations()
 {
     anim_props_t **animations = malloc(sizeof(anim_props_t) * 10);
@@ -317,6 +334,11 @@ anim_props_t **create_animations()
     return animations;
 }
 
+/**
+ * @brief Charge les textures pour les animations
+ *
+ * @param ui Structure de l'interface utilisateur
+ */
 void load_textures_anim(ui_t *ui)
 {
     for (int j = 1; j < 3; j++)
@@ -330,6 +352,11 @@ void load_textures_anim(ui_t *ui)
     }
 }
 
+/**
+ * @brief Crée une structure d'interface utilisateur
+ *
+ * @return ui_t* Structure d'interface utilisateur
+ */
 ui_t *create_ui()
 {
     ui_t *ui = malloc(sizeof(ui_t));
@@ -345,6 +372,11 @@ ui_t *create_ui()
     return ui;
 }
 
+/**
+ * @brief Crée une structure d'entrée utilisateur
+ *
+ * @return ui_input_t* Structure d'entrée utilisateur
+ */
 ui_input_t *create_ui_input()
 {
     ui_input_t *ui_input = malloc(sizeof(ui_input_t));
@@ -356,13 +388,25 @@ ui_input_t *create_ui_input()
     return ui_input;
 }
 
-// si les coordonnées cliquées correspondent à la pile
+/**
+ * @brief Vérifie si la pile est cliquée
+ *
+ * @param ui_input Entrée utilisateur
+ * @return true si la pile est cliquée
+ * @return false sinon
+ */
 bool stack_clicked(ui_input_t *ui_input)
 {
     return ui_input->click.x > SCREEN_WIDTH / 2 - CARD_WIDTH / 6 && ui_input->click.x < SCREEN_WIDTH / 2 + CARD_WIDTH / 6 && ui_input->click.y > SCREEN_HEIGHT / 2 - CARD_HEIGHT / 6 && ui_input->click.y < SCREEN_HEIGHT / 2 + CARD_HEIGHT / 6;
 }
 
-// si les coordonnées cliquées correspondent à un joueur (pour le voler)
+/**
+ * @brief Récupère le joueur cliqué
+ * 
+ * @param click Position du clic
+ * @return int Joueur cliqué
+ * @return -1 Aucun joueur cliqué
+ */
 int player_clicked(pos_t click)
 {
     int x = click.x;
@@ -392,6 +436,11 @@ int player_clicked(pos_t click)
     }
 }
 
+/**
+ * @brief Libère la mémoire de l'interface utilisateur
+ *
+ * @param ui Structure de l'interface utilisateur
+ */
 void free_ui(ui_t *ui)
 {
     for (int i = 0; i < 10; i++)
@@ -405,11 +454,11 @@ void free_ui(ui_t *ui)
     free(ui);
 }
 
-/*
+/**
  * @brief Fonction pour récupérer les événements lié à l'interface utilisateur
  *
  * @param ui Structure de l'interface utilisateur
- * @param input Structure des entrées
+ * @param ui_input Structure des entrées
  */
 void refresh_input(ui_t *ui, ui_input_t *ui_input)
 {
@@ -435,11 +484,11 @@ void refresh_input(ui_t *ui, ui_input_t *ui_input)
 
                 if (ui->in_pause)
                 {
-                    if (is_continue_clicked(ui, x, y))
+                    if (is_continue_clicked(ui, ui_input->click))
                     {
                         ui->in_pause = false;
                     }
-                    else if (is_quit_clicked(ui, x, y))
+                    else if (is_quit_clicked(ui, ui_input->click))
                     {
                         ui->program_on = false;
                     }
@@ -462,6 +511,13 @@ void refresh_input(ui_t *ui, ui_input_t *ui_input)
     }
 }
 
+/**
+ * @brief Vérifie si une animation est en cours
+ *
+ * @param animations Tableau d'animations
+ * @return true si une animation est en cours
+ * @return false sinon
+ */
 bool is_anim_blocking_game(anim_props_t **animations)
 {
     if (animations[1]->playing || animations[2]->playing)
@@ -469,11 +525,25 @@ bool is_anim_blocking_game(anim_props_t **animations)
     return false;
 }
 
+/**
+ * @brief Vérifie si le joueur peut voler pour l'animation
+ *
+ * @param game Structure du jeu
+ * @param player Joueur cible
+ * @return true si c'est un vol
+ * @return false sinon
+ */
 bool is_steal_clicked(game_t *game, int player)
 {
     return player != game->player_action && game->players[player]->tank[game->face_card_color] > 0;
 }
 
+/**
+ * @brief Trouve la position de la cible
+ *
+ * @param anim Structure de l'animation
+ * @param player Joueur cible
+ */
 void anim_find_target(anim_props_t *anim, int player)
 {
     switch (player)
@@ -495,8 +565,13 @@ void anim_find_target(anim_props_t *anim, int player)
     }
 }
 
-// Fonction qui traite les inputs de la SDL vers les inputs relative au jeu en fonction de l'état de celui-ci
-// Active les animations si besoin
+/**
+ * @brief Fonction pour récupérer les inputs du joueur
+ *
+ * @param ui_input Structure des entrées
+ * @param game Structure du jeu
+ * @param ui Structure de l'interface utilisateur
+ */
 int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
 {
     int input = -1;
@@ -522,6 +597,9 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
             {
                 ui->animations[0]->number_of_frame = 1600;
                 ui->animations[0]->loop = true;
+                ui->animations[0]->param[0] = game->back_card_color[0];
+                ui->animations[0]->param[1] = game->back_card_color[1];
+                ui->animations[0]->param[2] = game->back_card_color[2];
                 start_animation(ui->animations[0], 0);
             }
             else
@@ -562,6 +640,13 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
     return input;
 }
 
+/**
+ * @brief Fonction pour récupérer les inputs du robot
+ *
+ * @param ui_input Structure des entrées
+ * @param game Structure du jeu
+ * @param ui Structure de l'interface utilisateur
+ */
 int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
 {
     int input = -1;
@@ -580,10 +665,10 @@ int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
         int player = mcts(game);            // Récupère l'input du robot
         if (is_steal_clicked(game, player)) // Click sur un joueur non actif et vole
         {
-            anim_find_target(ui->animations[1], player);
+            anim_find_target(ui->animations[1], player); // Trouve la position du joueur
             ui->animations[1]->pos.x = ui->animations[1]->target.x;
             ui->animations[1]->pos.y = ui->animations[1]->target.y;
-            anim_find_target(ui->animations[1], game->player_action);
+            anim_find_target(ui->animations[1], game->player_action); // Trouve la position du joueur (cible)
             ui->animations[1]->number_of_frame = 2000;
             ui->animations[1]->param[0] = game->face_card_color;
             ui->animations[1]->size.x = CARD_WIDTH / 6;
