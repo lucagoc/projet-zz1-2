@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdbool.h>
 
 #include "headers/sdl_common.h"
@@ -315,6 +316,20 @@ void init_sdl(ui_t *ui)
         exit(EXIT_FAILURE);
     }
 
+    // Initialisation de SDL
+    if (SDL_Init(SDL_INIT_AUDIO) < 0)
+    {
+        printf("Erreur d'initialisation de SDL: %s\n", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+
+    // Initialisation de SDL_mixer
+    if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 2048) < 0)
+    {
+        printf("Erreur d'initialisation de SDL_mixer: %s\n", Mix_GetError());
+        exit(EXIT_FAILURE);
+    }
+
     ui->window = SDL_CreateWindow("Mantis 1.0",
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
@@ -331,6 +346,24 @@ void init_sdl(ui_t *ui)
 
     load_textures(ui);
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
+}
+
+void load_sound(ui_t *ui)
+{
+    // Chargement des sons
+    ui->music[0] = Mix_LoadWAV("assets/sounds/main_loop.wav");
+    if (ui->music[0] == NULL)
+    {
+        printf("Erreur de chargement du fichier audio: %s\n", Mix_GetError());
+        return;
+    }
+
+    ui->music[1] = Mix_LoadWAV("assets/sounds/congratulations.wav");
+    if (ui->music[1] == NULL)
+    {
+        printf("Erreur de chargement du fichier audio: %s\n", Mix_GetError());
+        return;
+    }
 }
 
 /**
@@ -388,8 +421,10 @@ ui_t *create_ui()
     init_sdl(ui);
     ui->in_pause = false;
     ui->program_on = true;
+    ui->congrats_played = false; 
     ui->animations = create_animations();
     load_textures_anim(ui);
+    load_sound(ui);
 
     return ui;
 }
@@ -472,6 +507,8 @@ void free_ui(ui_t *ui)
     }
 
     free(ui->animations);
+    Mix_FreeChunk(ui->music[0]); // Libération de la musique
+    Mix_FreeChunk(ui->music[1]);
     unload_textures(ui);
     free(ui);
 }
@@ -712,4 +749,24 @@ int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
     }
 
     return input;
+}
+
+void play_sound(ui_t *ui, game_t *game)
+{
+    if (game->win == -1)
+    {
+        if (Mix_Playing(-1) == 0)
+        {
+            Mix_PlayChannel(-1, ui->music[0], 0);
+        }
+    }
+    else
+    {
+        if(!(ui->congrats_played))
+        {
+            Mix_HaltChannel(-1);
+            Mix_PlayChannel(-1, ui->music[1], 0);
+            ui->congrats_played = true;
+        }
+    }
 }

@@ -1,7 +1,8 @@
-#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "headers/sdl_common.h"
 #include "headers/graphics.h"
@@ -11,7 +12,7 @@
 
 /**
  * @brief Fonction qui permet de rafraichir les inputs
- * 
+ *
  * @param ui
  * @param ui_input
  */
@@ -19,10 +20,11 @@ int main(int argc, char const *argv[])
 {
     (void)argc;
     (void)argv;
-    
+
     ui_t *ui = create_ui();
     ui_input_t *ui_input = create_ui_input();
     game_t *game = create_game();
+    Mix_PlayChannel(-1, ui->music[0], 0);
 
     while (ui->program_on)
     {
@@ -48,6 +50,7 @@ int main(int argc, char const *argv[])
         }
 
         draw(ui, game);
+        play_sound(ui, game);
     }
 
     free_game(game);

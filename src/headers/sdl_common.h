@@ -1,6 +1,8 @@
 #define SDL_COMMON_H
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+#include <SDL2/SDL_mixer.h>
+
 #include "headers/struct.h"
 
 #define NUM_PLAYERS 4
@@ -58,6 +60,10 @@ struct ui_s
     /* Animation */
     anim_props_t **animations; // Tableau d'animation.
 
+    /* Sons */
+    Mix_Chunk *music[2];
+    bool congrats_played;
+
     bool in_pause;
     bool program_on;
 
@@ -84,3 +90,4 @@ void init_animation(anim_props_t *animation, pos_t pos, int number_of_frame);
 bool stack_clicked(ui_input_t *ui_input);
 int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui);
 int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui);
+void play_sound(ui_t *ui, game_t *game);

@@ -14,7 +14,7 @@ EXEC := $(BIN_DIR)/mantis
 # Compilateur et options de compilation
 CC := gcc
 CFLAGS := -Wall -Wextra -g -I$(SRC_DIR)
-LIBS := -lm -lSDL2 -lSDL2_image -lSDL2_ttf
+LIBS := -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 SANITIZE := -fsanitize=address
 
 # Cible par défaut
