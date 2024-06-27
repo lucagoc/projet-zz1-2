@@ -31,6 +31,7 @@ struct ui_s
     SDL_Texture *score_textures[10];
 
     SDL_Texture *active_player_textures[4];
+    SDL_Texture *triangle;
 
     /* Animation */
     bool animate[3]; // 0: flip_the_card, 1: draw_particles, 3:vol de cartes
