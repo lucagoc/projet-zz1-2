@@ -20,12 +20,23 @@ void start_animation(anim_props_t *animation)
     animation->playing = true;
 }
 
+
+void end_animation(anim_props_t *animation)
+{
+    animation->loop = false;
+    animation->playing = false;
+}
+
 /*
  * Joue l'animation donnée en entrée
  */
 void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim_props_t *, SDL_Renderer *, int))
 {
     long unsigned delta_frame = SDL_GetTicks() - animation->start_frame;
+    if(animation->number_of_frame < delta_frame)
+    {
+        animation->playing = false;
+    }
     if (animation->playing)
     {
         func_anim(animation, ui->renderer, delta_frame);
@@ -68,7 +79,6 @@ void fct_move_animation(anim_props_t *anim, SDL_Renderer *renderer, int frame)
 
     // Affichage de l'animation
     SDL_Rect rect = {x, y, anim->size.x, anim->size.y};
-    fprintf(stderr, "Texture: %d \n", anim->param[0]);
     SDL_RenderCopy(renderer, anim->texture[anim->param[0]], NULL, &rect);
 }
 
@@ -132,7 +142,7 @@ void fct_anim_flip(anim_props_t *anim, SDL_Renderer *renderer, int frame)
 }
 
 // Affiche des particules tournant autour d'un point
-void draw_particles(anim_props_t *anim, SDL_Renderer *renderer, int frame)
+void fct_anim_particles(anim_props_t *anim, SDL_Renderer *renderer, int frame)
 {
     // Correction d'un problème d'allignement;
     int x = anim->pos.x;

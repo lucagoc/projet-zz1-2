@@ -93,7 +93,6 @@ stack_t *mix_cards(stack_t *origin)
     while (current != NULL)
     {
         int r = rand() % NUMBER_MIX_STACK;
-        fprintf(stderr, "[DEBUG] mix_cards : %d\n", r);
         stacks[r] = stack_push(stacks[r], current->card);
         current = current->next;
     }
@@ -180,6 +179,7 @@ game_t *create_game()
     game->draw_pile_left = 105;
 
     game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
+    game->drawn_card_color = game->draw_pile->card->face;
     print_all_cards(game->draw_pile);
     game->stealing = 0;
 
@@ -250,7 +250,6 @@ void score_card(game_t *game)
  */
 void add_card_in_tank(int player, game_t *game)
 {
-    fprintf(stderr, "[DEBUG] add_card_in_tank : player %d, card %d\n", player, game->drawn_card_color);
     game->players[player]->tank[game->drawn_card_color] = 1; // on ajoute la carte au tank
 }
 
@@ -347,7 +346,6 @@ void game_play(game_t *game, int input)
 {
 
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
-
     game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
     if (input == game->player_action) // le joueur actif choisit de marquer
@@ -368,7 +366,6 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-
             steal_card(input, game);
         }
         else

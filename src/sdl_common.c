@@ -5,6 +5,7 @@
 
 #include "headers/sdl_common.h"
 #include "headers/gameplay.h"
+#include "headers/animation.h"
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
@@ -267,6 +268,8 @@ anim_props_t **create_animations()
     {
         animations[i] = malloc(sizeof(anim_props_t));
         animations[i]->texture = malloc(sizeof(SDL_Texture *) * 10);
+        animations[i]->playing = false;
+        animations[i]->loop = false;
         init_animation(animations[i], (pos_t){0, 0}, 300);
         for (int j = 0; j < 10; j++) // NB de paramètres
         {
@@ -305,7 +308,7 @@ ui_input_t *create_ui_input()
 {
     ui_input_t *ui_input = malloc(sizeof(ui_input_t));
     ui_input->click = (pos_t){-1, -1};
-    ui_input->cursor = (pos_t){0, 0};
+    ui_input->cursor = (pos_t){-1, -1};
     ui_input->key = 0;
     ui_input->delay_input = -1;
 
@@ -433,14 +436,16 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
         ui_input->delay_input = -1;
         return tmp;
     }
-
-    if (game->win == -1)
+    else if (game->win == -1)
     {
         if (ui_input->click.x != -1 && ui_input->click.y != -1)
         {
+            fprintf(stderr, "Click: %d %d\n", ui_input->click.x, ui_input->click.y);
             if (stack_clicked(ui_input))
             {
-                ui->animations[0]->playing = true;
+                ui->animations[0]->number_of_frame = 1600;
+                ui->animations[0]->loop = true;
+                start_animation(ui->animations[0]);
             }
             else
             {
@@ -451,11 +456,12 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
                     {
                         ui->animations[1]->pos.x = ui_input->cursor.x;
                         ui->animations[1]->pos.y = ui_input->cursor.y;
-                        ui->animations[1]->target.x = SCREEN_WIDTH / 2;
+                        ui->animations[1]->target.x = SCREEN_WIDTH / 2; // Dumb
                         ui->animations[1]->target.y = SCREEN_HEIGHT / 2;
-                        ui->animations[1]->playing = true;
-                        ui->animations[1]->start_frame = SDL_GetTicks();
+                        ui->animations[1]->number_of_frame = 300;
                         ui->animations[1]->param[0] = player;
+                        start_animation(ui->animations[1]);
+
                         ui_input->delay_input = player;
                         fprintf(stderr, "Steal clicked\n");
                     }
@@ -465,7 +471,7 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
                     }
                 }
 
-                ui->animations[0]->playing = false;
+                end_animation(ui->animations[0]);
             }
         }
     }

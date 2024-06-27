@@ -181,6 +181,9 @@ void draw_draw_card(ui_t *ui, game_t *game)
     // Affiche la carte
     SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
     SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
+
+    // Animation 
+    animation_runtime(ui, ui->animations[0], fct_anim_particles);
 }
 
 void draw_active_player(ui_t *ui, game_t *game)
