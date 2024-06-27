@@ -80,6 +80,7 @@ void unload_textures(ui_t *ui)
         //SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
         SDL_DestroyTexture(ui->active_player_textures[i]);
+        SDL_DestroyTexture(ui->background[i]);
 
     }
    SDL_DestroyTexture(ui->triangle);
@@ -199,6 +200,11 @@ void load_textures(ui_t *ui)
     ui->active_player_textures[2] = load_texture_from_image("assets/ui/haut-gauche.png", ui->window, ui->renderer);
     ui->active_player_textures[3] = load_texture_from_image("assets/ui/bas-droit.png", ui->window, ui->renderer);
     ui->triangle = load_texture_from_image("assets/ui/triangle.png", ui->window, ui->renderer);
+
+    ui->background[0] = load_texture_from_image("assets/ui/layer0.png", ui->window, ui->renderer);
+    ui->background[1] = load_texture_from_image("assets/ui/layer1.png", ui->window, ui->renderer);
+    ui->background[2] = load_texture_from_image("assets/ui/layer2.png", ui->window, ui->renderer);
+    ui->background[3] = load_texture_from_image("assets/ui/layer3.png", ui->window, ui->renderer);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
     ui->interface_textures[0] = load_texture_from_image("assets/ui/logo.png", ui->window, ui->renderer);

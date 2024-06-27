@@ -13,8 +13,21 @@
 // Affiche le fond d'écran.
 void draw_background(ui_t *ui)
 {
-    SDL_SetRenderDrawColor(ui->renderer, 255, 255, 255, 255);
+
+
+    SDL_SetRenderDrawColor(ui->renderer, 220, 220, 255, 255);
     SDL_RenderClear(ui->renderer);
+
+    SDL_Rect layer0_draw = {-1600, 0, ui->screen_w, ui->screen_h};
+    SDL_Rect layer1_draw = {-1600 +(ui->tick *3)%1600, 0, 600+ ui->screen_w +(ui->tick)%1600, ui->screen_h};
+    SDL_Rect layer2_draw = {-1600 +(ui->tick *2)%1600, 0, 600+ ui->screen_w +(ui->tick)%1600, ui->screen_h};
+    SDL_Rect layer3_draw = {-1600 +(ui->tick)%1600, 0, 600+ ui->screen_w +(ui->tick)%1600, ui->screen_h};
+
+    SDL_RenderCopy(ui->renderer, ui->background[0], NULL, &layer0_draw);
+    SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw);
+    SDL_RenderCopy(ui->renderer, ui->background[2], NULL, &layer2_draw);
+    SDL_RenderCopy(ui->renderer, ui->background[3], NULL, &layer3_draw);
+
 }
 
 void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
