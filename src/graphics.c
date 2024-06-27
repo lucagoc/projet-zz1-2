@@ -178,12 +178,52 @@ void draw_logo(ui_t *ui)
     SDL_RenderCopy(ui->renderer, ui->interface_textures[0], NULL, &draw_logo_rect);
 }
 
+/*------------------------------------------ PAUSE -----------------------------------------------*/
+void draw_background_pause(ui_t *ui)
+{
+    SDL_SetRenderDrawColor(ui->renderer, 255, 153, 204, 0); //N'active pas la transparence
+    SDL_RenderClear(ui->renderer);
+}
+
+void draw_menu_pause(ui_t *ui)
+{
+    draw_background_pause(ui);
+
+    // Charger les textures des boutons
+    SDL_Texture *continue_button = ui->pause_texture[0];
+    // SDL_Texture* restart_button = ui->background_texture[1];
+    SDL_Texture *quit_button = ui->pause_texture[1];
+
+    int button_w = 2000;
+    int button_h = 900;
+    /*SDL_QueryTexture(continue_button, NULL, NULL, &button_w, &button_h);
+    SDL_QueryTexture(quit_button, NULL, NULL, &button_w, &button_h);*/
+
+    // Calculer les positions pour centrer les boutons
+    int button_x = (ui->screen_w - button_w) / 2;
+    int continue_button_y = (ui->screen_h - button_h) / 4;
+    // int restart_button_y = (ui->screen_h - button_h) / 2;
+    int quit_button_y = 3 * (ui->screen_h - button_h) / 4;
+
+    // Définir les rectangles de destination pour les boutons
+    SDL_Rect dest_rect_continue = {button_x, continue_button_y, button_w, button_h};
+    // SDL_Rect dest_rect_restart = { button_x, restart_button_y, button_w, button_h };
+    SDL_Rect dest_rect_quit = {button_x, quit_button_y, button_w, button_h};
+
+    // Dessiner les boutons
+    SDL_RenderCopy(ui->renderer, continue_button, NULL, &dest_rect_continue);
+    // SDL_RenderCopy(ui->renderer, restart_button, NULL, &dest_rect_restart);
+    SDL_RenderCopy(ui->renderer, quit_button, NULL, &dest_rect_quit);
+}
+/*------------------------------------------ PAUSE -----------------------------------------------*/
+
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
 {
     if (ui->in_pause)
     {
         // Affiche le menu pause
+        draw_menu_pause(ui);
     }
     else
     {

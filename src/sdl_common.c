@@ -78,7 +78,7 @@ void unload_textures(ui_t *ui)
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
-        SDL_DestroyTexture(ui->player_textures[i]);
+        // SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
     }
 
@@ -98,6 +98,12 @@ void unload_textures(ui_t *ui)
     for (int i = 0; i < 10; i++)
     {
         SDL_DestroyTexture(ui->score_textures[i]);
+    }
+
+    /* --------------------------------------------- PAUSE --------------------------------------------- */
+    for (int i = 0; i < 2; i++)
+    {
+        SDL_DestroyTexture(ui->pause_texture[i]);
     }
 }
 
@@ -217,8 +223,46 @@ void load_textures(ui_t *ui)
     ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
     ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
 
+    /* --------------------------------------------- PAUSE --------------------------------------------- */
+
+    ui->pause_texture[0] = load_texture_from_image("assets/ui/button_continue.png", ui->window, ui->renderer);
+    ui->pause_texture[1] = load_texture_from_image("assets/ui/button_quit.png", ui->window, ui->renderer);
+
     return;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool is_continue_clicked(ui_t *ui, int x, int y)
+{
+    int button_w, button_h;
+    SDL_QueryTexture(ui->pause_texture[0], NULL, NULL, &button_w, &button_h);
+    int button_x = (ui->screen_w - button_w) / 2;
+    int continue_button_y = (ui->screen_h - 3 * button_h) / 4;
+
+    return (x >= button_x && x <= button_x + button_w && y >= continue_button_y && y <= continue_button_y + button_h);
+}
+/*
+bool is_restart_clicked(ui_t *ui, int x, int y)
+{
+    int button_w, button_h;
+    SDL_QueryTexture(ui->background_texture[1], NULL, NULL, &button_w, &button_h);
+    int button_x = (ui->screen_w - button_w) / 2;
+    int restart_button_y = (ui->screen_h - button_h) / 2;
+
+    return (x >= button_x && x <= button_x + button_w && y >= restart_button_y && y <= restart_button_y + button_h);
+}*/
+
+bool is_quit_clicked(ui_t *ui, int x, int y)
+{
+    int button_w = 300; 
+    int button_h = 300;
+    SDL_QueryTexture(ui->pause_texture[1], NULL, NULL, &button_w, &button_h);
+    int button_x = (ui->screen_w - button_w) / 2;
+    int quit_button_y = 3 * (ui->screen_h - button_h) / 4;
+
+    return (x >= button_x && x <= button_x + button_w && y >= quit_button_y && y <= quit_button_y + button_h);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief Initialisation de la SDL
@@ -257,7 +301,41 @@ void init_sdl(ui_t *ui)
 
     // Activer le mode de mélange pour la transparence
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
+
+    /////////////////////////////////////////////////
+    /*ui->restart_game_state = malloc(sizeof(game_t));
+    if (ui->restart_game_state == NULL)
+    {
+        SDL_Log("ERROR: Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }*/
 }
+
+
+/*
+void restart_game(ui_t *ui)
+{
+    ui->in_pause = false;
+    ui->follow_mouse = false;
+    ui->animate[0] = false;
+    ui->animate[1] = false;
+    ui->animate[2] = false;
+    ui->ticks_stealing_init = 0;
+    ui->tick = 0;
+    ui->last_tick = 0;
+    ui->delta_t = 0;
+
+    get_draw_card(ui->restart_game_state);
+    for (int i = 0; i < 4; i++)
+    {
+        ui->restart_game_state->players[i]->score = 0;
+        for (int j = 0; j < 7; j++)
+        {
+            ui->restart_game_state->players[i]->tank[j] = 0;
+        }
+    }
+}
+*/
 
 ui_t *create_ui()
 {
@@ -355,21 +433,38 @@ void refresh_input(ui_t *ui, int *input)
                     int x = ui->event.button.x;
                     int y = ui->event.button.y;
 
-                    if (stack_clicked(ui, x, y))
+                    /////////////////////////////////////////////////////////
+                    if (ui->in_pause)
                     {
-                        ui->follow_mouse = !ui->follow_mouse;
+                        if (is_continue_clicked(ui, x, y))
+                        {
+                            ui->in_pause = false;
+                        }
+                        else if (is_quit_clicked(ui, x, y))
+                        {
+                            ui->program_on = false;
+                        }
                     }
+                    /////////////////////////////////////////////////////////
+
                     else
                     {
-                        *input = player_clicked(x, y);
-                        if (*input != -1) // input valide
+                        if (stack_clicked(ui, x, y))
                         {
-                            ui->animate[0] = true; // flip_the_card
-                            ui->last_tick = ui->tick;
-                            ui->click_x = x;
-                            ui->click_y = y;
+                            ui->follow_mouse = !ui->follow_mouse;
                         }
-                        ui->follow_mouse = false;
+                        else
+                        {
+                            *input = player_clicked(x, y);
+                            if (*input != -1) // input valide
+                            {
+                                ui->animate[0] = true; // flip_the_card
+                                ui->last_tick = ui->tick;
+                                ui->click_x = x;
+                                ui->click_y = y;
+                            }
+                            ui->follow_mouse = false;
+                        }
                     }
                 }
             }
@@ -379,7 +474,7 @@ void refresh_input(ui_t *ui, int *input)
             switch (ui->event.key.keysym.sym)
             {
             case SDLK_ESCAPE:
-                ui->program_on = false;
+                ui->in_pause = true;
                 break;
             }
             break;
