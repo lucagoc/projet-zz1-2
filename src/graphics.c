@@ -19,9 +19,9 @@ void draw_background(ui_t *ui)
     SDL_RenderClear(ui->renderer);
 
     SDL_Rect layer0_draw = {-1600, 0, ui->screen_w, ui->screen_h};
-    SDL_Rect layer1_draw = {-1600 +(ui->tick *3)%1600, 0, 600+ ui->screen_w +(ui->tick)%1600, ui->screen_h};
-    SDL_Rect layer2_draw = {-1600 +(ui->tick *2)%1600, 0, 600+ ui->screen_w +(ui->tick)%1600, ui->screen_h};
-    SDL_Rect layer3_draw = {-1600 +(ui->tick)%1600, 0, 600+ ui->screen_w +(ui->tick)%1600, ui->screen_h};
+    SDL_Rect layer1_draw = {-1400 +(ui->tick)%1600, 0, ui->screen_w +(ui->tick)%1600 +200, ui->screen_h};
+    SDL_Rect layer2_draw = {-1200 +(ui->tick)%1600, 0, ui->screen_w +(ui->tick)%1600 +400, ui->screen_h};
+    SDL_Rect layer3_draw = {-1000 +(ui->tick)%1600, 0, ui->screen_w +(ui->tick)%1600 +600, ui->screen_h};
 
     SDL_RenderCopy(ui->renderer, ui->background[0], NULL, &layer0_draw);
     SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw);
