@@ -54,10 +54,10 @@ int is_victory(game_t *game)
 
     if (is_draw_pile_empty(game))
     {
-        int score_1 = get_reward(game, 1);
-        int score_2 = get_reward(game, 2);
-        int score_3 = get_reward(game, 3);
-        int score_4 = get_reward(game, 4);
+        int score_1 = game->players[0]->score;
+        int score_2 = game->players[1]->score;
+        int score_3 = game->players[2]->score;
+        int score_4 = game->players[3]->score;
 
         return max_4(score_1, score_2, score_3, score_4);
     }
@@ -72,7 +72,7 @@ int is_victory(game_t *game)
         }
     }
 
-    return 0;
+    return -1;
 }
 
 /**
@@ -158,7 +158,7 @@ game_t *create_game()
 
     game->face_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
     game->player_action = 0;    // Le joueur 1 commence
-    game->win = 0;              // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->win = -1;              // Initialisation du statut de victoire à 0 (personne n'a gagné)
     game->back_card_color[0] = -1;
     game->back_card_color[1] = -1;
     game->back_card_color[2] = -1;
@@ -288,13 +288,7 @@ game_t *copy_game(game_t *game)
 
 void game_play(game_t *game, int input)
 {
-
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
-
-    printf("Game id entry : \n");
-    node_id_t *gen = gen_id(game);
-    print_node_id(*gen);
-    free(gen);
 
     if (input == game->player_action) // le joueur actif choisit de marquer
     {
@@ -314,7 +308,6 @@ void game_play(game_t *game, int input)
         fprintf(stderr, "[DEBUG] input value = %d", input);
         if (is_card_in_tank(input, game)) // s'il tombe sur une bonne couleur qu'il a
         {
-
             steal_card(input, game);
         }
         else
@@ -330,11 +323,8 @@ void game_play(game_t *game, int input)
     // Changement de carte
     get_draw_card(game);
 
+
     // passage au joueur suivant
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 
-    printf("Game id out : \n");
-    node_id_t *gen2 = gen_id(game);
-    print_node_id(*gen2);
-    free(gen2);
 }

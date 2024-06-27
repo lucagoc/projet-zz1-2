@@ -5,6 +5,7 @@
 
 #include "headers/sdl_common.h"
 #include "headers/gameplay.h"
+#include "headers/animation.h"
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
@@ -206,22 +207,22 @@ void load_textures(ui_t *ui)
     ui->interface_textures[1] = render_text("SCORE", "assets/fonts/Vividly-Regular.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
     ui->interface_textures[2] = render_text("STEAL", "assets/fonts/Vividly-Regular.otf", (SDL_Color){204, 136, 80, 255}, 24, ui->renderer);
     ui->interface_textures[3] = render_text("Good game !", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[4] = render_text("Joueur 1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[5] = render_text("Joueur 2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
-    ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 48, ui->renderer);
+    ui->interface_textures[4] = render_text("Joueur 1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
+    ui->interface_textures[5] = render_text("Joueur 2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
+    ui->interface_textures[6] = render_text("Joueur 3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
+    ui->interface_textures[7] = render_text("Joueur 4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){20, 0, 40, 255}, 108, ui->renderer);
 
     /* --------------------------------------------- SCORE ------------------------------------------------*/
-    ui->score_textures[0] = render_text("0", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[1] = render_text("1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[2] = render_text("2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[3] = render_text("3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[4] = render_text("4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[5] = render_text("5", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[6] = render_text("6", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[7] = render_text("7", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
-    ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 48, ui->renderer);
+    ui->score_textures[0] = render_text("0", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[1] = render_text("1", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[2] = render_text("2", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[3] = render_text("3", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[4] = render_text("4", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[5] = render_text("5", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[6] = render_text("6", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[7] = render_text("7", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[8] = render_text("8", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
+    ui->score_textures[9] = render_text("9", "assets/fonts/Vividly-Regular.otf", (SDL_Color){0, 0, 0, 255}, 72, ui->renderer);
 
     /* --------------------------------------------- PAUSE --------------------------------------------- */
 
@@ -282,6 +283,38 @@ void init_sdl(ui_t *ui)
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
+/* Mettre ici toutes les initialisations */
+anim_props_t **create_animations()
+{
+    anim_props_t **animations = malloc(sizeof(anim_props_t) * 10);
+    for (int i = 0; i < 10; i++)
+    {
+        animations[i] = malloc(sizeof(anim_props_t));
+        animations[i]->texture = malloc(sizeof(SDL_Texture *) * 10);
+        animations[i]->playing = false;
+        animations[i]->loop = false;
+        init_animation(animations[i], (pos_t){0, 0}, 300);
+        for (int j = 0; j < 10; j++) // NB de paramètres
+        {
+            animations[i]->param[j] = 0;
+        }
+    }
+    return animations;
+}
+
+void load_textures_anim(ui_t *ui)
+{
+    for (int j = 1; j < 3; j++)
+    {
+        for (int i = 0; i < 7; i++) // Pointe les textures des cartes pour l'anim
+        {
+            ui->animations[j]->texture[i] = ui->front_card_textures[i];
+        }
+        ui->animations[j]->texture[7] = ui->back_card_texture[0];
+        ui->animations[j]->texture[8] = ui->back_card_texture[1];
+    }
+}
+
 ui_t *create_ui()
 {
     ui_t *ui = malloc(sizeof(ui_t));
@@ -291,30 +324,36 @@ ui_t *create_ui()
     init_sdl(ui);
     ui->in_pause = false;
     ui->program_on = true;
-
-    ui->tick = 0;
-    ui->last_tick = 0;
-    ui->animate[0] = false;
-    ui->animate[1] = false;
-    ui->follow_mouse = false;
-    ui->ticks_stealing_init = 0;
-    ui->animate[2] = 0;
+    ui->animations = create_animations();
+    load_textures_anim(ui);
 
     return ui;
 }
 
-// si les coordonnées cliquées correspondent à la pile
-bool stack_clicked(ui_t *ui, int x, int y)
+ui_input_t *create_ui_input()
 {
-    return x > ui->screen_w / 2 - CARD_WIDTH / 6 && x < ui->screen_w / 2 + CARD_WIDTH / 6 && y > ui->screen_h / 2 - CARD_HEIGHT / 6 && y < ui->screen_h / 2 + CARD_HEIGHT / 6;
+    ui_input_t *ui_input = malloc(sizeof(ui_input_t));
+    ui_input->click = (pos_t){-1, -1};
+    ui_input->cursor = (pos_t){-1, -1};
+    ui_input->key = 0;
+    ui_input->delay_input = -1;
+
+    return ui_input;
+}
+
+// si les coordonnées cliquées correspondent à la pile
+bool stack_clicked(ui_input_t *ui_input)
+{
+    return ui_input->click.x > SCREEN_WIDTH / 2 - CARD_WIDTH / 6 && ui_input->click.x < SCREEN_WIDTH / 2 + CARD_WIDTH / 6 && ui_input->click.y > SCREEN_HEIGHT / 2 - CARD_HEIGHT / 6 && ui_input->click.y < SCREEN_HEIGHT / 2 + CARD_HEIGHT / 6;
 }
 
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
-int player_clicked(int x, int y)
+int player_clicked(pos_t click)
 {
+    int x = click.x;
+    int y = click.y;
 
     int box_size = 100;
-
     // OUI c'est des magic numbers, mais c'est pour le prototype
     if (x < 800 + box_size && y < 100 + box_size)
     {
@@ -344,22 +383,23 @@ int player_clicked(int x, int y)
 
 void free_ui(ui_t *ui)
 {
+    free(ui->animations);
     unload_textures(ui);
     free(ui);
 }
 
 /*
- * @brief Fonction pour récupérer les événements
+ * @brief Fonction pour récupérer les événements lié à l'interface utilisateur
  *
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, int *input)
+void refresh_input(ui_t *ui, ui_input_t *ui_input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    ui->mouse_pos.x = x;
-    ui->mouse_pos.y = y;
+    ui_input->cursor.x = x;
+    ui_input->cursor.y = y;
 
     /* Gestion des événements */
     while (SDL_PollEvent(&ui->event))
@@ -373,46 +413,18 @@ void refresh_input(ui_t *ui, int *input)
         case SDL_MOUSEBUTTONDOWN:
             if (ui->event.button.button == SDL_BUTTON_LEFT)
             {
-                if (*input == -1 && !ui->animate[0] && !ui->animate[2]) // Traiter seulement si non déjà traité
+                ui_input->click.x = x;
+                ui_input->click.y = y;
+
+                if(ui->in_pause)
                 {
-                    int x = ui->event.button.x;
-                    int y = ui->event.button.y;
-
-                    if (ui->in_pause)
+                    if(is_continue_clicked(ui, x, y))
                     {
-                        if (is_continue_clicked(ui, x, y))
-                        {                            
-                            ui->in_pause = false;
-                        }
-                        else if (is_quit_clicked(ui, x, y))
-                        {
-                            //SDL_SetTextureColorMod(ui->pause_texture[1], 150, 150, 150);
-                            ui->program_on = false;
-                        }
-                        else
-                        {
-                            fprintf(stderr, "Clique en dehors des boutons\n");
-                        }
+                        ui->in_pause = false;
                     }
-
-                    else
+                    else if(is_quit_clicked(ui, x, y))
                     {
-                        if (stack_clicked(ui, x, y))
-                        {
-                            ui->follow_mouse = !ui->follow_mouse;
-                        }
-                        else
-                        {
-                            *input = player_clicked(x, y);
-                            if (*input != -1) // input valide
-                            {
-                                ui->animate[0] = true; // flip_the_card
-                                ui->last_tick = ui->tick;
-                                ui->click_x = x;
-                                ui->click_y = y;
-                            }
-                            ui->follow_mouse = false;
-                        }
+                        ui->program_on = false;
                     }
                 }
             }
@@ -422,7 +434,7 @@ void refresh_input(ui_t *ui, int *input)
             switch (ui->event.key.keysym.sym)
             {
             case SDLK_ESCAPE:
-                ui->in_pause = true;
+                ui->in_pause = !ui->in_pause;
                 break;
             }
             break;
@@ -433,11 +445,105 @@ void refresh_input(ui_t *ui, int *input)
     }
 }
 
-void game_interact(int *input, game_t *game, ui_t *ui)
+bool is_anim_blocking_game(anim_props_t **animations)
 {
-    if (!(ui->animate[0]) && *input != -1)
+    if (animations[1]->playing || animations[2]->playing)
+        return true;
+    return false;
+}
+
+bool is_steal_clicked(game_t *game, int player)
+{
+    return player != game->player_action && game->players[player]->tank[game->face_card_color] > 0;
+}
+
+void anim_find_target(anim_props_t *anim, int player)
+{
+    switch (player)
     {
-        game_play(game, *input);
-        *input = -1;
+    case 2:
+        anim->target = (pos_t){SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8};
+        break;
+    case 1:
+        anim->target = (pos_t){SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 8};
+        break;
+    case 0:
+        anim->target = (pos_t){SCREEN_WIDTH / 4, SCREEN_HEIGHT * 7 / 8};
+        break;
+    case 3:
+        anim->target = (pos_t){SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT * 7 / 8};
+        break;
+    default:
+        break;
     }
+}
+
+// Fonction qui traite les inputs de la SDL vers les inputs relative au jeu en fonction de l'état de celui-ci
+// Active les animations si besoin
+int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
+{
+    int input = -1;
+
+    ui->animations[0]->pos.x = ui_input->cursor.x;
+    ui->animations[0]->pos.y = ui_input->cursor.y;
+
+    if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
+    {
+        return input;
+    }
+    else if (ui_input->delay_input != -1)
+    {
+        int tmp = ui_input->delay_input;
+        ui_input->delay_input = -1;
+        return tmp;
+    }
+    else if (game->win == -1)
+    {
+        if (ui_input->click.x != -1 && ui_input->click.y != -1)
+        {
+            fprintf(stderr, "Click: %d %d\n", ui_input->click.x, ui_input->click.y);
+            if (stack_clicked(ui_input))
+            {
+                ui->animations[0]->number_of_frame = 1600;
+                ui->animations[0]->loop = true;
+                start_animation(ui->animations[0], 0);
+            }
+            else
+            {
+                int player = player_clicked(ui_input->click);
+                if (player != -1)
+                {
+                    if (is_steal_clicked(game, player)) // Click sur un joueur non actif et vole
+                    {
+                        ui->animations[1]->pos.x = ui_input->cursor.x;
+                        ui->animations[1]->pos.y = ui_input->cursor.y;
+                        anim_find_target(ui->animations[1], game->player_action);
+                        ui->animations[1]->number_of_frame = 2000;
+                        ui->animations[1]->param[0] = game->face_card_color;
+                        ui->animations[1]->size.x = CARD_WIDTH / 6;
+                        ui->animations[1]->size.y = CARD_HEIGHT / 6;
+                        start_animation(ui->animations[1], 3000);
+
+                    }
+                    ui->animations[2]->pos.x = ui_input->cursor.x;
+                    ui->animations[2]->pos.y = ui_input->cursor.y;
+                    ui->animations[2]->number_of_frame = 3000;
+                    ui->animations[2]->param[0] = game->face_card_color;
+                    start_animation(ui->animations[2], 0);
+
+                    ui_input->delay_input = player;
+                    fprintf(stderr, "ui_input->delay_input : %d\n", ui_input->delay_input);
+                }
+
+                end_animation(ui->animations[0]);
+            }
+        }
+    }
+
+    // Reset des entrées
+    ui_input->click.x = -1;
+    ui_input->click.y = -1;
+    ui_input->key = -1;
+
+    return input;
 }

@@ -24,34 +24,36 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
     int card_width = CARD_WIDTH / descale;
     int card_height = CARD_HEIGHT / descale;
 
-    /* DEBUG
-    for (int i = 0; i < 7; i++)
-    {
-        player->tank[i] = 1;
-    }*/
-
     for (int i = 0; i < 7; i++)
     {
         for (int j = 0; j < player->tank[i]; j++)
         {
             int card_x = x + i * card_width + i * 10;
             int card_y = y + j * 10;
-            SDL_Rect draw_card_rect = {card_x, card_y, card_width, card_height};
-            SDL_RenderCopy(ui->renderer, ui->front_card_textures[i], NULL, &draw_card_rect);
+
+            if (ui->animations[1]->playing && ui->animations[1]->param[0] == i && ui->animations[1]->param[1] == j)
+            {
+                //
+            }
+            else
+            {
+                SDL_Rect draw_card_rect = {card_x, card_y, card_width, card_height};
+                SDL_RenderCopy(ui->renderer, ui->front_card_textures[i], NULL, &draw_card_rect);
+            }
         }
     }
+
+    animation_runtime(ui, ui->animations[1], fct_move_animation); // Joue les animations de déplacement des cartes.
 }
 
 // teste la victoire
 void draw_victory(ui_t *ui, game_t *game)
 {
-
-    int player_win = game->win;
     SDL_Rect drawvic = {650, 200, 300, 100};
 
-    if (player_win > -1)
+    if (game->win > -1)
     {
-        SDL_RenderCopy(ui->renderer, ui->victory[player_win], NULL, &drawvic);
+        SDL_RenderCopy(ui->renderer, ui->victory[game->win], NULL, &drawvic);
     }
 }
 
@@ -130,13 +132,12 @@ void draw_players(ui_t *ui, game_t *game)
 // Affiche la pioche
 void draw_draw_card(ui_t *ui, game_t *game)
 {
-    int x = 0;
-    int y = 0;
-
-    if (ui->follow_mouse)
+    int x;
+    int y;
+    if (ui->animations[0]->playing)
     {
-        x = ui->mouse_pos.x - CARD_WIDTH / 6;
-        y = ui->mouse_pos.y - CARD_HEIGHT / 6;
+        x = ui->animations[0]->pos.x - CARD_WIDTH / 6;
+        y = ui->animations[0]->pos.y - CARD_HEIGHT / 6;
     }
     else
     {
@@ -144,27 +145,20 @@ void draw_draw_card(ui_t *ui, game_t *game)
         y = ui->screen_h / 2 - CARD_HEIGHT / 6;
     }
 
-    if (ui->animate[0]) // flip_the_card
-    {
-        flip_the_card(ui, game, ui->click_x, ui->click_y);
-    }
-    else
-    {
+    
         for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
         {
             SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
             SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->back_card_color[i]], NULL, &draw_indicator_rect);
         }
 
-        // Affiche la carte
-        SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
-        SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
+    // Affiche la carte
+    SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
+    SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
 
-        if (ui->follow_mouse)
-        {
-            draw_particles(ui, game, ui->mouse_pos.x, ui->mouse_pos.y);
-        }
-    }
+    // Animation 
+    animation_runtime(ui, ui->animations[0], fct_anim_particles);
+    animation_runtime(ui, ui->animations[2], fct_anim_flip);
 }
 
 void draw_active_player(ui_t *ui, game_t *game)
@@ -261,20 +255,12 @@ void draw(ui_t *ui, game_t *game)
         draw_draw_card(ui, game);
     }
 
-    if (game->win != 0)
+    if (game->win != -1)
     {
         draw_victory(ui, game);
-        draw_confetti(ui);
-    }
-
-    if (game->stealing > 0)
-    { // si on est dans une animation de vol
-        draw_steal(ui, game);
     }
 
     // Affichage
     SDL_RenderPresent(ui->renderer);
     SDL_Delay(15); // ~ 60 FPS
-    ui->tick = SDL_GetTicks();
-    ui->delta_t = ui->tick - ui->last_tick;
 }
