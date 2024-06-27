@@ -81,3 +81,4 @@ ui_input_t *create_ui_input();
 void init_animation(anim_props_t *animation, pos_t pos, int number_of_frame);
 bool stack_clicked(ui_input_t *ui_input);
 int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui);
+int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui);

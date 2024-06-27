@@ -390,7 +390,7 @@ void free_ui(ui_t *ui)
         free(ui->animations[i]->texture);
         free(ui->animations[i]);
     }
-    
+
     free(ui->animations);
     unload_textures(ui);
     free(ui);
@@ -549,6 +549,47 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
     ui_input->click.x = -1;
     ui_input->click.y = -1;
     ui_input->key = -1;
+
+    return input;
+}
+
+int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
+{
+    int input = -1;
+    if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
+    {
+        return input;
+    }
+    else if (ui_input->delay_input != -1)
+    {
+        int tmp = ui_input->delay_input;
+        ui_input->delay_input = -1;
+        return tmp;
+    }
+    if (game->player_action != 0)
+    {
+        int player = mcts(game);            // Récupère l'input du robot
+        if (is_steal_clicked(game, player)) // Click sur un joueur non actif et vole
+        {
+            anim_find_target(ui->animations[1], player);
+            ui->animations[1]->pos.x = ui->animations[1]->target.x;
+            ui->animations[1]->pos.y = ui->animations[1]->target.y;
+            anim_find_target(ui->animations[1], game->player_action);
+            ui->animations[1]->number_of_frame = 2000;
+            ui->animations[1]->param[0] = game->face_card_color;
+            ui->animations[1]->size.x = CARD_WIDTH / 6;
+            ui->animations[1]->size.y = CARD_HEIGHT / 6;
+            start_animation(ui->animations[1], 3000);
+        }
+        anim_find_target(ui->animations[1], player);
+        ui->animations[2]->pos.x = ui->animations[1]->target.x;
+        ui->animations[2]->pos.y = ui->animations[1]->target.y;
+        ui->animations[2]->number_of_frame = 3000;
+        ui->animations[2]->param[0] = game->face_card_color;
+        start_animation(ui->animations[2], 0);
+
+        ui_input->delay_input = player;
+    }
 
     return input;
 }
