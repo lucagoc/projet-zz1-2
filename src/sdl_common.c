@@ -570,16 +570,20 @@ void anim_find_target(anim_props_t *anim, int player)
     switch (player)
     {
     case 2:
-        anim->target = (pos_t){SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8};
+        anim->target.x = SCREEN_WIDTH / 4;
+        anim->target.y = SCREEN_HEIGHT / 8;
         break;
     case 1:
-        anim->target = (pos_t){SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 8};
+        anim->target.x = SCREEN_WIDTH * 3 / 4;
+        anim->target.y = SCREEN_HEIGHT / 8;
         break;
     case 0:
-        anim->target = (pos_t){SCREEN_WIDTH / 4, SCREEN_HEIGHT * 7 / 8};
+        anim->target.x = SCREEN_WIDTH / 4;
+        anim->target.y = SCREEN_HEIGHT * 7 / 8;
         break;
     case 3:
-        anim->target = (pos_t){SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT * 7 / 8};
+        anim->target.x = SCREEN_WIDTH * 3 / 4;
+        anim->target.y = SCREEN_HEIGHT * 7 / 8;
         break;
     default:
         break;
@@ -616,7 +620,7 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
         {
             if (stack_clicked(ui_input))
             {
-                ui->animations[0]->number_of_frame = 1600;
+                ui->animations[0]->number_of_frame = -1; // Infini
                 ui->animations[0]->loop = true;
                 ui->animations[0]->param[0] = game->back_card_color[0];
                 ui->animations[0]->param[1] = game->back_card_color[1];
