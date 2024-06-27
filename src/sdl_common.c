@@ -79,6 +79,8 @@ void unload_textures(ui_t *ui)
     {
         SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
+        SDL_DestroyTexture(ui->active_player_textures[i]);
+
     }
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
