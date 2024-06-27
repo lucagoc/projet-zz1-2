@@ -234,12 +234,13 @@ void load_textures(ui_t *ui)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool is_continue_clicked(ui_t *ui, int x, int y)
 {
-    int button_w, button_h;
-    SDL_QueryTexture(ui->pause_texture[0], NULL, NULL, &button_w, &button_h);
+    int button_w = 2000; 
+    int button_h = 900;
+    //SDL_QueryTexture(ui->pause_texture[0], NULL, NULL, &button_w, &button_h);
     int button_x = (ui->screen_w - button_w) / 2;
     int continue_button_y = (ui->screen_h - 3 * button_h) / 4;
 
-    return (x >= button_x && x <= button_x + button_w && y >= continue_button_y && y <= continue_button_y + button_h);
+    return ((x >= button_x && x <= button_x + button_w ) && (y >= continue_button_y && y <= continue_button_y + button_h));
 }
 /*
 bool is_restart_clicked(ui_t *ui, int x, int y)
@@ -254,9 +255,9 @@ bool is_restart_clicked(ui_t *ui, int x, int y)
 
 bool is_quit_clicked(ui_t *ui, int x, int y)
 {
-    int button_w = 300; 
-    int button_h = 300;
-    SDL_QueryTexture(ui->pause_texture[1], NULL, NULL, &button_w, &button_h);
+    int button_w = 2000; 
+    int button_h = 900;
+    //SDL_QueryTexture(ui->pause_texture[1], NULL, NULL, &button_w, &button_h);
     int button_x = (ui->screen_w - button_w) / 2;
     int quit_button_y = 3 * (ui->screen_h - button_h) / 4;
 
@@ -443,6 +444,15 @@ void refresh_input(ui_t *ui, int *input)
                         else if (is_quit_clicked(ui, x, y))
                         {
                             ui->program_on = false;
+                            
+                        }
+                        /*else if (is_restart_clicked(ui, x, y))
+                        {
+                            //restart_game(ui);
+                        }*/
+                        else
+                        {
+                            fprintf(stderr, "Clique en dehors des boutons\n");
                         }
                     }
                     /////////////////////////////////////////////////////////
