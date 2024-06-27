@@ -256,8 +256,14 @@ void load_textures(ui_t *ui)
 
 bool is_continue_clicked(ui_t *ui, pos_t pos)
 {
-    (void)ui;
-    return (pos.x >= 550 && pos.x <= 1145 && pos.y >= 250 && pos.y <= 390);
+    int button_w = 300;
+    int button_h = 100;
+
+    // Calculer les positions pour centrer les boutons
+    int button_x = (ui->screen_w - button_w) / 2;
+    int continue_button_y = 2 * (ui->screen_h - button_h) / 5;
+
+    return (pos.x >= button_x && pos.x <= button_x + button_w && pos.y >= continue_button_y && pos.y <= continue_button_y + button_h);
 }
 
 /**
@@ -268,8 +274,13 @@ bool is_continue_clicked(ui_t *ui, pos_t pos)
  */
 bool is_quit_clicked(ui_t *ui, pos_t pos)
 {
-    (void)ui;
-    return (pos.x >= 540 && pos.x <= 1148 && pos.y >= 500 && pos.y <= 640);
+    int button_w = 300;
+    int button_h = 100;
+
+    int button_x = (ui->screen_w - button_w) / 2;
+    int quit_button_y = 4 * (ui->screen_h - button_h) / 5;
+
+    return (pos.x >= button_x && pos.x <= button_x + button_w && pos.y >= quit_button_y && pos.y <= quit_button_y + button_h);
 }
 
 /**

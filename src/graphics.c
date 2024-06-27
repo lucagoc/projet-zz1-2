@@ -19,11 +19,12 @@
 #define SCORE_WIDTH 30
 #define SCORE_HEIGHT 50
 
+#define LOGO_SIZE 200
+
 // Affiche le fond d'écran.
 // Affiche le fond d'écran.
 void draw_background(ui_t *ui)
 {
-
     SDL_SetRenderDrawColor(ui->renderer, 220, 220, 255, 255);
     SDL_RenderClear(ui->renderer);
 
@@ -41,19 +42,19 @@ void draw_background(ui_t *ui)
 
     SDL_Rect layer0_draw = {0, 0, ui->screen_w, ui->screen_h};
 
-    SDL_Rect layer1_draw = {-3200 + ((int)round(tick * 0.02)) % 6400 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
-    SDL_Rect layer2_draw = {-3200 + ((int)round(tick * 0.05)) % 6400 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
-    SDL_Rect layer3_draw = {-3200 + ((int)round(tick * 0.15)) % 6400 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
-  
-    SDL_Rect layer1_draw2 = {-6400+ ((int)round(tick * 0.02)) % 7600 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
-    SDL_Rect layer2_draw2 = {-6400+ ((int)round(tick * 0.05)) % 7600 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
-    SDL_Rect layer3_draw2 = {-6400+ ((int)round(tick * 0.15)) % 7600 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
+    SDL_Rect layer1_draw = {-3200 + ((int)round(tick * 0.02)) % 6400 + (int)round(mouseX * parallX), (int)round(mouseY * parallY), 3200, 900};
+    SDL_Rect layer2_draw = {-3200 + ((int)round(tick * 0.05)) % 6400 + (int)round(mouseX * parallX), (int)round(mouseY * parallY), 3200, 900};
+    SDL_Rect layer3_draw = {-3200 + ((int)round(tick * 0.15)) % 6400 + (int)round(mouseX * parallX), (int)round(mouseY * parallY), 3200, 900};
+
+    SDL_Rect layer1_draw2 = {-6400 + ((int)round(tick * 0.02)) % 7600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY), 3200, 900};
+    SDL_Rect layer2_draw2 = {-6400 + ((int)round(tick * 0.05)) % 7600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY), 3200, 900};
+    SDL_Rect layer3_draw2 = {-6400 + ((int)round(tick * 0.15)) % 7600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY), 3200, 900};
 
     SDL_RenderCopy(ui->renderer, ui->background[0], NULL, &layer0_draw);
     SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw);
     SDL_RenderCopy(ui->renderer, ui->background[2], NULL, &layer2_draw);
     SDL_RenderCopy(ui->renderer, ui->background[3], NULL, &layer3_draw);
-    
+
     SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw2);
     SDL_RenderCopy(ui->renderer, ui->background[2], NULL, &layer2_draw2);
     SDL_RenderCopy(ui->renderer, ui->background[3], NULL, &layer3_draw2);
@@ -65,7 +66,7 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
     int card_width = CARD_WIDTH / descale;
     int card_height = CARD_HEIGHT / descale;
 
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < NUM_PLAYERS; i++)
     {
         for (int j = 0; j < player->tank[i]; j++)
         {
@@ -148,7 +149,7 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
 
         draw_player_tank(ui, game->players[1], ui->screen_w - size_length + padding, padding);
-        draw_score(ui, game, 1, (pos_t){ui->screen_w - (SCORE_WIDTH*2), 10});
+        draw_score(ui, game, 1, (pos_t){ui->screen_w - (SCORE_WIDTH * 2), 10});
         if (game->player_action == 1)
         {
             SDL_Rect player_background = {ui->screen_w - size_length, 0, size_length, size_height};
@@ -186,7 +187,7 @@ void draw_players(ui_t *ui, game_t *game)
         SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
         SDL_RenderCopy(ui->renderer, ui->triangle, NULL, &player_background);
         draw_player_tank(ui, game->players[3], ui->screen_w - size_length + padding, ui->screen_h - size_height + padding);
-        draw_score(ui, game, 3, (pos_t){ui->screen_w - (SCORE_WIDTH*2), ui->screen_h - SCORE_HEIGHT});
+        draw_score(ui, game, 3, (pos_t){ui->screen_w - (SCORE_WIDTH * 2), ui->screen_h - SCORE_HEIGHT});
         if (game->player_action == 3)
         {
             SDL_Rect player_background = {ui->screen_w - size_length, ui->screen_h - size_height, size_length, size_height};
@@ -213,18 +214,17 @@ void draw_draw_card(ui_t *ui, game_t *game)
         y = ui->screen_h / 2 - CARD_HEIGHT / 6;
     }
 
-    
-        for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
-        {
-            SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
-            SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->back_card_color[i]], NULL, &draw_indicator_rect);
-        }
+    for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
+    {
+        SDL_Rect draw_indicator_rect = {x + i * 20 + 7, y + 30 + i * 45, FLAG_WIDTH / 3, FLAG_HEIGHT / 3};
+        SDL_RenderCopy(ui->renderer, ui->back_flag_textures[game->back_card_color[i]], NULL, &draw_indicator_rect);
+    }
 
     // Affiche la carte
     SDL_Rect draw_pile_rect = {x, y, CARD_WIDTH / 3, CARD_HEIGHT / 3};
     SDL_RenderCopy(ui->renderer, ui->back_card_texture[0], NULL, &draw_pile_rect);
 
-    // Animation 
+    // Animation
     animation_runtime(ui, ui->animations[0], fct_anim_particles);
     animation_runtime(ui, ui->animations[2], fct_anim_flip);
 }
@@ -237,7 +237,7 @@ void draw_active_player(ui_t *ui, game_t *game)
 
 void draw_logo(ui_t *ui)
 {
-    SDL_Rect draw_logo_rect = {10, ui->screen_h / 2 - 100, 200, 200};
+    SDL_Rect draw_logo_rect = {10, ui->screen_h / 2 - 100, LOGO_SIZE, LOGO_SIZE};
     SDL_RenderCopy(ui->renderer, ui->interface_textures[0], NULL, &draw_logo_rect);
 }
 
@@ -245,39 +245,10 @@ void draw_logo(ui_t *ui)
 void draw_background_pause(ui_t *ui)
 {
 
-    srand(time(NULL));
-
-    // Couleurs de départ et de fin pour le gradient
-
-    int start_R = rand() % 256;
-    int start_G = rand() % 256;
-    int start_B = rand() % 256;
-
-    int end_R = rand() % 256;
-    int end_G = rand() % 256;
-    int end_B = rand() % 256;
-
-    int screen_height = ui->screen_h;
-    int screen_width = ui->screen_w;
-
-    // Calculer les incréments de couleur
-
-    float step_R = (float)(end_R - start_R) / screen_height;
-    float step_G = (float)(end_G - start_G) / screen_height;
-    float step_B = (float)(end_B - start_B) / screen_height;
-
-    // Dessiner le gradient
-
-    for (int y = 0; y < screen_height; ++y)
-    {
-        int current_R = start_R + (int)(step_R * y);
-        int current_G = start_G + (int)(step_G * y);
-        int current_B = start_B + (int)(step_B * y);
-
-        SDL_SetRenderDrawColor(ui->renderer, current_R, current_G, current_B, 255);
-
-        SDL_RenderDrawLine(ui->renderer, 0, y, screen_width, y);
-    }
+    // affiche un fond noir semi transparent
+    SDL_SetRenderDrawColor(ui->renderer, 0, 0, 0, 200);
+    SDL_Rect rect = {0, 0, ui->screen_w, ui->screen_h};
+    SDL_RenderFillRect(ui->renderer, &rect);
 }
 
 void draw_menu_pause(ui_t *ui)
@@ -288,13 +259,13 @@ void draw_menu_pause(ui_t *ui)
     SDL_Texture *continue_button = ui->pause_texture[0];
     SDL_Texture *quit_button = ui->pause_texture[1];
 
-    int button_w = 2000;
-    int button_h = 900;
+    int button_w = 300;
+    int button_h = 100;
 
     // Calculer les positions pour centrer les boutons
     int button_x = (ui->screen_w - button_w) / 2;
-    int continue_button_y = (ui->screen_h - button_h) / 4;
-    int quit_button_y = 3 * (ui->screen_h - button_h) / 4;
+    int continue_button_y = 2 * (ui->screen_h - button_h) / 5;
+    int quit_button_y = 4 * (ui->screen_h - button_h) / 5;
 
     // Définir les rectangles de destination pour les boutons
     SDL_Rect dest_rect_continue = {button_x, continue_button_y, button_w, button_h};
@@ -309,25 +280,23 @@ void draw_menu_pause(ui_t *ui)
 // Affiche tout les éléments du jeu.
 void draw(ui_t *ui, game_t *game)
 {
+
+    draw_background(ui);
+    draw_players(ui, game);
+    draw_active_player(ui, game);
+    draw_logo(ui);
+    draw_draw_card(ui, game);
+
     if (ui->in_pause)
     {
         // Affiche le menu pause
         draw_menu_pause(ui);
-    }
-    else
-    {
-        draw_background(ui);
-        draw_players(ui, game);
-        draw_active_player(ui, game);
-        draw_logo(ui);
-        draw_draw_card(ui, game);
     }
 
     if (game->win > -1)
     {
         draw_victory(ui, game);
     }
-
 
     // Affichage
     SDL_RenderPresent(ui->renderer);
