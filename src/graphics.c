@@ -31,19 +31,24 @@ void draw_background(ui_t *ui)
     float parallX = 0.03;
     float parallY = 0.04;
 
-    SDL_Rect layer0_draw = {0, 0,
-                            ui->screen_w, ui->screen_h};
-    SDL_Rect layer1_draw = {-1200 + ((int)round(tick * 0.02)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
-                            ui->screen_w + ((int)round(tick * 0.02)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
-    SDL_Rect layer2_draw = {-1200 + ((int)round(tick * 0.05)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
-                            ui->screen_w + ((int)round(tick * 0.05)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
-    SDL_Rect layer3_draw = {-1200 + ((int)round(tick * 0.15)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
-                            ui->screen_w + ((int)round(tick * 0.15)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
+    SDL_Rect layer0_draw = {0, 0, ui->screen_w, ui->screen_h};
+
+    SDL_Rect layer1_draw = {-3200 + ((int)round(tick * 0.02)) % 6400 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
+    SDL_Rect layer2_draw = {-3200 + ((int)round(tick * 0.05)) % 6400 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
+    SDL_Rect layer3_draw = {-3200 + ((int)round(tick * 0.15)) % 6400 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
+  
+    SDL_Rect layer1_draw2 = {-6400+ ((int)round(tick * 0.02)) % 7600 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
+    SDL_Rect layer2_draw2 = {-6400+ ((int)round(tick * 0.05)) % 7600 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
+    SDL_Rect layer3_draw2 = {-6400+ ((int)round(tick * 0.15)) % 7600 + (int)round(mouseX * parallX),  (int)round(mouseY * parallY),   3200,   900};
 
     SDL_RenderCopy(ui->renderer, ui->background[0], NULL, &layer0_draw);
     SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw);
     SDL_RenderCopy(ui->renderer, ui->background[2], NULL, &layer2_draw);
     SDL_RenderCopy(ui->renderer, ui->background[3], NULL, &layer3_draw);
+    
+    SDL_RenderCopy(ui->renderer, ui->background[1], NULL, &layer1_draw2);
+    SDL_RenderCopy(ui->renderer, ui->background[2], NULL, &layer2_draw2);
+    SDL_RenderCopy(ui->renderer, ui->background[3], NULL, &layer3_draw2);
 }
 
 void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
