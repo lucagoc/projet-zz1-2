@@ -5,6 +5,8 @@
 #include "headers/sdl_common.h"
 #include "headers/animation.h"
 
+#define MAX_FPS 60
+
 #define FLAG_WIDTH 434
 #define FLAG_HEIGHT 396
 
@@ -19,7 +21,7 @@
 #define SCORE_WIDTH 30
 #define SCORE_HEIGHT 50
 
-#define LOGO_SIZE 200
+#define LOGO_SIZE 180
 
 // Affiche le fond d'écran.
 // Affiche le fond d'écran.
@@ -289,7 +291,6 @@ void draw(ui_t *ui, game_t *game)
 
     if (ui->in_pause)
     {
-        // Affiche le menu pause
         draw_menu_pause(ui);
     }
 
@@ -298,7 +299,6 @@ void draw(ui_t *ui, game_t *game)
         draw_victory(ui, game);
     }
 
-    // Affichage
     SDL_RenderPresent(ui->renderer);
-    SDL_Delay(15); // ~ 60 FPS
+    SDL_Delay((int)1/(float)MAX_FPS);
 }
