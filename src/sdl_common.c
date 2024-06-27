@@ -231,39 +231,17 @@ void load_textures(ui_t *ui)
     return;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool is_continue_clicked(ui_t *ui, int x, int y)
 {
-    int button_w = 2000; 
-    int button_h = 900;
-    //SDL_QueryTexture(ui->pause_texture[0], NULL, NULL, &button_w, &button_h);
-    int button_x = (ui->screen_w - button_w) / 2;
-    int continue_button_y = (ui->screen_h - 3 * button_h) / 4;
-
-    return ((x >= button_x && x <= button_x + button_w ) && (y >= continue_button_y && y <= continue_button_y + button_h));
+    (void)ui;
+    return (x >= 550 && x <= 1145 && y >= 250 && y <= 390);
 }
-/*
-bool is_restart_clicked(ui_t *ui, int x, int y)
-{
-    int button_w, button_h;
-    SDL_QueryTexture(ui->background_texture[1], NULL, NULL, &button_w, &button_h);
-    int button_x = (ui->screen_w - button_w) / 2;
-    int restart_button_y = (ui->screen_h - button_h) / 2;
-
-    return (x >= button_x && x <= button_x + button_w && y >= restart_button_y && y <= restart_button_y + button_h);
-}*/
 
 bool is_quit_clicked(ui_t *ui, int x, int y)
 {
-    int button_w = 2000; 
-    int button_h = 900;
-    //SDL_QueryTexture(ui->pause_texture[1], NULL, NULL, &button_w, &button_h);
-    int button_x = (ui->screen_w - button_w) / 2;
-    int quit_button_y = 3 * (ui->screen_h - button_h) / 4;
-
-    return (x >= button_x && x <= button_x + button_w && y >= quit_button_y && y <= quit_button_y + button_h);
+    (void)ui;
+    return (x >= 540 && x <= 1148 && y >= 500 && y <= 640);
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief Initialisation de la SDL
@@ -302,41 +280,7 @@ void init_sdl(ui_t *ui)
 
     // Activer le mode de mélange pour la transparence
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
-
-    /////////////////////////////////////////////////
-    /*ui->restart_game_state = malloc(sizeof(game_t));
-    if (ui->restart_game_state == NULL)
-    {
-        SDL_Log("ERROR: Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }*/
 }
-
-
-/*
-void restart_game(ui_t *ui)
-{
-    ui->in_pause = false;
-    ui->follow_mouse = false;
-    ui->animate[0] = false;
-    ui->animate[1] = false;
-    ui->animate[2] = false;
-    ui->ticks_stealing_init = 0;
-    ui->tick = 0;
-    ui->last_tick = 0;
-    ui->delta_t = 0;
-
-    get_draw_card(ui->restart_game_state);
-    for (int i = 0; i < 4; i++)
-    {
-        ui->restart_game_state->players[i]->score = 0;
-        for (int j = 0; j < 7; j++)
-        {
-            ui->restart_game_state->players[i]->tank[j] = 0;
-        }
-    }
-}
-*/
 
 ui_t *create_ui()
 {
@@ -434,7 +378,6 @@ void refresh_input(ui_t *ui, int *input)
                     int x = ui->event.button.x;
                     int y = ui->event.button.y;
 
-                    /////////////////////////////////////////////////////////
                     if (ui->in_pause)
                     {
                         if (is_continue_clicked(ui, x, y))
@@ -444,18 +387,12 @@ void refresh_input(ui_t *ui, int *input)
                         else if (is_quit_clicked(ui, x, y))
                         {
                             ui->program_on = false;
-                            
                         }
-                        /*else if (is_restart_clicked(ui, x, y))
-                        {
-                            //restart_game(ui);
-                        }*/
                         else
                         {
                             fprintf(stderr, "Clique en dehors des boutons\n");
                         }
                     }
-                    /////////////////////////////////////////////////////////
 
                     else
                     {

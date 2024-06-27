@@ -44,9 +44,6 @@ struct ui_s
 
     bool in_pause;
     bool program_on;
-    /////////////////////////////
-    //game_t *restart_game_state;
-    /////////////////////////////
 
     int ticks_stealing_init;
 };
