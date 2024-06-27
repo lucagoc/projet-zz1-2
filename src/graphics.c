@@ -24,13 +24,13 @@ void draw_background(ui_t *ui)
     mouseX -= ui->screen_w / 2;
     mouseY -= ui->screen_h / 2;
 
-    float parallX = 0.015;
-    float parallY = 0.02;
+    float parallX = 0.03;
+    float parallY = 0.04;
 
-    SDL_Rect layer0_draw = {-1600, 0,
+    SDL_Rect layer0_draw = {0, 0,
                             ui->screen_w, ui->screen_h};
-    SDL_Rect layer1_draw = {-1200 + ((int)round(ui->tick * 0.025)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
-                            ui->screen_w + ((int)round(ui->tick * 0.025)) % 1600 + 400 + (int)round(mouseX * parallX), ui->screen_h + (int)round(mouseY * parallY)};
+    SDL_Rect layer1_draw = {-1200 + ((int)round(ui->tick * 0.02)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
+                            ui->screen_w + ((int)round(ui->tick * 0.02)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
     SDL_Rect layer2_draw = {-1200 + ((int)round(ui->tick * 0.05)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
                             ui->screen_w + ((int)round(ui->tick * 0.05)) % 1600 + 400 + (int)round(mouseX * parallX) + 800, ui->screen_h + (int)round(mouseY * parallY)};
     SDL_Rect layer3_draw = {-1200 + ((int)round(ui->tick * 0.15)) % 1600 + (int)round(mouseX * parallX), (int)round(mouseY * parallY),
