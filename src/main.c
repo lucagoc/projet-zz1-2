@@ -19,11 +19,11 @@ int main(int argc, char const *argv[])
 
     while (ui->program_on)
     {
+        refresh_input(ui, ui_input);
         if (game->win == -1) // Personne gagne
         {
             if (game->player_action == 0) // C'est le joueur 1
             {
-                refresh_input(ui, ui_input);
                 int input = process_input(ui_input, game, ui);
                 if (input != -1)
                 {
