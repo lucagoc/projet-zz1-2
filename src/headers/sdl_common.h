@@ -20,7 +20,7 @@ struct anim_props_s
 {
     pos_t pos;                     // Position de l'animation
     pos_t target;                  // Position cible (si besoin)
-    int start_frame;               // Frame de départ
+    long unsigned start_frame;     // Frame de départ
     long unsigned number_of_frame; // Pendant combien de frame est jouée l'animation
     float speed;                   // Vitesse
     bool loop;                     // Doit-elle boucler ?
@@ -41,8 +41,8 @@ struct ui_s
     SDL_Event event;
 
     /* Textures */
-    SDL_Texture *front_card_textures[NUM_COLORS]; 
-    SDL_Texture *back_flag_textures[NUM_COLORS];  
+    SDL_Texture *front_card_textures[NUM_COLORS];
+    SDL_Texture *back_flag_textures[NUM_COLORS];
     SDL_Texture *back_card_texture[2];
     SDL_Texture *player_textures[NUM_PLAYERS];
     SDL_Texture *interface_textures[4];
@@ -50,7 +50,7 @@ struct ui_s
     SDL_Texture *victory[4];
     SDL_Texture *score_textures[10];
     SDL_Texture *background_texture[3];
-    
+
     SDL_Texture *pause_texture[2];
 
     /* Animation */

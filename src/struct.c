@@ -47,7 +47,7 @@ node_id_t *gen_id(game_t *game)
     node_id_t *id = malloc(sizeof(node_id_t));
     if (id == NULL)
     {
-        fprintf(stderr, "gen_id : Erreur d'allocation de mémoire\n");
+        fprintf(stderr, "[ERROR] gen_id : Can't allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
@@ -177,7 +177,7 @@ rb_tree_t *rb_tree_insert(rb_tree_t *tree, mcts_t *value)
         tree = malloc(sizeof(rb_tree_t));
         if (tree == NULL)
         {
-            fprintf(stderr, "rb_tree_insert : Erreur d'allocation de mémoire\n");
+            fprintf(stderr, "[ERROR] rb_tree_insert : Can't allocate memory\n");
             exit(EXIT_FAILURE);
         }
         tree->value = value;

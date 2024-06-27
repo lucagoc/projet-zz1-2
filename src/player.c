@@ -9,7 +9,7 @@
 #define NUM_PLAYERS 4      // Nombre de joueurs
 #define NUM_ARMS 10        // Nombre de bras
 #define NUM_ITERATIONS 200 // Nombre total d'itérations
-#define UCB_ITERATIONS 100  // Nombre d'itérations pour UCB
+#define UCB_ITERATIONS 100 // Nombre d'itérations pour UCB
 
 float I_k(float G, float C, int n, int n_k)
 {
@@ -32,7 +32,7 @@ int ucb(mcts_t *root, int n)
     game_t *game = root->state;
     /* Initialisation */
     int player = game->player_action;
-    float C = 0.4699;      // Constante d'exploration
+    float C = 0.4699; // Constante d'exploration
     int max = 0;
     int G[NUM_PLAYERS];   // Valeur de la récompense pour chaque possibilité
     int n_t[NUM_PLAYERS]; // Nombre de fois où l'on a joué sur la machine
@@ -172,7 +172,7 @@ void simulate_node(mcts_t *node)
 {
     if (node == NULL)
     {
-        fprintf(stderr, "[ERREUR] simulate_node le noeud est NULL\n");
+        fprintf(stderr, "[ERROR] copy_game : Can't allocate memory\n");
     }
     while (node->state->win == -1)
     {
@@ -222,7 +222,7 @@ rb_tree_t *expand_node(mcts_t *parent, rb_tree_t *rb_tree, int input)
         {
             // Le noeud existe déjà.
             free_mtsc_node(node);
-            fprintf(stderr, "[WARNING] Le noeud existe déjà !\n");
+            fprintf(stderr, "[WARNING] expand_node : the node already exist (safe to ignore)\n");
             parent->children[input] = node;
         }
         else
@@ -286,23 +286,13 @@ int mcts(game_t *game)
     float max = -100;
     for (int i = 0; i < NUM_PLAYERS; i++)
     {
-        float a = root->gain_coup[i]/(float)root->n_coup[i];
+        float a = root->gain_coup[i] / (float)root->n_coup[i];
         if (max < a)
         {
             max = a;
             best_input = i;
         }
     }
-
-    /*
-    for (int i = 0; i < NUM_PLAYERS; i++)
-    {
-        fprintf(stderr, "Coup %d : %d\n", i, root->gain_coup[i]);
-        fprintf(stderr, "Nombre de coup %d : %d\n", i, root->n_coup[i]);
-    }*/
-    
-
-    fprintf(stderr, "Meilleur coup : %d\n", best_input);
 
     free_mtsc_node(root);
     free_rb_tree(rb_tree);

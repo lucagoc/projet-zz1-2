@@ -363,22 +363,18 @@ int player_clicked(pos_t click)
     // OUI c'est des magic numbers, mais c'est pour le prototype
     if (x < 800 + box_size && y < 100 + box_size)
     {
-        fprintf(stderr, "Clique sur joueur 3\n"); // En haut à gauche
         return 2;
     }
     else if (x > 1000 - box_size && y < 100 + box_size) // En haut à droite
     {
-        fprintf(stderr, "Clique sur joueur 2\n");
         return 1;
     }
     else if (x < 800 + box_size && y > 800 - box_size) // En bas à gauche
     {
-        fprintf(stderr, "Clique sur joueur 1\n");
         return 0;
     }
     else if (x > 1000 - box_size && y > 800 - box_size) // En bas à droite
     {
-        fprintf(stderr, "Clique sur joueur 4\n");
         return 3;
     }
     else
@@ -422,13 +418,13 @@ void refresh_input(ui_t *ui, ui_input_t *ui_input)
                 ui_input->click.x = x;
                 ui_input->click.y = y;
 
-                if(ui->in_pause)
+                if (ui->in_pause)
                 {
-                    if(is_continue_clicked(ui, x, y))
+                    if (is_continue_clicked(ui, x, y))
                     {
                         ui->in_pause = false;
                     }
-                    else if(is_quit_clicked(ui, x, y))
+                    else if (is_quit_clicked(ui, x, y))
                     {
                         ui->program_on = false;
                     }
@@ -507,7 +503,6 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
     {
         if (ui_input->click.x != -1 && ui_input->click.y != -1)
         {
-            fprintf(stderr, "Click: %d %d\n", ui_input->click.x, ui_input->click.y);
             if (stack_clicked(ui_input))
             {
                 ui->animations[0]->number_of_frame = 1600;
@@ -529,7 +524,6 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
                         ui->animations[1]->size.x = CARD_WIDTH / 6;
                         ui->animations[1]->size.y = CARD_HEIGHT / 6;
                         start_animation(ui->animations[1], 3000);
-
                     }
                     ui->animations[2]->pos.x = ui_input->cursor.x;
                     ui->animations[2]->pos.y = ui_input->cursor.y;
@@ -538,7 +532,6 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
                     start_animation(ui->animations[2], 0);
 
                     ui_input->delay_input = player;
-                    fprintf(stderr, "ui_input->delay_input : %d\n", ui_input->delay_input);
                 }
 
                 end_animation(ui->animations[0]);

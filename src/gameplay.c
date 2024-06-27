@@ -23,7 +23,7 @@ bool is_draw_pile_empty(game_t *game)
     return true;
 }
 
-//Retourne le joueur qui a le plus de points
+// Retourne le joueur qui a le plus de points
 int max_4(int p1, int p2, int p3, int p4)
 {
     if (p1 >= p2 && p1 >= p3 && p1 >= p4)
@@ -49,7 +49,7 @@ int max_4(int p1, int p2, int p3, int p4)
  *
  * @param game le jeu
  */
-int is_victory(game_t *game, int res_card)
+int is_victory(game_t *game)
 {
     if (is_draw_pile_empty(game))
     {
@@ -246,7 +246,7 @@ game_t *copy_game(game_t *game)
     game_t *copy_game_state = malloc(sizeof(game_t));
     if (copy_game_state == NULL)
     {
-        fprintf(stderr, "Erreur d'alloction de mémoire\n");
+        fprintf(stderr, "[ERROR] copy_game : Can't allocate memory\n");
         return NULL;
     }
 
@@ -256,7 +256,7 @@ game_t *copy_game(game_t *game)
         player_t *copy_player = malloc(sizeof(player_t));
         if (copy_player == NULL)
         {
-            fprintf(stderr, "Erreur d'alloction de mémoire\n");
+            fprintf(stderr, "[ERROR] copy_game : Can't allocate memory\n");
             return NULL;
         }
         for (int j = 0; j < NUMBER_FACE; j++)
@@ -319,7 +319,7 @@ void game_play(game_t *game, int input)
         }
     }
 
-    int res_card = get_draw_card(game);
-    game->win = is_victory(game, res_card);
+    get_draw_card(game);
+    game->win = is_victory(game);
     game->player_action = (game->player_action + 1) % 4;
 }

@@ -76,16 +76,6 @@ struct rb_tree
 };
 typedef struct rb_tree rb_tree_t;
 
-/******************** Fonctions utiles pour la pile *************************/
-stack_t *stack_create();
-bool stack_is_empty(stack_t *stack);
-stack_t *stack_push(stack_t *stack, card_t *card);
-int stack_top(stack_t *stack);
-stack_t *stack_pop(stack_t *stack);
-int stack_size(stack_t *stack);
-void stack_free(stack_t *stack);
-/******************** Fonctions utiles pour la pile *************************/
-
 void print_node_id(node_id_t id);
 node_id_t *gen_id(game_t *game);
 mcts_t *rb_tree_search(rb_tree_t *tree, node_id_t *id);
