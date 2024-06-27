@@ -27,3 +27,16 @@ void debug_print_id(game_t *game)
     free(gen);
 }
 
+void print_all_players_tank(game_t *game)
+{
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        printf("Player %d : ", i);
+        for (int j = 0; j < NUM_COLORS; j++)
+        {
+            printf("%d ", game->players[i]->tank[j]);
+        }
+        printf("\n");
+    }
+}
+

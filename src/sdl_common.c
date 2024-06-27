@@ -30,7 +30,6 @@
  * @param window Fenêtre à fermer
  * @param renderer Renderer à fermer
  */
-
 void end_sdl(char ok, char const *msg, SDL_Window *window, SDL_Renderer *renderer)
 {
     char msg_formated[255];
@@ -148,6 +147,16 @@ SDL_Texture *load_texture_from_image(char *file_image_name, SDL_Window *window, 
     return my_texture;
 }
 
+/**
+ * @brief Rend un texte en texture
+ *
+ * @param message Message à afficher
+ * @param font_file Nom du fichier de police
+ * @param color Couleur du texte
+ * @param font_size Taille de la police
+ * @param renderer Renderer SDL
+ * @return SDL_Texture* Texture du texte
+ */
 SDL_Texture *render_text(const char *message, const char *font_file, SDL_Color color, int font_size, SDL_Renderer *renderer)
 {
     TTF_Font *font = TTF_OpenFont(font_file, font_size);
@@ -254,6 +263,12 @@ void load_textures(ui_t *ui)
     return;
 }
 
+/**
+ * @brief Vérifie si le bouton continuer est cliqué
+ *
+ * @param ui Structure de l'interface utilisateur
+ * @param pos Position du clic
+ */
 bool is_continue_clicked(ui_t *ui, pos_t pos)
 {
     int button_w = 300;
@@ -293,15 +308,13 @@ void init_sdl(ui_t *ui)
     ui->renderer = NULL;
     ui->window = NULL;
 
-    /* Initialisation SDL */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    /* Création de la fenêtre et du renderer */
-    ui->window = SDL_CreateWindow("Mantis (pre-alpha)",
+    ui->window = SDL_CreateWindow("Mantis 1.0",
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
                                   ui->screen_w,
@@ -315,10 +328,7 @@ void init_sdl(ui_t *ui)
     if (TTF_Init() < 0)
         end_sdl(0, "Couldn't initialize SDL TTF", ui->window, ui->renderer);
 
-    /* Loading de toutes les textures dans un tableau */
     load_textures(ui);
-
-    // Activer le mode de mélange pour la transparence
     SDL_SetRenderDrawBlendMode(ui->renderer, SDL_BLENDMODE_BLEND);
 }
 
@@ -337,7 +347,7 @@ anim_props_t **create_animations()
         animations[i]->playing = false;
         animations[i]->loop = false;
         init_animation(animations[i], (pos_t){0, 0}, 300);
-        for (int j = 0; j < 10; j++) // NB de paramètres
+        for (int j = 0; j < 10; j++)
         {
             animations[i]->param[j] = 0;
         }

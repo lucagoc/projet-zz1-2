@@ -7,6 +7,7 @@
 #include "headers/graphics.h"
 #include "headers/gameplay.h"
 #include "headers/player.h"
+#include "headers/debug.h"
 
 int main(int argc, char const *argv[])
 {

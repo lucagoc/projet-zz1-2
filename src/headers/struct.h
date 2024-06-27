@@ -63,7 +63,7 @@ struct mcts
     int visits;               // Le nombre de fois que ce noeud a été visité
     int from_input;           // L'input qui a mené à ce noeud
     int *n_coup;
-    int *gain_coup;
+    int **gain_coup;
 };
 typedef struct mcts mcts_t;
 

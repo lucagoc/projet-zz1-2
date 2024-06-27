@@ -5,6 +5,7 @@
 
 #include "headers/struct.h"
 #include "headers/player.h"
+#include "headers/debug.h"
 
 #define NUMBER_FACE 7       // Nombre de couleurs
 #define NUMBER_BACK 3       // Nombre d'indicateur au dos de la carte
@@ -220,7 +221,7 @@ void score_card(game_t *game)
  */
 void add_card_in_tank(int player, game_t *game)
 {
-    game->players[player]->tank[game->face_card_color] = 1; // on ajoute la carte au tank
+    game->players[player]->tank[game->face_card_color] += 1; // on ajoute la carte au tank
 }
 
 /**
