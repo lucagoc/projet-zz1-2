@@ -25,7 +25,7 @@ struct ui_s
     SDL_Texture *back_flag_textures[7];  
     SDL_Texture *back_card_texture[2];
     SDL_Texture *player_textures[4];
-    SDL_Texture *interface_textures[4];
+    SDL_Texture *interface_textures[8];
     SDL_Texture *button_textures[8];
     SDL_Texture *victory[4];
     SDL_Texture *score_textures[10];

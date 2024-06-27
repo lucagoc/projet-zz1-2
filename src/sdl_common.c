@@ -77,15 +77,15 @@ void unload_textures(ui_t *ui)
     /* --------------------------------------------- JOUEURS --------------------------------------------- */
     for (int i = 0; i < 4; i++)
     {
-        SDL_DestroyTexture(ui->player_textures[i]);
+        //SDL_DestroyTexture(ui->player_textures[i]);
         SDL_DestroyTexture(ui->victory[i]);
-        //SDL_DestroyTexture(ui->active_player_textures[i]);
+        SDL_DestroyTexture(ui->active_player_textures[i]);
 
     }
-   // SDL_DestroyTexture(ui->triangle);
+   SDL_DestroyTexture(ui->triangle);
 
     /* --------------------------------------------- MENU  --------------------------------------------- */
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 8; i++)
     {
         SDL_DestroyTexture(ui->interface_textures[i]);
     }
