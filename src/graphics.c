@@ -23,28 +23,31 @@ void draw_player_tank(ui_t *ui, player_t *player, int x, int y)
     int card_width = CARD_WIDTH / descale;
     int card_height = CARD_HEIGHT / descale;
 
-    /* DEBUG
-    for (int i = 0; i < 7; i++)
-    {
-        player->tank[i] = 1;
-    }*/
-
     for (int i = 0; i < 7; i++)
     {
         for (int j = 0; j < player->tank[i]; j++)
         {
             int card_x = x + i * card_width + i * 10;
             int card_y = y + j * 10;
-            SDL_Rect draw_card_rect = {card_x, card_y, card_width, card_height};
-            SDL_RenderCopy(ui->renderer, ui->front_card_textures[i], NULL, &draw_card_rect);
+
+            if (ui->animations[1]->playing && ui->animations[1]->param[0] == i && ui->animations[1]->param[1] == j)
+            {
+                //
+            }
+            else
+            {
+                SDL_Rect draw_card_rect = {card_x, card_y, card_width, card_height};
+                SDL_RenderCopy(ui->renderer, ui->front_card_textures[i], NULL, &draw_card_rect);
+            }
         }
     }
+
+    animation_runtime(ui, ui->animations[1], fct_move_animation); // Joue les animations de déplacement des cartes.
 }
 
 // teste la victoire
 int is_victory(game_t *game)
 {
-
     for (int i = 0; i < 4; i++)
     {
         if (game->players[i]->score >= 10)
@@ -53,7 +56,7 @@ int is_victory(game_t *game)
         }
     }
 
-    return 0;
+    return -1;
 }
 
 // teste la victoire
@@ -156,8 +159,18 @@ void draw_players(ui_t *ui, game_t *game)
 // Affiche la pioche
 void draw_draw_card(ui_t *ui, game_t *game)
 {
-    int x = 0;
-    int y = 0;
+    int x;
+    int y;
+    if (ui->animations[0]->playing)
+    {
+        x = ui->animations[0]->pos.x - CARD_WIDTH / 6;
+        y = ui->animations[0]->pos.y - CARD_HEIGHT / 6;
+    }
+    else
+    {
+        x = ui->screen_w / 2 - CARD_WIDTH / 6;
+        y = ui->screen_h / 2 - CARD_HEIGHT / 6;
+    }
 
     for (int i = 0; i < 3; i++) // 3 = nombre d'élément derrière la carte.
     {
@@ -204,11 +217,6 @@ void draw(ui_t *ui, game_t *game)
     if (game->win != 0)
     {
         draw_victory(ui, game);
-    }
-
-    if (game->stealing > 0)
-    { // si on est dans une animation de vol
-        draw_steal(ui, game);
     }
 
     // Affichage

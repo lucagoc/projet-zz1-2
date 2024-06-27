@@ -36,8 +36,6 @@ struct ui_s
     int screen_w;
     int screen_h;
     SDL_Event event;
-    pos_t mouse_pos;
-    pos_t click;
 
     /* Textures */
     SDL_Texture *front_card_textures[7];
@@ -50,7 +48,7 @@ struct ui_s
     SDL_Texture *score_textures[10];
 
     /* Animation */
-    anim_props_t *animations; // Tableau d'animation.
+    anim_props_t **animations; // Tableau d'animation.
 
     bool in_pause;
     bool program_on;
@@ -64,10 +62,16 @@ struct ui_input_s
     pos_t click;
     pos_t cursor;
     int key;
+    int delay_input;    // input à donner à la fin de l'animation
 };
 typedef struct ui_input_s ui_input_t;
 
 ui_t *create_ui();
 void refresh_input(ui_t *ui, ui_input_t *ui_input);
 void free_ui(ui_t *ui);
-void game_interact(int *input, game_t *game, ui_t *ui);
+void game_interact(int input, game_t *game);
+int player_clicked(pos_t click);
+ui_input_t *create_ui_input();
+void init_animation(anim_props_t *animation, pos_t pos, int number_of_frame);
+bool stack_clicked(ui_input_t *ui_input);
+int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui);

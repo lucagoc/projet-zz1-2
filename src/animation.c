@@ -23,9 +23,9 @@ void start_animation(anim_props_t *animation)
 /*
  * Joue l'animation donnée en entrée
  */
-void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim_props_t*, SDL_Renderer*, int), long unsigned game_frame)
+void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim_props_t *, SDL_Renderer *, int))
 {
-    long unsigned delta_frame = game_frame - animation->start_frame;
+    long unsigned delta_frame = SDL_GetTicks() - animation->start_frame;
     if (animation->playing)
     {
         func_anim(animation, ui->renderer, delta_frame);
@@ -34,7 +34,7 @@ void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim
     {
         if (!animation->playing)
         {
-            animation->start_frame = game_frame;
+            animation->start_frame = SDL_GetTicks();
             animation->playing = true;
         }
     }
@@ -68,7 +68,8 @@ void fct_move_animation(anim_props_t *anim, SDL_Renderer *renderer, int frame)
 
     // Affichage de l'animation
     SDL_Rect rect = {x, y, anim->size.x, anim->size.y};
-    SDL_RenderCopy(renderer, anim->texture[0], NULL, &rect);
+    fprintf(stderr, "Texture: %d \n", anim->param[0]);
+    SDL_RenderCopy(renderer, anim->texture[anim->param[0]], NULL, &rect);
 }
 
 void fct_anim_confettis(anim_props_t *anim, SDL_Renderer *renderer, int frame)

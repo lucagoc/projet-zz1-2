@@ -260,15 +260,28 @@ void init_sdl(ui_t *ui)
 }
 
 /* Mettre ici toutes les initialisations */
-anim_props_t *create_animations()
+anim_props_t **create_animations()
 {
-    anim_props_t *animations = malloc(sizeof(anim_props_t) * 10);
+    anim_props_t **animations = malloc(sizeof(anim_props_t) * 10);
     for (int i = 0; i < 10; i++)
     {
+        animations[i] = malloc(sizeof(anim_props_t));
+        animations[i]->texture = malloc(sizeof(SDL_Texture *) * 10);
         init_animation(animations[i], (pos_t){0, 0}, 300);
+        for (int j = 0; j < 10; j++) // NB de paramètres
+        {
+            animations[i]->param[j] = 0;
+        }
     }
     return animations;
+}
 
+void load_textures_anim(ui_t *ui)
+{
+    for (int i = 0; i < 7; i++) // Pointe les textures des cartes pour l'anim
+    {
+        ui->animations[1]->texture[i] = ui->front_card_textures[i];
+    }
 }
 
 ui_t *create_ui()
@@ -282,28 +295,34 @@ ui_t *create_ui()
     ui->program_on = true;
     ui->ticks_stealing_init = 0;
 
+    ui->animations = create_animations();
+    load_textures_anim(ui);
+
     return ui;
 }
 
 ui_input_t *create_ui_input()
 {
     ui_input_t *ui_input = malloc(sizeof(ui_input_t));
-    ui_input->click = (pos_t){0, 0};
+    ui_input->click = (pos_t){-1, -1};
     ui_input->cursor = (pos_t){0, 0};
     ui_input->key = 0;
+    ui_input->delay_input = -1;
 
     return ui_input;
 }
 
 // si les coordonnées cliquées correspondent à la pile
-bool stack_clicked(ui_t *ui, int x, int y)
+bool stack_clicked(ui_input_t *ui_input)
 {
-    return x > ui->screen_w / 2 - CARD_WIDTH / 6 && x < ui->screen_w / 2 + CARD_WIDTH / 6 && y > ui->screen_h / 2 - CARD_HEIGHT / 6 && y < ui->screen_h / 2 + CARD_HEIGHT / 6;
+    return ui_input->click.x > SCREEN_WIDTH / 2 - CARD_WIDTH / 6 && ui_input->click.x < SCREEN_WIDTH / 2 + CARD_WIDTH / 6 && ui_input->click.y > SCREEN_HEIGHT / 2 - CARD_HEIGHT / 6 && ui_input->click.y < SCREEN_HEIGHT / 2 + CARD_HEIGHT / 6;
 }
 
 // si les coordonnées cliquées correspondent à un joueur (pour le voler)
-int player_clicked(int x, int y)
+int player_clicked(pos_t click)
 {
+    int x = click.x;
+    int y = click.y;
     // OUI c'est des magic numbers, mais c'est pour le prototype
     if (x < 800 && y < 100)
     {
@@ -333,6 +352,7 @@ int player_clicked(int x, int y)
 
 void free_ui(ui_t *ui)
 {
+    free(ui->animations);
     unload_textures(ui);
     free(ui);
 }
@@ -343,7 +363,7 @@ void free_ui(ui_t *ui)
  * @param ui Structure de l'interface utilisateur
  * @param input Structure des entrées
  */
-void refresh_input(ui_t *ui, ui_input_t* ui_input)
+void refresh_input(ui_t *ui, ui_input_t *ui_input)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -382,10 +402,78 @@ void refresh_input(ui_t *ui, ui_input_t* ui_input)
     }
 }
 
-void game_interact(int input, game_t *game)
+bool is_anim_blocking_game(anim_props_t **animations)
 {
-    if (game->player_action == 0 && game->win == -1)
+    if (animations[1]->playing)
+        return true;
+    return false;
+}
+
+bool is_steal_clicked(game_t *game, int player)
+{
+    return player != game->player_action && game->players[player]->tank[game->drawn_card_color] > 0;
+}
+
+// Fonction qui traite les inputs de la SDL vers les inputs relative au jeu en fonction de l'état de celui-ci
+// Active les animations si besoin
+int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
+{
+    int input = -1;
+
+    ui->animations[0]->pos.x = ui_input->cursor.x;
+    ui->animations[0]->pos.y = ui_input->cursor.y;
+
+    if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
     {
-        game_play(game, input);
+        return input;
     }
+    else if (ui_input->delay_input != -1)
+    {
+        int tmp = ui_input->delay_input;
+        ui_input->delay_input = -1;
+        return tmp;
+    }
+
+    if (game->win == -1)
+    {
+        if (ui_input->click.x != -1 && ui_input->click.y != -1)
+        {
+            if (stack_clicked(ui_input))
+            {
+                ui->animations[0]->playing = true;
+            }
+            else
+            {
+                int player = player_clicked(ui_input->click);
+                if (player != -1)
+                {
+                    if (is_steal_clicked(game, player)) // Click sur un joueur non actif et vole
+                    {
+                        ui->animations[1]->pos.x = ui_input->cursor.x;
+                        ui->animations[1]->pos.y = ui_input->cursor.y;
+                        ui->animations[1]->target.x = SCREEN_WIDTH / 2;
+                        ui->animations[1]->target.y = SCREEN_HEIGHT / 2;
+                        ui->animations[1]->playing = true;
+                        ui->animations[1]->start_frame = SDL_GetTicks();
+                        ui->animations[1]->param[0] = player;
+                        ui_input->delay_input = player;
+                        fprintf(stderr, "Steal clicked\n");
+                    }
+                    else // Animation classique
+                    {
+                        input = player;
+                    }
+                }
+
+                ui->animations[0]->playing = false;
+            }
+        }
+    }
+
+    // Reset des entrées
+    ui_input->click.x = -1;
+    ui_input->click.y = -1;
+    ui_input->key = -1;
+
+    return input;
 }

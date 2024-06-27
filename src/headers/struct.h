@@ -35,7 +35,7 @@ struct game
     int draw_pile_left;   // Nombre de cartes restantes dans la pioche
     int drawn_card_color;
     int player_action; // Joueur actif
-    int win;           // 0 si joueur n'a pas gagné, 1 si joueur 1 a gagné
+    int win;           // -1 si joueur n'a pas gagné, sinon le numéro du joueur gagnant
     int stealing;
 };
 typedef struct game game_t;

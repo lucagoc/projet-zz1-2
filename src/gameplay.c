@@ -40,7 +40,7 @@ void check_win(game_t *game, int nb_player)
     {
         if (game->players[i]->score >= 10)
         {
-            game->win = i + 1;
+            game->win = i;
         }
     }
 }
@@ -176,7 +176,7 @@ game_t *create_game()
 
     game->drawn_card_color = -1; // Initialisation de la couleur de la carte tirée à -1
     game->player_action = 0;     // Le joueur 1 commence
-    game->win = 0;               // Initialisation du statut de victoire à 0 (personne n'a gagné)
+    game->win = -1;               // Initialisation du statut de victoire à 0 (personne n'a gagné)
     game->draw_pile_left = 105;
 
     game->draw_pile = init_draw_card(); // Initialisation de la pile de pioche
