@@ -281,9 +281,14 @@ anim_props_t **create_animations()
 
 void load_textures_anim(ui_t *ui)
 {
-    for (int i = 0; i < 7; i++) // Pointe les textures des cartes pour l'anim
+    for (int j = 1; j < 3; j++)
     {
-        ui->animations[1]->texture[i] = ui->front_card_textures[i];
+        for (int i = 0; i < 7; i++) // Pointe les textures des cartes pour l'anim
+        {
+            ui->animations[j]->texture[i] = ui->front_card_textures[i];
+        }
+        ui->animations[j]->texture[7] = ui->back_card_texture[0];
+        ui->animations[j]->texture[8] = ui->back_card_texture[1];
     }
 }
 
@@ -407,14 +412,36 @@ void refresh_input(ui_t *ui, ui_input_t *ui_input)
 
 bool is_anim_blocking_game(anim_props_t **animations)
 {
-    if (animations[1]->playing)
+    if (animations[1]->playing || animations[2]->playing)
         return true;
     return false;
 }
 
 bool is_steal_clicked(game_t *game, int player)
 {
+    fprintf(stderr, "player nb color : %d\n", game->players[player]->tank[game->drawn_card_color]);
     return player != game->player_action && game->players[player]->tank[game->drawn_card_color] > 0;
+}
+
+void anim_find_target(anim_props_t *anim, int player)
+{
+    switch (player)
+    {
+    case 2:
+        anim->target = (pos_t){SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8};
+        break;
+    case 1:
+        anim->target = (pos_t){SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT / 8};
+        break;
+    case 0:
+        anim->target = (pos_t){SCREEN_WIDTH / 4, SCREEN_HEIGHT * 7 / 8};
+        break;
+    case 3:
+        anim->target = (pos_t){SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT * 7 / 8};
+        break;
+    default:
+        break;
+    }
 }
 
 // Fonction qui traite les inputs de la SDL vers les inputs relative au jeu en fonction de l'état de celui-ci
@@ -445,7 +472,7 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
             {
                 ui->animations[0]->number_of_frame = 1600;
                 ui->animations[0]->loop = true;
-                start_animation(ui->animations[0]);
+                start_animation(ui->animations[0], 0);
             }
             else
             {
@@ -456,19 +483,22 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
                     {
                         ui->animations[1]->pos.x = ui_input->cursor.x;
                         ui->animations[1]->pos.y = ui_input->cursor.y;
-                        ui->animations[1]->target.x = SCREEN_WIDTH / 2; // Dumb
-                        ui->animations[1]->target.y = SCREEN_HEIGHT / 2;
-                        ui->animations[1]->number_of_frame = 300;
-                        ui->animations[1]->param[0] = player;
-                        start_animation(ui->animations[1]);
+                        anim_find_target(ui->animations[1], game->player_action);
+                        ui->animations[1]->number_of_frame = 2000;
+                        ui->animations[1]->param[0] = game->drawn_card_color;
+                        ui->animations[1]->size.x = CARD_WIDTH / 6;
+                        ui->animations[1]->size.y = CARD_HEIGHT / 6;
+                        start_animation(ui->animations[1], 3000);
 
-                        ui_input->delay_input = player;
                         fprintf(stderr, "Steal clicked\n");
                     }
-                    else // Animation classique
-                    {
-                        input = player;
-                    }
+                    ui->animations[2]->pos.x = ui_input->cursor.x;
+                    ui->animations[2]->pos.y = ui_input->cursor.y;
+                    ui->animations[2]->number_of_frame = 3000;
+                    ui->animations[2]->param[0] = game->drawn_card_color;
+                    start_animation(ui->animations[2], 0);
+
+                    ui_input->delay_input = player;
                 }
 
                 end_animation(ui->animations[0]);

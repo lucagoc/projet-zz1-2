@@ -14,12 +14,17 @@
 #define COLOR_PINK 187, 82, 144, 255
 #define COLOR_GREEN 66, 177, 66, 255
 
-void start_animation(anim_props_t *animation)
+double ease_out_quint(double x)
 {
-    animation->start_frame = SDL_GetTicks();
-    animation->playing = true;
+    fprintf(stderr, "x : %f\n", x);
+    return 1 - pow(1 - x, 5);
 }
 
+void start_animation(anim_props_t *animation, long unsigned delay)
+{
+    animation->start_frame = SDL_GetTicks() + delay;
+    animation->playing = true;
+}
 
 void end_animation(anim_props_t *animation)
 {
@@ -30,10 +35,13 @@ void end_animation(anim_props_t *animation)
 /*
  * Joue l'animation donnée en entrée
  */
-void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim_props_t *, SDL_Renderer *, int))
+void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim_props_t *, SDL_Renderer *, long unsigned))
 {
-    long unsigned delta_frame = SDL_GetTicks() - animation->start_frame;
-    if(animation->number_of_frame < delta_frame)
+    long unsigned actual_frame = SDL_GetTicks();
+    long unsigned delta_frame = actual_frame - animation->start_frame;
+    if(animation->start_frame > actual_frame)
+        return;
+    if (animation->number_of_frame < delta_frame)
     {
         animation->playing = false;
     }
@@ -45,7 +53,7 @@ void animation_runtime(ui_t *ui, anim_props_t *animation, void *(func_anim)(anim
     {
         if (!animation->playing)
         {
-            animation->start_frame = SDL_GetTicks();
+            animation->start_frame = actual_frame;
             animation->playing = true;
         }
     }
@@ -60,29 +68,20 @@ void init_animation(anim_props_t *animation, pos_t pos, int number_of_frame)
     animation->playing = false;
 }
 
-void init_move_animation(anim_props_t *animation, pos_t origin, pos_t target)
+void fct_move_animation(anim_props_t *anim, SDL_Renderer *renderer, long unsigned frame)
 {
-    animation->pos.x = origin.x;
-    animation->pos.y = origin.y;
-    animation->target.x = target.x;
-    animation->target.y = target.y;
-    animation->speed = 0.001;
-    animation->loop = false;
-    animation->playing = false;
-}
-
-void fct_move_animation(anim_props_t *anim, SDL_Renderer *renderer, int frame)
-{
-    // Calcul de la position de l'animation de pos vers target
-    int x = anim->pos.x + (anim->target.x - anim->pos.x) * frame / anim->number_of_frame;
-    int y = anim->pos.y + (anim->target.y - anim->pos.y) * frame / anim->number_of_frame;
+    fprintf(stderr, "pos : %d, %d\n", anim->pos.x, anim->pos.y);
+    fprintf(stderr, "target : %d, %d\n", anim->target.x, anim->target.y);
+    float x = anim->pos.x + (anim->target.x - anim->pos.x) * ease_out_quint(frame /(double)anim->number_of_frame);
+    float y = anim->pos.y + (anim->target.y - anim->pos.y) * ease_out_quint(frame /(double)anim->number_of_frame);
+    fprintf(stderr, "x : %f, y : %f\n", x, y);
 
     // Affichage de l'animation
     SDL_Rect rect = {x, y, anim->size.x, anim->size.y};
     SDL_RenderCopy(renderer, anim->texture[anim->param[0]], NULL, &rect);
 }
 
-void fct_anim_confettis(anim_props_t *anim, SDL_Renderer *renderer, int frame)
+void fct_anim_confettis(anim_props_t *anim, SDL_Renderer *renderer, long unsigned frame)
 {
     for (int i = 0; i < 100; i++)
     {
@@ -104,7 +103,7 @@ void fct_anim_confettis(anim_props_t *anim, SDL_Renderer *renderer, int frame)
 }
 
 // Donne un effet de flip à une carte.
-void fct_anim_flip(anim_props_t *anim, SDL_Renderer *renderer, int frame)
+void fct_anim_flip(anim_props_t *anim, SDL_Renderer *renderer, long unsigned frame)
 {
     int descale = 6;
     int card_width = CARD_WIDTH / descale;
@@ -119,14 +118,14 @@ void fct_anim_flip(anim_props_t *anim, SDL_Renderer *renderer, int frame)
         SDL_Rect background = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2 + 20, card_width, card_height - 40};
         SDL_RenderFillRect(renderer, &background);
         SDL_Rect card = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2, card_width, card_height};
-        SDL_RenderCopy(renderer, anim->texture[0], NULL, &card); // à corriger
+        SDL_RenderCopy(renderer, anim->texture[7], NULL, &card);
     }
     else if (anime_tick < 300)
     {
         card_width = (CARD_WIDTH * (300 - anime_tick) / 100) / descale;
         card_height = CARD_HEIGHT / descale;
         SDL_Rect card = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2, card_width, card_height};
-        SDL_RenderCopy(renderer, anim->texture[1], NULL, &card); // à corriger
+        SDL_RenderCopy(renderer, anim->texture[8], NULL, &card);
     }
     else if (anime_tick < 400)
     {
@@ -137,12 +136,15 @@ void fct_anim_flip(anim_props_t *anim, SDL_Renderer *renderer, int frame)
     }
     else
     {
-        anim->playing = false;
+        card_width = CARD_WIDTH / descale;
+        card_height = CARD_HEIGHT / descale;
+        SDL_Rect card = {anim->pos.x - card_width / 2, anim->pos.y - card_height / 2, card_width, card_height};
+        SDL_RenderCopy(renderer, anim->texture[anim->param[0]], NULL, &card);
     }
 }
 
 // Affiche des particules tournant autour d'un point
-void fct_anim_particles(anim_props_t *anim, SDL_Renderer *renderer, int frame)
+void fct_anim_particles(anim_props_t *anim, SDL_Renderer *renderer, long unsigned frame)
 {
     // Correction d'un problème d'allignement;
     int x = anim->pos.x;

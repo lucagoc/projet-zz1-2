@@ -184,6 +184,7 @@ void draw_draw_card(ui_t *ui, game_t *game)
 
     // Animation 
     animation_runtime(ui, ui->animations[0], fct_anim_particles);
+    animation_runtime(ui, ui->animations[2], fct_anim_flip);
 }
 
 void draw_active_player(ui_t *ui, game_t *game)

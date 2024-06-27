@@ -15,16 +15,16 @@ typedef struct pos_s pos_t;
  */
 struct anim_props_s
 {
-    pos_t pos;             // Position de l'animation
-    pos_t target;          // Position cible (si besoin)
-    int start_frame;       // Frame de départ
-    int number_of_frame;   // Pendant combien de frame est jouée l'animation
-    float speed;           // Vitesse
-    bool loop;             // Doit-elle boucler ?
-    bool playing;          // L'animation est-elle terminée ?
-    SDL_Texture **texture; // Tableau de texture pour l'animation
-    pos_t size;            // Taille de la texture
-    int param[10];         // Valeur qui peuvent être utilisée pour passer des informations
+    pos_t pos;                     // Position de l'animation
+    pos_t target;                  // Position cible (si besoin)
+    int start_frame;               // Frame de départ
+    long unsigned number_of_frame; // Pendant combien de frame est jouée l'animation
+    float speed;                   // Vitesse
+    bool loop;                     // Doit-elle boucler ?
+    bool playing;                  // L'animation est-elle terminée ?
+    SDL_Texture **texture;         // Tableau de texture pour l'animation
+    pos_t size;                    // Taille de la texture
+    int param[10];                 // Valeur qui peuvent être utilisée pour passer des informations
 };
 typedef struct anim_props_s anim_props_t;
 
@@ -62,7 +62,7 @@ struct ui_input_s
     pos_t click;
     pos_t cursor;
     int key;
-    int delay_input;    // input à donner à la fin de l'animation
+    int delay_input; // input à donner à la fin de l'animation
 };
 typedef struct ui_input_s ui_input_t;
 

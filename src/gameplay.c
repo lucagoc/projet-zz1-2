@@ -344,7 +344,6 @@ int get_score(game_t *game, int player)
 
 void game_play(game_t *game, int input)
 {
-
     // input vaut 0 si le joueur actif clique sur sa propre pile et i>0 s'il clique sur le joueur i pour le voler
     game->drawn_card_color = get_draw_card(game); // on dépile et on affiche
 
@@ -375,6 +374,7 @@ void game_play(game_t *game, int input)
         }
     }
 
+    game->drawn_card_color = game->draw_pile->card->face;
     // passage au joueur suivant
     fprintf(stderr, "[DEBUG] game_play : switching to player %d\n", game->player_action);
 }
