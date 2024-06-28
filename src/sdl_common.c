@@ -421,7 +421,7 @@ ui_t *create_ui()
     init_sdl(ui);
     ui->in_pause = false;
     ui->program_on = true;
-    ui->congrats_played = false; 
+    ui->congrats_played = false;
     ui->animations = create_animations();
     load_textures_anim(ui);
     load_sound(ui);
@@ -540,24 +540,6 @@ void refresh_input(ui_t *ui, ui_input_t *ui_input)
             {
                 ui_input->click.x = x;
                 ui_input->click.y = y;
-
-                /*if (ui->in_pause)
-                {
-                    if (is_continue_clicked(ui, ui_input->click))
-                    {
-                        ui->in_pause = false;
-                        SDL_Delay(250);
-                    }
-                    else if (is_quit_clicked(ui, ui_input->click))
-                    {
-                        ui->program_on = false;
-                    }
-                }
-                ui_input->click.x = -1;
-                ui_input->click.y = -1;
-
-                ui_input->click.x = x;
-                ui_input->click.y = y;*/
             }
             break;
 
@@ -645,7 +627,6 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
 {
     int input = -1;
 
-    
     if (ui->in_pause)
     {
         if (ui_input->click.x != -1 && ui_input->click.y != -1)
@@ -653,22 +634,23 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
             if (is_continue_clicked(ui, ui_input->click))
             {
                 ui->in_pause = false;
-                SDL_Delay(100); // Petit délai pour éviter les clics multiples
             }
             else if (is_quit_clicked(ui, ui_input->click))
             {
                 ui->program_on = false;
             }
 
+            // Réinitialiser l'état du bouton de la souris après traitement
+            ui_input->click.x = -1;
+            ui_input->click.y = -1;
+            ui_input->key = -1;
         }
-                return input;
+        return input; 
+    }
 
-    }
-    else 
-    {
-        ui->animations[0]->pos.x = ui_input->cursor.x;
-        ui->animations[0]->pos.y = ui_input->cursor.y;
-    }
+    // Traitement des entrées en jeu
+    ui->animations[0]->pos.x = ui_input->cursor.x;
+    ui->animations[0]->pos.y = ui_input->cursor.y;
 
     if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
     {
@@ -720,16 +702,24 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
 
                 end_animation(ui->animations[0]);
             }
+
+            // Réinitialiser l'état du bouton de la souris après traitement
+            ui_input->click.x = -1;
+            ui_input->click.y = -1;
         }
     }
-
-    // Reset des entrées
-    ui_input->click.x = -1;
-    ui_input->click.y = -1;
+    else
+    {
+        if (ui_input->click.x != -1 && ui_input->click.y != -1)
+        {
+            ui->program_on = false;
+        }
+    }
     ui_input->key = -1;
 
     return input;
 }
+
 
 /**
  * @brief Fonction pour récupérer les inputs du robot
@@ -743,7 +733,23 @@ int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
     int input = -1;
     if (ui->in_pause)
     {
-        return input;
+        if (ui_input->click.x != -1 && ui_input->click.y != -1)
+        {
+            if (is_continue_clicked(ui, ui_input->click))
+            {
+                ui->in_pause = false;
+            }
+            else if (is_quit_clicked(ui, ui_input->click))
+            {
+                ui->program_on = false;
+            }
+
+            // Réinitialiser l'état du bouton de la souris après traitement
+            ui_input->click.x = -1;
+            ui_input->click.y = -1;
+            ui_input->key = -1;
+        }
+        return input; 
     }
 
     if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
@@ -795,7 +801,7 @@ void play_sound(ui_t *ui, game_t *game)
     }
     else
     {
-        if(!(ui->congrats_played))
+        if (!(ui->congrats_played))
         {
             Mix_HaltChannel(-1);
             Mix_PlayChannel(-1, ui->music[1], 0);
