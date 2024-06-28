@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "headers/struct.h"
+#include "headers/struct.h" 
 #include "headers/player.h"
 #include "headers/gameplay.h"
 
-#define NUM_PLAYERS 4      // Nombre de joueurs
-#define NUM_ARMS 10        // Nombre de bras
-#define NUM_ITERATIONS 200 // Nombre total d'itérations
-#define UCB_ITERATIONS 100 // Nombre d'itérations pour UCB
+#define NUM_PLAYERS 4       // Nombre de joueurs
+#define NUM_ARMS 10         // Nombre de bras
+#define NUM_ITERATIONS 2000 // Nombre total d'itérations
+#define UCB_ITERATIONS 100  // Nombre d'itérations pour UCB
 
 float I_k(float G, float C, int n, int n_k)
 {
@@ -345,7 +345,7 @@ int mcts(game_t *game)
         fprintf(stderr, "Coup %d : ", i);
         for (int j = 0; j < NUM_PLAYERS; j++)
         {
-            printf("%f ", root->gain_coup[i][j]/(float)root->n_coup[i]);
+            printf("%f ", root->gain_coup[i][j] / (float)root->n_coup[i]);
         }
         printf("\n");
     }

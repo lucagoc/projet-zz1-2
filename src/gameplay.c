@@ -95,6 +95,53 @@ void free_game(game_t *game)
     free(game);
 }
 
+struct list
+{
+    int color;
+    struct list *next;
+};
+typedef struct list list_t;
+
+list_t *add_to_list(list_t *list, int couleur)
+{
+    list_t *new_list = malloc(sizeof(list_t));
+    if (new_list == NULL)
+    {
+        fprintf(stderr, "Erreur : Impossible d'allouer de la mémoire\n");
+        return NULL;
+    }
+    new_list->color = couleur;
+    new_list->next = list;
+    return new_list;
+}
+
+list_t *remove_list(list_t *list, int couleur)
+{
+    if (list == NULL)
+    {
+        return NULL;
+    }
+    if (list->color == couleur)
+    {
+        list_t *tmp = list->next;
+        free(list);
+        return tmp;
+    }
+    list->next = remove_list(list->next, couleur);
+    return list;
+}
+
+void print_list(list_t *list)
+{
+    fprintf(stderr, "List : ");
+    while (list != NULL)
+    {
+        fprintf(stderr, "%d ", list->color);
+        list = list->next;
+    }
+    fprintf(stderr, "\n");
+}
+
 /**
  * @brief Génére la prochaine carte à tirer
  *
@@ -108,33 +155,92 @@ int get_draw_card(game_t *game)
         return -1;
     }
 
-    // Prendre une carte dans le paquet
-    int r = (rand() % NUMBER_FACE);
-    while (game->draw_pile_left[r] <= 0)
+    for (int i = 0; i < 3; i++)
     {
-        r = rand() % NUMBER_FACE;
-    }
-    game->face_card_color = r;
-
-    /* Couleur d'indicateur */
-    int a = -1;
-    int b = -1;
-    while (a == -1 || a == r)
-    {
-        a = rand() % NUMBER_FACE;
-    }
-    while (b == -1 || b == r || b == a)
-    {
-        b = rand() % NUMBER_FACE;
+        game->back_card_color[i] = -1;
     }
 
-    // Mettre les 3 couleurs en positions aléatoires
-    int d = rand() % NUMBER_BACK;
-    game->back_card_color[d] = r;
-    game->back_card_color[(d + 1) % NUMBER_BACK] = a;
-    game->back_card_color[(d + 2) % NUMBER_BACK] = b;
+    // Lister les couleurs disponibles
+    list_t *list = NULL;
+    for (int i = 0; i < 7; i++)
+    {
+        if (game->draw_pile_left[i] > 0)
+        {
+            list = add_to_list(list, i);
+        }
+    }
 
-    game->draw_pile_left[r] = game->draw_pile_left[r] - 1;
+    // Choisir une couleur aléatoire dans la liste
+    int random = rand() % 7;
+    list_t *tmp = list;
+    int res = -1;
+    for (int i = 0; i < random; i++)
+    {
+        if (tmp == NULL || tmp->next == NULL)
+        {
+            tmp = list; // On revient au début de la liste
+        }
+        else
+        {
+            tmp = tmp->next;
+        }
+    }
+    res = tmp->color;
+
+    // Enlever la couleur de la liste
+    game->draw_pile_left[res] -= 1;
+    game->face_card_color = res;
+
+    // Ajouter la couleur à la pile de dos emplacement aléatoire
+    int random_back = rand() % 3;
+    game->back_card_color[random_back] = game->face_card_color;
+
+    // Ajouter 2 couleurs aléatoire dans la pile de dos depuis la liste
+    list_t *list2 = NULL;
+    // Lister toutes les couleurs
+    for (int i = 0; i < 7; i++)
+    {
+        list2 = add_to_list(list2, i);
+    }
+    // Retirer la couleur de la face
+    list2 = remove_list(list2, game->face_card_color);
+
+    // Choisir 2 couleurs aléatoires
+    for (int i = 0; i < 2; i++)
+    {
+        int random2 = rand() % 6;
+        list_t *tmp2 = list2;
+        for (int j = 0; j < random2; j++)
+        {
+            if (tmp2 == NULL || tmp2->next == NULL)
+            {
+                tmp2 = list2; // On revient au début de la liste
+            }
+            else
+            {
+                tmp2 = tmp2->next;
+            }
+        }
+        game->back_card_color[(random_back + i + 1) % 3] = tmp2->color;
+        list2 = remove_list(list2, tmp2->color);
+    }
+
+    // free list
+    while (list != NULL)
+    {
+        list_t *tmp = list;
+        list = list->next;
+        free(tmp);
+    }
+
+    // free list2
+    while (list2 != NULL)
+    {
+        list_t *tmp = list2;
+        list2 = list2->next;
+        free(tmp);
+    }
+
     return 1;
 }
 
