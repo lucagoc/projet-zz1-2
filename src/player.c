@@ -6,10 +6,10 @@
 #include "headers/player.h"
 #include "headers/gameplay.h"
 
-#define NUM_PLAYERS 4      // Nombre de joueurs
-#define NUM_ARMS 10        // Nombre de bras
-#define NUM_ITERATIONS 200 // Nombre total d'itérations
-#define UCB_ITERATIONS 100 // Nombre d'itérations pour UCB
+#define NUM_PLAYERS 4       // Nombre de joueurs
+#define NUM_ARMS 10         // Nombre de bras
+#define NUM_ITERATIONS 2000 // Nombre total d'itérations
+#define UCB_ITERATIONS 100  // Nombre d'itérations pour UCB
 
 float I_k(float G, float C, int n, int n_k)
 {
@@ -28,11 +28,55 @@ int *get_reward(game_t *game)
     return res;
 }
 
+struct list
+{
+    int input;
+    struct list *next;
+};
+typedef struct list list_t;
+
+list_t *create_possible_move_list(game_t *game)
+{
+    list_t *list = malloc(sizeof(list_t));
+    list->input = 0;
+    list->next = NULL;
+    list_t *current = list;
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        if (game->player_action == i)
+        {
+            list_t *new = malloc(sizeof(list_t));
+            new->input = i;
+            new->next = NULL;
+            current->next = new;
+            current = new;
+        }
+        else
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                if (game->players[i]->tank[j] > 0)
+                {
+                    list_t *new = malloc(sizeof(list_t));
+                    new->input = i;
+                    new->next = NULL;
+                    current->next = new;
+                    current = new;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    return list;
+}
+
 // Calcul pour le prochain coup si il faut scorer ou voler à l'aide de l'algorithme UCB (Upper Confidence Bound)
 // Renvoie un tableau des estimations de récompenses pour chaque bras
 // n le nombre de totale de partie jouée
 // Renvoie l'input i avec le meilleur score
-int ucb(mcts_t *root, int n)
+int ucb(mcts_t *root, list_t *list, int n)
 {
     game_t *game = root->state;
 
@@ -50,47 +94,64 @@ int ucb(mcts_t *root, int n)
         n_t[i] = root->n_coup[i];
     }
 
-    // On joue une fois sur toute les machines
-    for (int i = 0; i < NUM_PLAYERS; i++)
+    // On joue une fois sur toute les machines au coup possible
+    while (list != NULL)
     {
         game_t *copy = copy_game(game);
-        game_play(copy, i % 4);
+        game_play(copy, list->input % 4);
         int *reward = get_reward(copy);
-        I[i] = I_k(G[i], C, n, 1); // 1 = le nombre de fois où l'on a déjà joué sur la machine.
-        G[i] += reward[player];
-        n_t[i]++;
+        I[list->input] = I_k(G[list->input], C, n, 1); // 1 = le nombre de fois où l'on a déjà joué sur la machine.
+        G[list->input] += reward[player];
+        n_t[list->input]++;
         free_game(copy);
         free(reward);
+        list = list->next;
     }
 
-    // On joue n fois sur toute les machines
+    // On joue n fois sur toute les machines possibles
     // On choisit la machine avec l'indice de confiance le plus élevé
-    for (int i = NUM_PLAYERS; i < n; i++)
+    for (int i = 1; i < n; i++)
     {
-        for (int j = 0; j < NUM_PLAYERS; j++)
+
+        list_t *tmp = list;
+        while (tmp != NULL)
         {
-            I[j] = I_k(G[j], C, n, n_t[j]);
+            game_t *copy = copy_game(game);
+            game_play(copy, tmp->input % 4);
+            int *reward = get_reward(copy);
+            I[tmp->input] = I_k(G[tmp->input], C, n, n_t[tmp->input]);
+            G[tmp->input] += reward[player];
+            n_t[tmp->input]++;
+            free_game(copy);
+            free(reward);
+            tmp = tmp->next;
         }
-        for (int j = 0; j < NUM_PLAYERS; j++)
+    }
+
+    // On choisit le meilleur coup
+    for (int i = 0; i < NUM_PLAYERS; i++)
+    {
+        if (I[i] > I[max])
         {
-            if (I[j] > I[max])
-            {
-                max = j;
-            }
+            max = i;
         }
-        game_t *copy = copy_game(game);
-        game_play(copy, max);
-        int *reward = get_reward(copy);
-        G[max] += reward[player];
-        n_t[max]++;
-        free_game(copy);
-        free(reward);
     }
 
     return max;
 }
 
 /*----------------------------------------------------------------------Implémentation des phases de MCTS-----------------------------------------------------------*/
+
+void free_list(list_t *list)
+{
+    list_t *current = list;
+    while (current != NULL)
+    {
+        list_t *tmp = current;
+        current = current->next;
+        free(tmp);
+    }
+}
 
 /**
  * @brief Sélection de la branche à explorer à l'aide de UCB
@@ -99,16 +160,24 @@ int ucb(mcts_t *root, int n)
  */
 int select_node(mcts_t *root)
 {
-    for (int i = 0; i < 4; i++)
+    // Chercher les enfants non
+    list_t *list = create_possible_move_list(root->state);
+    list_t *current = list;
+    while (current != NULL)
     {
-        if (root->children[i] == NULL)
+        if (root->children[current->input] == NULL)
         {
-            return i;
+            int res = current->input;
+            free_list(list);
+            return res;
         }
+        current = current->next;
     }
 
     // Dans l'autre cas.
-    return ucb(root, UCB_ITERATIONS);
+    int res = ucb(root, list, UCB_ITERATIONS);
+    free_list(list);
+    return res;
 }
 
 /**
@@ -345,7 +414,7 @@ int mcts(game_t *game)
         fprintf(stderr, "Coup %d : ", i);
         for (int j = 0; j < NUM_PLAYERS; j++)
         {
-            printf("%f ", root->gain_coup[i][j]/(float)root->n_coup[i]);
+            printf("%f ", root->gain_coup[i][j] / (float)root->n_coup[i]);
         }
         printf("\n");
     }
