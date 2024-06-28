@@ -8,7 +8,7 @@
 
 #define NUM_PLAYERS 4      // Nombre de joueurs
 #define NUM_ARMS 10        // Nombre de bras
-#define NUM_ITERATIONS 200 // Nombre total d'itérations
+#define NUM_ITERATIONS 1000 // Nombre total d'itérations
 #define UCB_ITERATIONS 100 // Nombre d'itérations pour UCB
 
 float I_k(float G, float C, int n, int n_k)

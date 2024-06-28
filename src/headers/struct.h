@@ -39,6 +39,7 @@ struct game
     int back_card_color[3];
     int player_action; // Joueur actif
     int win;           // -1 si joueur n'a pas gagné, sinon le numéro du joueur gagnant
+    stack_t *stack;    // Pile de cartes
 };
 typedef struct game game_t;
 

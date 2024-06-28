@@ -74,6 +74,17 @@ int is_victory(game_t *game)
     return -1;
 }
 
+void free_stack(stack_t *stack)
+{
+    stack_t *current = stack;
+    while (current != NULL)
+    {
+        stack_t *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
 /**
  * @brief Libération de la mémoire du jeu
  *
@@ -92,7 +103,103 @@ void free_game(game_t *game)
             free(game->players[i]);
         }
     }
+    free_stack(game->stack);
+
     free(game);
+}
+
+stack_t *add_card_to_stack(stack_t *stack, card_t *card)
+{
+    stack_t *new_stack = malloc(sizeof(stack_t));
+    new_stack->card = card;
+    new_stack->next = stack;
+    return new_stack;
+}
+
+stack_t *remove_card_from_stack(stack_t *stack)
+{
+    stack_t *new_stack = stack->next;
+    free(stack);
+    return new_stack;
+}
+
+stack_t *create_stack()
+{
+    return NULL;
+}
+
+/* Mélange la stack sauf la première carte */
+stack_t *mix_stack(stack_t *stack)
+{
+    if (stack == NULL)
+    {
+        return NULL;
+    }
+    if(stack->next == NULL)
+    {
+        return stack;
+    }
+    
+    // retenir la première carte
+    card_t *first_card = stack->card;
+    stack = remove_card_from_stack(stack);
+
+    // Mélanger la stack
+    for (int i = 0; i < NUMBER_MIX_STACK; i++)
+    {
+        stack_t *current = stack;
+        stack_t *previous = NULL;
+        while (current->next != NULL)
+        {
+            previous = current;
+            current = current->next;
+        }
+        previous->next = NULL;
+        current->next = stack;
+        stack = current;
+    }
+
+    // Remettre la première carte
+    stack = add_card_to_stack(stack, first_card);
+
+    return stack;
+}
+
+// Génère la pile de cartes
+stack_t *gen_stack(game_t *game)
+{
+    stack_t *stack = create_stack();
+    // Générer le nombre de carte par rapport au nombre disponible dans game->draw_pile_left[couleur]
+    for (int i = 0; i < 7; i++)
+    {
+        for (int j = 0; j < game->draw_pile_left[i]; j++)
+        {
+            card_t *card = malloc(sizeof(card_t));
+            card->face = i;
+
+            // Générer le dos, position aléatoire dans le tableau de la couleur face et 2 couleur aléatoire et différentes à coté
+            int back = rand() % 3;
+            card->back[back] = i;
+
+            int color1 = rand() % 7;
+            while (color1 == i)
+            {
+                color1 = rand() % 7;
+            }
+
+            int color2 = rand() % 7;
+            while (color2 == i || color2 == color1)
+            {
+                color2 = rand() % 7;
+            }
+
+            card->back[(back + 1) % 3] = color1;
+            card->back[(back + 2) % 3] = color2;
+            stack = add_card_to_stack(stack, card);
+        }
+    }
+
+    return stack;
 }
 
 /**
@@ -103,39 +210,21 @@ void free_game(game_t *game)
  */
 int get_draw_card(game_t *game)
 {
-    if (is_draw_pile_empty(game))
+    // Dépiler la carte si possible
+    if (game->stack != NULL)
+    {
+        card_t *card = game->stack->card;
+        game->face_card_color = card->face;
+        game->back_card_color[0] = card->back[0];
+        game->back_card_color[1] = card->back[1];
+        game->back_card_color[2] = card->back[2];
+        game->stack = remove_card_from_stack(game->stack);
+        return 1;
+    }
+    else
     {
         return -1;
     }
-
-    // Prendre une carte dans le paquet
-    int r = (rand() % NUMBER_FACE);
-    while (game->draw_pile_left[r] <= 0)
-    {
-        r = rand() % NUMBER_FACE;
-    }
-    game->face_card_color = r;
-
-    /* Couleur d'indicateur */
-    int a = -1;
-    int b = -1;
-    while (a == -1 || a == r)
-    {
-        a = rand() % NUMBER_FACE;
-    }
-    while (b == -1 || b == r || b == a)
-    {
-        b = rand() % NUMBER_FACE;
-    }
-
-    // Mettre les 3 couleurs en positions aléatoires
-    int d = rand() % NUMBER_BACK;
-    game->back_card_color[d] = r;
-    game->back_card_color[(d + 1) % NUMBER_BACK] = a;
-    game->back_card_color[(d + 2) % NUMBER_BACK] = b;
-
-    game->draw_pile_left[r] = game->draw_pile_left[r] - 1;
-    return 1;
 }
 
 /**
@@ -172,6 +261,8 @@ game_t *create_game()
     {
         game->draw_pile_left[i] = 15; // Initialisation de la pile de cartes
     }
+
+    game->stack = mix_stack(gen_stack(game));
 
     // Tirer une première carte
     get_draw_card(game);
@@ -235,6 +326,18 @@ void steal_card(int input, game_t *game)
     game->players[input]->tank[game->face_card_color] = 0;                                                                    // on enlève les cartes au joueur volé
 }
 
+stack_t *copy_stack(stack_t *stack)
+{
+    stack_t *copy_stack = create_stack();
+    stack_t *current = stack;
+    while (current != NULL)
+    {
+        copy_stack = add_card_to_stack(copy_stack, current->card);
+        current = current->next;
+    }
+    return copy_stack;
+}
+
 /**
  * @brief Fonction copie l'état du jeu
  *
@@ -282,6 +385,10 @@ game_t *copy_game(game_t *game)
     copy_game_state->player_action = game->player_action;
     copy_game_state->win = game->win;
     copy_game_state->face_card_color = game->face_card_color;
+
+    /* Copie de la stack */
+    stack_t *copied_stack = copy_stack(game->stack);
+    copy_game_state->stack = copied_stack;
 
     return copy_game_state;
 }
