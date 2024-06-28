@@ -541,17 +541,23 @@ void refresh_input(ui_t *ui, ui_input_t *ui_input)
                 ui_input->click.x = x;
                 ui_input->click.y = y;
 
-                if (ui->in_pause)
+                /*if (ui->in_pause)
                 {
                     if (is_continue_clicked(ui, ui_input->click))
                     {
                         ui->in_pause = false;
+                        SDL_Delay(250);
                     }
                     else if (is_quit_clicked(ui, ui_input->click))
                     {
                         ui->program_on = false;
                     }
                 }
+                ui_input->click.x = -1;
+                ui_input->click.y = -1;
+
+                ui_input->click.x = x;
+                ui_input->click.y = y;*/
             }
             break;
 
@@ -639,8 +645,30 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
 {
     int input = -1;
 
-    ui->animations[0]->pos.x = ui_input->cursor.x;
-    ui->animations[0]->pos.y = ui_input->cursor.y;
+    
+    if (ui->in_pause)
+    {
+        if (ui_input->click.x != -1 && ui_input->click.y != -1)
+        {
+            if (is_continue_clicked(ui, ui_input->click))
+            {
+                ui->in_pause = false;
+                SDL_Delay(100); // Petit délai pour éviter les clics multiples
+            }
+            else if (is_quit_clicked(ui, ui_input->click))
+            {
+                ui->program_on = false;
+            }
+
+        }
+                return input;
+
+    }
+    else 
+    {
+        ui->animations[0]->pos.x = ui_input->cursor.x;
+        ui->animations[0]->pos.y = ui_input->cursor.y;
+    }
 
     if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
     {
@@ -713,6 +741,11 @@ int process_input(ui_input_t *ui_input, game_t *game, ui_t *ui)
 int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
 {
     int input = -1;
+    if (ui->in_pause)
+    {
+        return input;
+    }
+
     if (is_anim_blocking_game(ui->animations)) // Blocage des autres entrées
     {
         return input;
