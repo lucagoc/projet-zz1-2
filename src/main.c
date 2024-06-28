@@ -11,10 +11,10 @@
 #include "headers/debug.h"
 
 /**
- * @brief Fonction qui permet de rafraichir les inputs
- *
- * @param ui
- * @param ui_input
+ * @brief Fonction principale du programme
+ * 
+ * @param argc Nombre d'arguments
+ * @param argv Arguments
  */
 int main(int argc, char const *argv[])
 {
