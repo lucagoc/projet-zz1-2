@@ -743,7 +743,6 @@ int process_input_robot(ui_input_t *ui_input, game_t *game, ui_t *ui)
             {
                 ui->program_on = false;
             }
-
             // Réinitialiser l'état du bouton de la souris après traitement
             ui_input->click.x = -1;
             ui_input->click.y = -1;
